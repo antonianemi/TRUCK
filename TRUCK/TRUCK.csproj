@@ -1,0 +1,648 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8E38DF12-3291-4F62-BD88-297B5A7FCDC1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TRUCK</RootNamespace>
+    <AssemblyName>TRUCK</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BaseAcces">
+      <HintPath>..\..\..\..\..\..\..\Librerias\BaseAcces.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=10.5.3700.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC_MSIL\CrystalDecisions.CrystalReports.Engine\10.5.3700.0__692fbea5521e1304\CrystalDecisions.CrystalReports.Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.Enterprise.Framework, Version=10.5.3700.0, Culture=neutral, PublicKeyToken=692fbea5521e1304">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC\CrystalDecisions.Enterprise.Framework\10.5.3700.0__692fbea5521e1304\CrystalDecisions.Enterprise.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.Enterprise.InfoStore, Version=10.5.3700.0, Culture=neutral, PublicKeyToken=692fbea5521e1304">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC\CrystalDecisions.Enterprise.InfoStore\10.5.3700.0__692fbea5521e1304\CrystalDecisions.Enterprise.InfoStore.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.ReportSource, Version=10.5.3700.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC_MSIL\CrystalDecisions.ReportSource\10.5.3700.0__692fbea5521e1304\CrystalDecisions.ReportSource.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.Shared, Version=10.5.3700.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC_MSIL\CrystalDecisions.Shared\10.5.3700.0__692fbea5521e1304\CrystalDecisions.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.Windows.Forms, Version=10.5.3700.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC_MSIL\CrystalDecisions.Windows.Forms\10.5.3700.0__692fbea5521e1304\CrystalDecisions.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="FirebirdSql.Data.FirebirdClient, Version=4.6.2.0, Culture=neutral, PublicKeyToken=3750abcc3150b00c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Librerias\FirebirdSql.Data.FirebirdClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.ADODB">
+      <HintPath>..\..\..\..\..\..\..\Librerias\Interop.ADODB.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.JRO">
+      <HintPath>..\..\..\..\..\..\..\Librerias\Interop.JRO.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="MaskEdit">
+      <HintPath>..\..\..\..\..\..\..\Librerias\MaskEdit.dll</HintPath>
+    </Reference>
+    <Reference Include="MaskedTextBox">
+      <HintPath>..\..\..\..\..\..\..\Librerias\MaskedTextBox.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Acerca.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Acerca.Designer.cs">
+      <DependentUpon>Acerca.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ADOutil.cs" />
+    <Compile Include="Buscar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="clave.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Comunica.cs" />
+    <Compile Include="DataAcces\BaseBusiness.cs" />
+    <Compile Include="DataAcces\BLL.cs" />
+    <Compile Include="DataAcces\DataAccesQuery.cs" />
+    <Compile Include="DataAcces\DLL.cs" />
+    <Compile Include="depurar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ENTRADA.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Folio.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Global.cs" />
+    <Compile Include="importexport.cs" />
+    <Compile Include="Inventario.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="KeyLock.cs" />
+    <Compile Include="Liquidacion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Liquidacion.Designer.cs">
+      <DependentUpon>Liquidacion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Menu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Monitor1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Monitor3.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OpenWindows.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Parametros.cs" />
+    <Compile Include="Preview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="proceso.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="proceso.Designer.cs">
+      <DependentUpon>proceso.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registro.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Reportes\InvxFam.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\LCliente.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\LEmpresa.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\LProducto.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\LProducto2.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\LProveedor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\LTransporte.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\LUsuario.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\LVehiculo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\Movimientos2.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\Movimientos_3ejes2.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\Movimientos_publico2.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\Movimientos_publico_3ejes2.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RLiquidacion.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTPed_Can.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTPed_Can_publico.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTxCliente.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTxCliente_publico.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTxEmpresa.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTxEmpresa_publico.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTxFecha.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTxFecha_publico.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTxProducto.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTxProducto_publico.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTxProveedor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\RTxTransporte.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reportes\Ticket.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="RHistoria.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RHistoria.Designer.cs">
+      <DependentUpon>RHistoria.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RListados.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RListados.Designer.cs">
+      <DependentUpon>RListados.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ROtros.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ROtros.Designer.cs">
+      <DependentUpon>ROtros.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Transacciones1m.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WCUSTOMER.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WDGENERAL.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WEMPRESAS.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WFAMILIA.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WPASS.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WPRODUCTO.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WTARA.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WTRANSPORTE.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WUSER.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WVENDOR.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <EmbeddedResource Include="Acerca.en-US.resx">
+      <DependentUpon>Acerca.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Acerca.resx">
+      <DependentUpon>Acerca.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Buscar.en-US.resx">
+      <DependentUpon>Buscar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Buscar.en.resx">
+      <DependentUpon>Buscar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Buscar.resx">
+      <DependentUpon>Buscar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="clave.en-US.resx">
+      <DependentUpon>clave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="clave.en.resx">
+      <DependentUpon>clave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="clave.resx">
+      <DependentUpon>clave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="depurar.en-US.resx">
+      <DependentUpon>depurar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="depurar.en.resx">
+      <DependentUpon>depurar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="depurar.resx">
+      <DependentUpon>depurar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ENTRADA.en-US.resx">
+      <DependentUpon>ENTRADA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ENTRADA.en.resx">
+      <DependentUpon>ENTRADA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ENTRADA.resx">
+      <DependentUpon>ENTRADA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Folio.en-US.resx">
+      <DependentUpon>Folio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Folio.en.resx">
+      <DependentUpon>Folio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Folio.resx">
+      <DependentUpon>Folio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.en-US.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.en.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Inventario.en-US.resx">
+      <DependentUpon>Inventario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Inventario.en.resx">
+      <DependentUpon>Inventario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Inventario.resx">
+      <DependentUpon>Inventario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Liquidacion.en-US.resx">
+      <DependentUpon>Liquidacion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Liquidacion.resx">
+      <DependentUpon>Liquidacion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Menu.en-US.resx">
+      <DependentUpon>Menu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Menu.en.resx">
+      <DependentUpon>Menu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Menu.resx">
+      <DependentUpon>Menu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Monitor1.en-US.resx">
+      <DependentUpon>Monitor1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Monitor1.en.resx">
+      <DependentUpon>Monitor1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Monitor1.resx">
+      <DependentUpon>Monitor1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Monitor3.en-US.resx">
+      <DependentUpon>Monitor3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Monitor3.en.resx">
+      <DependentUpon>Monitor3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Monitor3.resx">
+      <DependentUpon>Monitor3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OpenWindows.en-US.resx">
+      <DependentUpon>OpenWindows.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OpenWindows.en.resx">
+      <DependentUpon>OpenWindows.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OpenWindows.resx">
+      <DependentUpon>OpenWindows.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Preview.en-US.resx">
+      <DependentUpon>Preview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Preview.en.resx">
+      <DependentUpon>Preview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Preview.resx">
+      <DependentUpon>Preview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Registro.en-US.resx">
+      <DependentUpon>Registro.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Registro.en.resx">
+      <DependentUpon>Registro.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Registro.resx">
+      <DependentUpon>Registro.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RHistoria.en-US.resx">
+      <DependentUpon>RHistoria.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RHistoria.resx">
+      <DependentUpon>RHistoria.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RListados.en-US.resx">
+      <DependentUpon>RListados.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RListados.resx">
+      <DependentUpon>RListados.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ROtros.en-US.resx">
+      <DependentUpon>ROtros.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ROtros.resx">
+      <DependentUpon>ROtros.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Transacciones1m.en-US.resx">
+      <DependentUpon>Transacciones1m.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Transacciones1m.en.resx">
+      <DependentUpon>Transacciones1m.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Transacciones1m.resx">
+      <DependentUpon>Transacciones1m.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WCUSTOMER.en-US.resx">
+      <DependentUpon>WCUSTOMER.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WCUSTOMER.en.resx">
+      <DependentUpon>WCUSTOMER.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WCUSTOMER.resx">
+      <DependentUpon>WCUSTOMER.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WDGENERAL.en-US.resx">
+      <DependentUpon>WDGENERAL.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WDGENERAL.en.resx">
+      <DependentUpon>WDGENERAL.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WDGENERAL.resx">
+      <DependentUpon>WDGENERAL.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WEMPRESAS.en-US.resx">
+      <DependentUpon>WEMPRESAS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WEMPRESAS.en.resx">
+      <DependentUpon>WEMPRESAS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WEMPRESAS.resx">
+      <DependentUpon>WEMPRESAS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WFAMILIA.en-US.resx">
+      <DependentUpon>WFAMILIA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WFAMILIA.en.resx">
+      <DependentUpon>WFAMILIA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WFAMILIA.resx">
+      <DependentUpon>WFAMILIA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WPASS.en-US.resx">
+      <DependentUpon>WPASS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WPASS.en.resx">
+      <DependentUpon>WPASS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WPASS.resx">
+      <DependentUpon>WPASS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WPRODUCTO.en-US.resx">
+      <DependentUpon>WPRODUCTO.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WPRODUCTO.en.resx">
+      <DependentUpon>WPRODUCTO.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WPRODUCTO.resx">
+      <DependentUpon>WPRODUCTO.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WTARA.en-US.resx">
+      <DependentUpon>WTARA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WTARA.en.resx">
+      <DependentUpon>WTARA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WTARA.resx">
+      <DependentUpon>WTARA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WTRANSPORTE.en-US.resx">
+      <DependentUpon>WTRANSPORTE.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WTRANSPORTE.en.resx">
+      <DependentUpon>WTRANSPORTE.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WTRANSPORTE.resx">
+      <DependentUpon>WTRANSPORTE.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WUSER.en-US.resx">
+      <DependentUpon>WUSER.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WUSER.en.resx">
+      <DependentUpon>WUSER.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WUSER.resx">
+      <DependentUpon>WUSER.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WVENDOR.en-US.resx">
+      <DependentUpon>WVENDOR.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WVENDOR.en.resx">
+      <DependentUpon>WVENDOR.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WVENDOR.resx">
+      <DependentUpon>WVENDOR.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="Reportes\InvxFam.rpt" />
+    <None Include="Reportes\LCliente.rpt" />
+    <None Include="Reportes\LEmpresa.rpt" />
+    <None Include="Reportes\LProducto.rpt" />
+    <None Include="Reportes\LProducto2.rpt" />
+    <None Include="Reportes\LProveedor.rpt" />
+    <None Include="Reportes\LTransporte.rpt" />
+    <None Include="Reportes\LUsuario.rpt" />
+    <None Include="Reportes\LVehiculo.rpt" />
+    <None Include="Reportes\Movimientos2.rpt" />
+    <None Include="Reportes\Movimientos_3ejes2.rpt" />
+    <None Include="Reportes\Movimientos_publico2.rpt" />
+    <None Include="Reportes\Movimientos_publico_3ejes2.rpt" />
+    <None Include="Reportes\RLiquidacion.rpt" />
+    <None Include="Reportes\RTPed_Can.rpt" />
+    <None Include="Reportes\RTPed_Can_publico.rpt" />
+    <None Include="Reportes\RTxCliente.rpt" />
+    <None Include="Reportes\RTxCliente_publico.rpt" />
+    <None Include="Reportes\RTxEmpresa.rpt" />
+    <None Include="Reportes\RTxEmpresa_publico.rpt" />
+    <None Include="Reportes\RTxFecha.rpt" />
+    <None Include="Reportes\RTxFecha_publico.rpt" />
+    <None Include="Reportes\RTxProducto.rpt" />
+    <None Include="Reportes\RTxProducto_publico.rpt" />
+    <None Include="Reportes\RTxProveedor.rpt" />
+    <None Include="Reportes\RTxTransporte.rpt" />
+    <None Include="Reportes\Ticket.rpt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AxShockwaveFlashObjects">
+      <Guid>{D27CDB6B-AE6D-11CF-96B8-444553540000}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="ShockwaveFlashObjects">
+      <Guid>{D27CDB6B-AE6D-11CF-96B8-444553540000}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
