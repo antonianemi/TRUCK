@@ -16,6 +16,7 @@ namespace TRUCK
 	/// </summary>
 	public class OpenWindows : System.Windows.Forms.Form
     {
+        DataSet dt;
         #region VARIABLES
         DataAccesQuery db;
         private System.ComponentModel.IContainer components;
@@ -360,411 +361,316 @@ namespace TRUCK
             this.PerformLayout();
 
 		}
-		#endregion
+        #endregion
         #region Grids
+        private void Grid_usuarios()
+        {
+            #region DESIGN
+            activo = false;
+            DataGridTableStyle myGridStyle = new DataGridTableStyle();
+            myGridStyle.MappingName = "usuarios";
+            DataGridTextBoxColumn colStyle1 = new DataGridTextBoxColumn();
+            colStyle1.HeaderText = Global.M_Error[207, Global.idioma].ToString();
+            colStyle1.Width = 100;
+            colStyle1.MappingName = "user";
+            DataGridTextBoxColumn colStyle2 = new DataGridTextBoxColumn();
+            colStyle2.HeaderText = Global.M_Error[209, Global.idioma].ToString();
+            colStyle2.Width = 100;
+            colStyle2.MappingName = "iniciales";
+            DataGridTextBoxColumn colStyle3 = new DataGridTextBoxColumn();
+            colStyle3.HeaderText = Global.M_Error[216, Global.idioma].ToString();
+            colStyle3.Width = 200;
+            colStyle3.MappingName = "nombre";
+            DataGridTextBoxColumn colStyle4 = new DataGridTextBoxColumn();
+            colStyle4.HeaderText = Global.M_Error[295, Global.idioma].ToString();
+            colStyle4.Width = 200;
+            colStyle4.MappingName = "turno";
+            myGridStyle.GridColumnStyles.Add(colStyle1);
+            myGridStyle.GridColumnStyles.Add(colStyle2);
+            myGridStyle.GridColumnStyles.Add(colStyle3);
+            myGridStyle.GridColumnStyles.Add(colStyle4);
+            para1 = Global.M_Error[207, Global.idioma].ToString();
+            para2 = Global.M_Error[209, Global.idioma].ToString();
+            campo1 = "user";
+            campo2 = "iniciales";
 
-        private void Grid_articulo()
-		{
-			try
-			{
-				activo=true;
+            #endregion
+            #region DATA
+            this.Dato = "";
+            string CadenaSelect_Maestro = "SELECT * FROM usuarios ORDER BY user";
+            this.TablaMaestra = "usuarios";
+            this.DataSetMaster.Clear();
+            DataSetMaster = db.getData(CadenaSelect_Maestro);
+            this.DGrid.DataSource = this.DataSetMaster;
+            this.DataSetMaster.Tables[0].TableName = TablaMaestra;
+            if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGridStyle);
+            this.DGrid.SetDataBinding(this.DataSetMaster, TablaMaestra);
+            cmGridRegister = (CurrencyManager)this.BindingContext[this.DataSetMaster, TablaMaestra];
+            cmGridRegister.Position = 0;
+            #endregion
 
-				int ff = Global.F_Decimal.Length-3;
-
-				string formato_precio=Global.F_Decimal.Substring(3,ff-1);
-
-				Global.Conexion = Global.Motor + Global.DATABASE;
-				
-				string CadenaSelect_Maestro = "SELECT * FROM Articulos WHERE numemp = " + Global.nempresa + " ORDER BY numero";
-
-				this.TablaMaestra="Articulos";
-
-                this.DataSetMaster.Clear();
-
-                DataSetMaster = db.getData(CadenaSelect_Maestro);
-
-
-                this.DGrid.DataSource = this.DataSetMaster;
-
-				this.DGrid.DataMember = TablaMaestra;
-
-                this.DataSetMaster.Tables[0].TableName = TablaMaestra;
-
-
-
-				DataGridTableStyle myGrid =new DataGridTableStyle();
-				myGrid.PreferredRowHeight = 20;
-				myGrid.MappingName = "Articulos";
-					
-				DataGridTextBoxColumn col1 = new DataGridTextBoxColumn();
-				col1.Width = 60;
-				col1.NullText = "0";
-				col1.Format = "#####";
-				col1.MappingName = "numero";
-				col1.TextBox.MaxLength = 5;
-						
-				DataGridTextBoxColumn col2 = new DataGridTextBoxColumn();
-				col2.Width = 200;
-				col2.NullText = "";
-				col2.MappingName ="descripcion";
-				col2.TextBox.MaxLength = 52;
-
-                col1.HeaderText = Global.M_Error[215, Global.idioma].ToString();
-                col2.HeaderText = Global.M_Error[216, Global.idioma].ToString();
-                myGrid.GridColumnStyles.Add(col1);
-                myGrid.GridColumnStyles.Add(col2);
-
-                if (Global.aplicacion != 0)
+            if (cmGridRegister.Count > 0)
+            {
+                for (int i = 0; i < Global.privilegio.Length; i++)
                 {
-                    DataGridTextBoxColumn col3 = new DataGridTextBoxColumn();
-                    col3.Width = 200;
-                    col3.NullText = "";
-                    col3.MappingName = "familia";
-                    col3.TextBox.MaxLength = 5;
-                    col3.HeaderText = Global.M_Error[218, Global.idioma].ToString();
-                    myGrid.GridColumnStyles.Add(col3);
+                    if (Global.privilegio.Substring(i, 1) == "1")
+                    {
+                        if (i == 3)
+                        {
+                            this.toolMaster.Items[0].Enabled = true;
+                            this.toolMaster.Items[1].Enabled = true;
+                            this.toolMaster.Items[2].Enabled = true;
+                            this.menuItem2.Enabled = true;
+                            this.menuItem3.Enabled = true;
+                            this.menuItem7.Enabled = true;
+                        }
+                        if (i == 11)
+                        {
+                            this.toolMaster.Items[4].Enabled = true;
+                            this.menuItem10.Enabled = true;
+                        }
+                        if (i == 12)
+                        {
+                            this.toolMaster.Items[5].Enabled = true;
+                            this.menuItem11.Enabled = true;
+                        }
+                        if (i == 13)
+                        {
+                            this.toolMaster.Items[6].Enabled = true;
+                            this.menuItem4.Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        if (i == 3)
+                        {
+                            this.toolMaster.Items[0].Enabled = false;
+                            this.toolMaster.Items[1].Enabled = false;
+                            this.toolMaster.Items[2].Enabled = false;
+                            this.menuItem2.Enabled = false;
+                            this.menuItem3.Enabled = false;
+                            this.menuItem7.Enabled = false;
+                        }
+                        if (i == 11)
+                        {
+                            this.toolMaster.Items[4].Enabled = false;
+                            this.menuItem10.Enabled = false;
+                        }
+                        if (i == 12)
+                        {
+                            this.toolMaster.Items[5].Enabled = false;
+                            this.menuItem11.Enabled = false;
+                        }
+                        if (i == 13)
+                        {
+                            this.toolMaster.Items[6].Enabled = false;
+                            this.menuItem4.Enabled = false;
+                        }
+                    }
+                }
+                this.toolMaster.Items[4].Enabled = false;
+                this.toolMaster.Items[5].Enabled = false;
+                this.toolMaster.Items[6].Enabled = false;
+                this.toolMaster.Items[3].Enabled = false;
+                this.menuItem5.Enabled = true;
+            }
+            else
+            {
+                if (Global.privilegio.Substring(3, 1) == "1")
+                {
+                    this.toolMaster.Items[0].Enabled = true;
+                    this.toolMaster.Items[4].Enabled = true;
+                    this.menuItem10.Enabled = true;
+                    this.menuItem2.Enabled = true;
                 }
                 else
                 {
-                    DataGridTextBoxColumn col4 = new DataGridTextBoxColumn();
-                    col4.Width = 200;
-                    col4.NullText = "";
-                    col4.MappingName = "tarifa";
-                    col4.TextBox.MaxLength = 5;
-                    col4.HeaderText = Global.M_Error[217, Global.idioma].ToString();
-                    myGrid.GridColumnStyles.Add(col4);
+                    this.toolMaster.Items[0].Enabled = false;
+                    this.toolMaster.Items[4].Enabled = false;
+                    this.menuItem10.Enabled = false;
+                    this.menuItem2.Enabled = false;
                 }
-			
-				para1=Global.M_Error[215,Global.idioma].ToString();
-				para2=Global.M_Error[216,Global.idioma].ToString();
-				campo1="numero";
-                campo2 = "descripcion";
-                
-                
-				
-                this.Dato = "";
+                this.toolMaster.Items[1].Enabled = false;
+                this.toolMaster.Items[2].Enabled = false;
+                this.toolMaster.Items[3].Enabled = false;
+                this.toolMaster.Items[5].Enabled = false;
+                this.toolMaster.Items[6].Enabled = false;
+                this.toolMaster.Items[7].Enabled = false;
+                this.menuItem3.Enabled = false;
+                this.menuItem7.Enabled = false;
+                this.menuItem5.Enabled = false;
+                this.menuItem11.Enabled = false;
+                this.menuItem4.Enabled = false;
+            }
 
-                
-                
-                if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGrid);	
-				
-                this.DGrid.SetDataBinding(this.DataSetMaster,TablaMaestra);
-				cmGridRegister = (CurrencyManager)this.DGrid.BindingContext[this.DataSetMaster,TablaMaestra];
-				cmGridRegister.Position=0;
-				
-                
-                if (cmGridRegister.Count > 0)
-				{					
-					for (int i=0; i<Global.privilegio.Length;i++)
-					{
-						if (Global.privilegio.Substring(i,1) == "1")
-						{
-							if (i == 4)
-							{
-								this.toolMaster.Items[0].Enabled = true;  //productos
-								this.toolMaster.Items[1].Enabled = true;
-								this.toolMaster.Items[2].Enabled = true;
-								this.menuItem2.Enabled = true;
-								this.menuItem7.Enabled = true;
-								this.menuItem3.Enabled = true;
-							}							
-							if(i==11)
-							{
-								this.toolMaster.Items[4].Enabled = true;  //importar datos
-								this.menuItem10.Enabled = true;
-							}
-							if(i==12)
-							{
-								this.menuItem11.Enabled = true;   //exportar datos
-								this.toolMaster.Items[5].Enabled = true;
-							}
-							if(i==13)
-							{
-								this.menuItem4.Enabled = true;  //depurar datos
-								this.toolMaster.Items[6].Enabled = true;
-							}
-						}
-						else
-						{
-							if (i == 4)
-							{							
-								this.toolMaster.Items[0].Enabled = false;
-								this.toolMaster.Items[1].Enabled = false;
-								this.toolMaster.Items[2].Enabled = false;
-								this.menuItem2.Enabled = false;
-								this.menuItem7.Enabled = false;
-								this.menuItem3.Enabled = false;
-							}
-							if(i==11)
-							{
-								this.menuItem10.Enabled = false;
-								this.toolMaster.Items[4].Enabled = false;
-							}
-							if(i==12)
-							{
-								this.menuItem11.Enabled = false;
-								this.toolMaster.Items[5].Enabled = false;
-							}
-							if(i==13)
-							{
-								this.menuItem4.Enabled = false;
-								this.toolMaster.Items[6].Enabled = false;
-							}
-						}
-					}
-					this.toolMaster.Items[3].Enabled = true;
-					this.toolMaster.Items[7].Enabled = true;
-				}
-				else
-				{					
-					if (Global.privilegio.Substring(4,1) == "1")
-					{
-                        this.toolMaster.Items[0].Enabled = true;
-                        this.toolMaster.Items[4].Enabled = true;
-						this.menuItem10.Enabled = true;
-						this.menuItem2.Enabled=true;
-					}
-					else
-					{
-                        this.toolMaster.Items[0].Enabled = false;
-						this.toolMaster.Items[4].Enabled=false;
-						this.menuItem10.Enabled = false;
-						this.menuItem2.Enabled=false;
-					}					
-					this.toolMaster.Items[1].Enabled=false;
-					this.toolMaster.Items[2].Enabled=false;
-					this.toolMaster.Items[3].Enabled=false;
-					this.toolMaster.Items[5].Enabled=false;
-					this.toolMaster.Items[6].Enabled=false;
-					this.toolMaster.Items[7].Enabled=false;
-					this.menuItem3.Enabled = false;
-					this.menuItem7.Enabled = false;
-					this.menuItem5.Enabled = false;
-					this.menuItem4.Enabled = false;
-					this.menuItem11.Enabled = false;
-				}			
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message);
-			}
-		}
+        }
+        private void Grid_cliente()
+        {
+            #region DESIGN
+            activo = false;
+            Global.Conexion = Global.Motor + Global.DATABASE;
+            DataGridTableStyle myGridStyle = new DataGridTableStyle();
+            myGridStyle.MappingName = "cliente";
+            DataGridTextBoxColumn colStyle1 = new DataGridTextBoxColumn();
+            colStyle1.HeaderText = Global.M_Error[215, Global.idioma].ToString();
+            colStyle1.Width = 60;
+            colStyle1.MappingName = "numero";
+            DataGridTextBoxColumn colStyle2 = new DataGridTextBoxColumn();
+            colStyle2.HeaderText = Global.M_Error[216, Global.idioma].ToString();
+            colStyle2.Width = 200;
+            colStyle2.MappingName = "nombre";
+            DataGridColumnStyle colStyle3 = new DataGridTextBoxColumn();
+            colStyle3.HeaderText = Global.M_Error[218, Global.idioma].ToString();
+            colStyle3.Width = 70;
+            colStyle3.MappingName = "tipo";
+            myGridStyle.GridColumnStyles.Add(colStyle1);
+            myGridStyle.GridColumnStyles.Add(colStyle2);
+            myGridStyle.GridColumnStyles.Add(colStyle3);
+            para1 = Global.M_Error[215, Global.idioma].ToString();
+            para2 = Global.M_Error[216, Global.idioma].ToString();
+            campo1 = "numero";
+            campo2 = "nombre";
 
-		private void Grid_tara()
-		{
-			try
-			{
+            #endregion
+            #region DATA
+            this.Dato = "";
+            string CadenaSelect_Maestro = "SELECT * FROM cliente WHERE numemp = " + Global.nempresa + " ORDER BY numero";
+            this.TablaMaestra = "cliente";
+            this.DataSetMaster.Clear();
+            DataSetMaster = db.getData(CadenaSelect_Maestro);
+            this.DGrid.DataSource = this.DataSetMaster;
+            this.DataSetMaster.Tables[0].TableName = TablaMaestra;
+            if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGridStyle);
+            this.DGrid.SetDataBinding(this.DataSetMaster, TablaMaestra);
+            cmGridRegister = (CurrencyManager)this.BindingContext[this.DataSetMaster, TablaMaestra];
+            cmGridRegister.Position = 0;
+            #endregion
 
-				activo=true;
+            if (cmGridRegister.Count > 0)
+            {
+                for (int i = 0; i < Global.privilegio.Length; i++)
+                {
+                    if (Global.privilegio.Substring(i, 1) == "1")
+                    {
+                        if (i == 9)
+                        {
+                            this.toolMaster.Items[0].Enabled = true;
+                            this.toolMaster.Items[1].Enabled = true;
+                            this.toolMaster.Items[2].Enabled = true;
+                            this.menuItem2.Enabled = true;
+                            this.menuItem3.Enabled = true;
+                            this.menuItem7.Enabled = true;
+                        }
+                        if (i == 11)
+                        {
+                            this.toolMaster.Items[4].Enabled = true;
+                            this.menuItem10.Enabled = true;
+                        }
+                        if (i == 12)
+                        {
+                            this.toolMaster.Items[5].Enabled = true;
+                            this.menuItem11.Enabled = true;
+                        }
+                        if (i == 13)
+                        {
+                            this.toolMaster.Items[6].Enabled = true;
+                            this.menuItem4.Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        if (i == 9)
+                        {
+                            this.toolMaster.Items[0].Enabled = false;
+                            this.toolMaster.Items[1].Enabled = false;
+                            this.toolMaster.Items[2].Enabled = false;
+                            this.menuItem2.Enabled = false;
+                            this.menuItem3.Enabled = false;
+                            this.menuItem7.Enabled = false;
+                        }
+                        if (i == 11)
+                        {
+                            this.toolMaster.Items[4].Enabled = false;
+                            this.menuItem10.Enabled = false;
+                        }
+                        if (i == 12)
+                        {
+                            this.toolMaster.Items[5].Enabled = false;
+                            this.menuItem11.Enabled = false;
+                        }
+                        if (i == 13)
+                        {
+                            this.toolMaster.Items[6].Enabled = false;
+                            this.menuItem4.Enabled = false;
+                        }
+                    }
+                }
+                this.toolMaster.Items[3].Enabled = true;
+                this.toolMaster.Items[7].Enabled = true;
+                this.menuItem5.Enabled = true;
+            }
+            else
+            {
+                if (Global.privilegio.Substring(9, 1) == "1")
+                {
+                    this.toolMaster.Items[0].Enabled = true;
+                    this.toolMaster.Items[4].Enabled = true;
+                    this.menuItem10.Enabled = true;
+                    this.menuItem2.Enabled = true;
+                }
+                else
+                {
+                    this.toolMaster.Items[0].Enabled = false;
+                    this.toolMaster.Items[4].Enabled = false;
+                    this.menuItem10.Enabled = false;
+                    this.menuItem2.Enabled = false;
+                }
+                this.toolMaster.Items[1].Enabled = false;
+                this.toolMaster.Items[2].Enabled = false;
+                this.toolMaster.Items[3].Enabled = false;
+                this.toolMaster.Items[5].Enabled = false;
+                this.toolMaster.Items[6].Enabled = false;
+                this.toolMaster.Items[7].Enabled = false;
+                this.menuItem3.Enabled = false;
+                this.menuItem7.Enabled = false;
+                this.menuItem5.Enabled = false;
+                this.menuItem11.Enabled = false;
+                this.menuItem4.Enabled = false;
+            }
 
-				int ff = Global.F_Decimal.Length-3;
 
-				string formato_precio=Global.F_Decimal.Substring(3,ff-1);
-
-
-				Global.Conexion = Global.Motor + Global.DATABASE;
-				
-
-				string CadenaSelect_Maestro = "SELECT * FROM Taras WHERE numemp = " + Global.nempresa + " ORDER BY numero";
-
-                this.TablaMaestra="Taras";
-
-                this.DataSetMaster.Clear();
-
-
-                //            ConnectionMaestro.Open();
-                //this.AdaptarMaestro = new OleDbDataAdapter(CadenaSelect_Maestro, ConnectionMaestro);
-                //OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(AdaptarMaestro);
-                //this.AdaptarMaestro.Fill(this.DataSetMaster, this.TablaMaestra);
-
-
-                DataSetMaster = db.getData(CadenaSelect_Maestro);
-
-                this.DGrid.DataSource = this.DataSetMaster;
-				this.DGrid.DataMember = TablaMaestra;
-
-                
-
-				//ConnectionMaestro.Close();
-
-				DataGridTableStyle myGrid =new DataGridTableStyle();
-				myGrid.PreferredRowHeight = 20;
-				myGrid.MappingName = "Taras";
-					
-				DataGridTextBoxColumn col1 = new DataGridTextBoxColumn();
-				col1.Width = 60;
-				col1.NullText = "";
-				col1.MappingName = "numero";
-				col1.TextBox.MaxLength = 5;
-						
-				DataGridTextBoxColumn col2 = new DataGridTextBoxColumn();
-				col2.Width = 200;
-				col2.NullText = "";
-				col2.MappingName ="descripcion";
-				col2.TextBox.MaxLength = 52;
-
-				DataGridTextBoxColumn col3 = new DataGridTextBoxColumn();
-				col3.Width = 200;
-				col3.NullText = "";
-				col3.MappingName ="tara";
-				col3.TextBox.MaxLength = 5;
-
-							
-				col1.HeaderText = Global.M_Error[215,Global.idioma].ToString();
-				col2.HeaderText = Global.M_Error[216,Global.idioma].ToString();
-				col3.HeaderText = Global.M_Error[280,Global.idioma].ToString();
-				
-				
-				para1=Global.M_Error[215,Global.idioma].ToString();
-				para2=Global.M_Error[216,Global.idioma].ToString();
-                campo1 = "numero";
-				campo2="descripcion";
-				
-				myGrid.GridColumnStyles.Add(col1);
-				myGrid.GridColumnStyles.Add(col2);
-				myGrid.GridColumnStyles.Add(col3);
-                this.DataSetMaster.Tables[0].TableName = TablaMaestra;								
-				this.Dato = "";
-				if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGrid);			
-				this.DGrid.SetDataBinding(this.DataSetMaster,TablaMaestra);
-				cmGridRegister = (CurrencyManager)this.DGrid.BindingContext[this.DataSetMaster,TablaMaestra];
-				cmGridRegister.Position=0;
-				if (cmGridRegister.Count > 0)
-				{					
-					for (int i=0; i<Global.privilegio.Length;i++)
-					{
-						if (Global.privilegio.Substring(i,1) == "1")
-						{
-							if (i == 14)
-							{
-								this.toolMaster.Items[0].Enabled = true;
-								this.toolMaster.Items[1].Enabled = true;
-								this.toolMaster.Items[2].Enabled = true;
-								this.menuItem2.Enabled = true;
-								this.menuItem7.Enabled = true;
-								this.menuItem3.Enabled = true;
-							}
-							
-							if(i==11)
-							{
-								this.toolMaster.Items[4].Enabled = true;
-								this.menuItem10.Enabled = true;
-							}
-							if(i==12)
-							{
-								this.menuItem11.Enabled = true;
-								this.toolMaster.Items[5].Enabled = true;
-							}
-							if(i==13)
-							{
-								this.menuItem4.Enabled = true;
-								this.toolMaster.Items[6].Enabled = true;
-							}
-						}
-						else
-						{
-							if (i == 14)
-							{							
-								this.toolMaster.Items[0].Enabled = false;
-								this.toolMaster.Items[1].Enabled = false;
-								this.toolMaster.Items[2].Enabled = false;
-								this.menuItem2.Enabled = false;
-								this.menuItem7.Enabled = false;
-								this.menuItem3.Enabled = false;
-							}
-							if(i==11)
-							{
-								this.menuItem10.Enabled = false;
-								this.toolMaster.Items[4].Enabled = false;
-							}
-							if(i==12)
-							{
-								this.menuItem11.Enabled = false;
-								this.toolMaster.Items[5].Enabled = false;
-							}
-							if(i==13)
-							{
-								this.menuItem4.Enabled = false;
-								this.toolMaster.Items[6].Enabled = false;
-							}
-						}
-					}
-					this.toolMaster.Items[3].Enabled = true;
-					this.toolMaster.Items[7].Enabled = true;
-				}
-				else
-				{
-					
-					if (Global.privilegio.Substring(0,1) == "1")
-					{
-						this.toolMaster.Items[0].Enabled=true;
-						this.toolMaster.Items[4].Enabled=true;
-						this.menuItem10.Enabled = true;
-						this.menuItem2.Enabled=true;
-					}
-					else
-					{
-						this.toolMaster.Items[0].Enabled=false;
-						this.toolMaster.Items[4].Enabled=false;
-						this.menuItem10.Enabled = false;
-						this.menuItem2.Enabled=false;
-					}					
-					this.toolMaster.Items[1].Enabled=false;
-					this.toolMaster.Items[2].Enabled=false;
-					this.toolMaster.Items[3].Enabled=false;
-					this.toolMaster.Items[5].Enabled=false;
-					this.toolMaster.Items[6].Enabled=false;
-					this.toolMaster.Items[7].Enabled=false;
-					this.menuItem3.Enabled = false;
-					this.menuItem7.Enabled = false;
-					this.menuItem5.Enabled = false;
-					this.menuItem4.Enabled = false;
-					this.menuItem11.Enabled = false;
-				}			
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message);
-			}
-		}
-
-		private void Grid_Empresa()
-		{	
-			activo=false;
-			string CadenaSelect_Maestro = "SELECT numemp,empresa,direccion1,direccion2,folio,direccion3,cp,telf FROM empresa ORDER BY numemp";
-			this.TablaMaestra="general";			
-		    this.DataSetMaster = new DataSet();
-		    this.DataSetMaster.Clear();
-            this.DataSetMaster = db.getData(CadenaSelect_Maestro);
-		    this.DGrid.DataSource = this.DataSetMaster;		
-			DataGridTableStyle myGrid2 =new DataGridTableStyle();
-			myGrid2.PreferredRowHeight = 20;
-			myGrid2.MappingName = "general";
-			DataGridTextBoxColumn colStyle1 =	new DataGridTextBoxColumn();
-			colStyle1.HeaderText = Global.M_Error[208,Global.idioma].ToString();
-			colStyle1.Width = 60;
-			colStyle1.NullText = "0";
-			colStyle1.Format = "####";
-			colStyle1.MappingName = "numemp";
-			colStyle1.TextBox.MaxLength = 4;
-			DataGridTextBoxColumn colStyle2 =	new DataGridTextBoxColumn();
-			colStyle2.HeaderText = Global.M_Error[293,Global.idioma].ToString();
-			colStyle2.Width = 200;
-			colStyle2.NullText = "";
-			colStyle2.MappingName = "empresa";
-			colStyle2.TextBox.MaxLength = 40;
-			DataGridTextBoxColumn colStyle3 =	new DataGridTextBoxColumn();
-			colStyle3.HeaderText = Global.M_Error[219,Global.idioma].ToString();
-			colStyle3.Width = 200;
-			colStyle3.NullText = "";
-			colStyle3.MappingName = "direccion1";
-			colStyle3.TextBox.MaxLength = 40;
-			DataGridTextBoxColumn colStyle4 =	new DataGridTextBoxColumn();
-			colStyle4.HeaderText = Global.M_Error[221,Global.idioma].ToString();
-			colStyle4.Width = 200;
-			colStyle4.NullText = "";
-			colStyle4.MappingName = "direccion2";
-			colStyle4.TextBox.MaxLength = 40;
+        }
+        private void Grid_Empresa()
+        {
+            #region DESIGN
+            DataGridTableStyle myGrid2 = new DataGridTableStyle();
+            myGrid2.PreferredRowHeight = 20;
+            myGrid2.MappingName = "general";
+            DataGridTextBoxColumn colStyle1 = new DataGridTextBoxColumn();
+            colStyle1.HeaderText = Global.M_Error[208, Global.idioma].ToString();
+            colStyle1.Width = 60;
+            colStyle1.NullText = "0";
+            colStyle1.Format = "####";
+            colStyle1.MappingName = "numemp";
+            colStyle1.TextBox.MaxLength = 4;
+            DataGridTextBoxColumn colStyle2 = new DataGridTextBoxColumn();
+            colStyle2.HeaderText = Global.M_Error[293, Global.idioma].ToString();
+            colStyle2.Width = 200;
+            colStyle2.NullText = "";
+            colStyle2.MappingName = "empresa";
+            colStyle2.TextBox.MaxLength = 40;
+            DataGridTextBoxColumn colStyle3 = new DataGridTextBoxColumn();
+            colStyle3.HeaderText = Global.M_Error[219, Global.idioma].ToString();
+            colStyle3.Width = 200;
+            colStyle3.NullText = "";
+            colStyle3.MappingName = "direccion1";
+            colStyle3.TextBox.MaxLength = 40;
+            DataGridTextBoxColumn colStyle4 = new DataGridTextBoxColumn();
+            colStyle4.HeaderText = Global.M_Error[221, Global.idioma].ToString();
+            colStyle4.Width = 200;
+            colStyle4.NullText = "";
+            colStyle4.MappingName = "direccion2";
+            colStyle4.TextBox.MaxLength = 40;
             DataGridTextBoxColumn colStyle5 = new DataGridTextBoxColumn();
             colStyle5.HeaderText = Global.M_Error[220, Global.idioma].ToString();
             colStyle5.Width = 200;
@@ -783,402 +689,554 @@ namespace TRUCK
             colStyle7.NullText = "";
             colStyle7.MappingName = "telf";
             colStyle7.TextBox.MaxLength = 40;
-			myGrid2.GridColumnStyles.Add(colStyle1);
-			myGrid2.GridColumnStyles.Add(colStyle2);   
-			myGrid2.GridColumnStyles.Add(colStyle3);
-			myGrid2.GridColumnStyles.Add(colStyle4);
+            myGrid2.GridColumnStyles.Add(colStyle1);
+            myGrid2.GridColumnStyles.Add(colStyle2);
+            myGrid2.GridColumnStyles.Add(colStyle3);
+            myGrid2.GridColumnStyles.Add(colStyle4);
             myGrid2.GridColumnStyles.Add(colStyle5);
             myGrid2.GridColumnStyles.Add(colStyle6);
-            myGrid2.GridColumnStyles.Add(colStyle7);   
-			para1=Global.M_Error[208,Global.idioma].ToString();
-			para2=Global.M_Error[293,Global.idioma].ToString();
+            myGrid2.GridColumnStyles.Add(colStyle7);
+            para1 = Global.M_Error[208, Global.idioma].ToString();
+            para2 = Global.M_Error[293, Global.idioma].ToString();
             campo1 = "numemp";
-			campo2="empresa";			
-			this.Dato = "";
+            campo2 = "empresa";
+            this.Dato = "";
 
-
-            this.DataSetMaster.Tables[0].TableName = TablaMaestra;
-			if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGrid2);	
-			this.DGrid.SetDataBinding(this.DataSetMaster,TablaMaestra);
-			cmGridRegister = (CurrencyManager)this.BindingContext[this.DataSetMaster,TablaMaestra];
-			cmGridRegister.Position=0;
-
-
-
-			if (cmGridRegister.Count > 0)
-			{
-				for (int i=0; i<Global.privilegio.Length;i++)
-				{
-					if (Global.privilegio.Substring(i,1) == "1")
-					{
-						if (i==4)
-						{
-							this.toolMaster.Items[0].Enabled = true;
-							this.toolMaster.Items[1].Enabled = true;
-							this.toolMaster.Items[2].Enabled = true;
-							this.menuItem2.Enabled = true;
-							this.menuItem7.Enabled = true;
-							this.menuItem3.Enabled = true;
-						}
-						if(i==23)
-						{
-							this.menuItem4.Enabled = true;
-							this.toolMaster.Items[6].Enabled = true;
-						}
-					}
-					else
-					{
-						if (i==4)
-						{
-							this.toolMaster.Items[0].Enabled = false;
-							this.toolMaster.Items[1].Enabled = false;
-							this.toolMaster.Items[2].Enabled = false;
-							this.menuItem2.Enabled = false;
-							this.menuItem7.Enabled = false;
-							this.menuItem3.Enabled = false;
-						}
-						if(i==23)
-						{
-							this.toolMaster.Items[6].Enabled = false;
-							this.menuItem4.Enabled = false;
-						}
-					}
-				}
-				this.toolMaster.Items[4].Enabled = false;
-				this.toolMaster.Items[5].Enabled = false;
-				this.toolMaster.Items[6].Enabled = false;
-				this.toolMaster.Items[3].Enabled = true;
-				this.toolMaster.Items[7].Enabled = true;
-				this.menuItem10.Enabled = false;
-				this.menuItem11.Enabled = false;
-				this.menuItem5.Enabled = true;
-			}
-			else
-			{
-				if (Global.privilegio.Substring(4,1) == "1")
-				{
-					this.toolMaster.Items[0].Enabled=true;
-					this.toolMaster.Items[4].Enabled=true;
-					this.menuItem10.Enabled = true;
-					this.menuItem2.Enabled=true;
-				}
-				else
-				{
-					this.toolMaster.Items[0].Enabled=false;
-					this.toolMaster.Items[4].Enabled=false;
-					this.menuItem10.Enabled = false;
-					this.menuItem2.Enabled=false;
-				}	
-				this.toolMaster.Items[1].Enabled=false;
-				this.toolMaster.Items[2].Enabled=false;
-				this.toolMaster.Items[3].Enabled=false;
-				this.toolMaster.Items[5].Enabled=false;
-				this.toolMaster.Items[6].Enabled=false;
-				this.toolMaster.Items[7].Enabled=false;
-				this.menuItem3.Enabled = false;
-				this.menuItem5.Enabled = false;				
-				this.menuItem4.Enabled = false;
-				this.menuItem7.Enabled = false;
-				this.menuItem11.Enabled = false;
-			}
-		}
-
-		private void Grid_transportista()
-		{	
-			activo=false;
-			//Global.DATABASE =Global.appPath+"\\"+Global.NAME_DATABASE;
-			Global.Conexion = Global.Motor + Global.DATABASE;
-
-			DataGridTableStyle myGrid3 =new DataGridTableStyle();
-			myGrid3.MappingName = "transportista";
-			
-			DataGridTextBoxColumn colStyle1 =	new DataGridTextBoxColumn();
-			colStyle1.HeaderText = Global.M_Error[215,Global.idioma].ToString();
-			colStyle1.Width = 60;
-			colStyle1.NullText="0";
-			colStyle1.Format = "####";
-			colStyle1.MappingName = "numero";
-			colStyle1.TextBox.MaxLength = 15;
-
-			DataGridTextBoxColumn colStyle2 =	new DataGridTextBoxColumn();
-			colStyle2.HeaderText = Global.M_Error[216,Global.idioma].ToString();
-			colStyle2.Width = 200;
-			colStyle2.NullText = "";
-			colStyle2.MappingName = "descripcion";
-			colStyle2.TextBox.MaxLength = 255;
-			
-			myGrid3.GridColumnStyles.Add(colStyle1);
-			myGrid3.GridColumnStyles.Add(colStyle2);   
-
-			para1=Global.M_Error[215,Global.idioma].ToString();
-			para2=Global.M_Error[216,Global.idioma].ToString();
-            campo1 = "numero";
-			campo2="descripcion";			
-		    
-			this.Dato = "";
-			
-			string CadenaSelect_Maestro = "SELECT numero,descripcion FROM transportistas WHERE numemp = " + Global.nempresa + " ORDER BY numero";
-			this.TablaMaestra="transportista";
-			
-			//this.DataSetMaster = new DataSet();
-			this.DataSetMaster.Clear();
-            //ConnectionMaestro.Open();
-            //this.AdaptarMaestro = new OleDbDataAdapter(CadenaSelect_Maestro, ConnectionMaestro);
-            //OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(this.AdaptarMaestro);
-            //this.AdaptarMaestro.Fill(this.DataSetMaster, this.TablaMaestra);
-
-            DataSetMaster = db.getData(CadenaSelect_Maestro);
-
+            #endregion
+            #region DATA
+            activo = false;
+            string CadenaSelect_Maestro = "SELECT numemp,empresa,direccion1,direccion2,folio,direccion3,cp,telf FROM empresa ORDER BY numemp";
+            this.TablaMaestra = "general";
+            this.DataSetMaster = new DataSet();
+            this.DataSetMaster.Clear();
+            this.DataSetMaster = db.getData(CadenaSelect_Maestro);
             this.DGrid.DataSource = this.DataSetMaster;
-			this.DGrid.DataMember = this.TablaMaestra;
-			//ConnectionMaestro.Close();
+            this.DataSetMaster.Tables[0].TableName = TablaMaestra;
+            if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGrid2);
+            this.DGrid.SetDataBinding(this.DataSetMaster, TablaMaestra);
+            cmGridRegister = (CurrencyManager)this.BindingContext[this.DataSetMaster, TablaMaestra];
+            cmGridRegister.Position = 0;
+            #endregion
+
+            if (cmGridRegister.Count > 0)
+            {
+                for (int i = 0; i < Global.privilegio.Length; i++)
+                {
+                    if (Global.privilegio.Substring(i, 1) == "1")
+                    {
+                        if (i == 4)
+                        {
+                            this.toolMaster.Items[0].Enabled = true;
+                            this.toolMaster.Items[1].Enabled = true;
+                            this.toolMaster.Items[2].Enabled = true;
+                            this.menuItem2.Enabled = true;
+                            this.menuItem7.Enabled = true;
+                            this.menuItem3.Enabled = true;
+                        }
+                        if (i == 23)
+                        {
+                            this.menuItem4.Enabled = true;
+                            this.toolMaster.Items[6].Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        if (i == 4)
+                        {
+                            this.toolMaster.Items[0].Enabled = false;
+                            this.toolMaster.Items[1].Enabled = false;
+                            this.toolMaster.Items[2].Enabled = false;
+                            this.menuItem2.Enabled = false;
+                            this.menuItem7.Enabled = false;
+                            this.menuItem3.Enabled = false;
+                        }
+                        if (i == 23)
+                        {
+                            this.toolMaster.Items[6].Enabled = false;
+                            this.menuItem4.Enabled = false;
+                        }
+                    }
+                }
+                this.toolMaster.Items[4].Enabled = false;
+                this.toolMaster.Items[5].Enabled = false;
+                this.toolMaster.Items[6].Enabled = false;
+                this.toolMaster.Items[3].Enabled = true;
+                this.toolMaster.Items[7].Enabled = true;
+                this.menuItem10.Enabled = false;
+                this.menuItem11.Enabled = false;
+                this.menuItem5.Enabled = true;
+            }
+            else
+            {
+                if (Global.privilegio.Substring(4, 1) == "1")
+                {
+                    this.toolMaster.Items[0].Enabled = true;
+                    this.toolMaster.Items[4].Enabled = true;
+                    this.menuItem10.Enabled = true;
+                    this.menuItem2.Enabled = true;
+                }
+                else
+                {
+                    this.toolMaster.Items[0].Enabled = false;
+                    this.toolMaster.Items[4].Enabled = false;
+                    this.menuItem10.Enabled = false;
+                    this.menuItem2.Enabled = false;
+                }
+                this.toolMaster.Items[1].Enabled = false;
+                this.toolMaster.Items[2].Enabled = false;
+                this.toolMaster.Items[3].Enabled = false;
+                this.toolMaster.Items[5].Enabled = false;
+                this.toolMaster.Items[6].Enabled = false;
+                this.toolMaster.Items[7].Enabled = false;
+                this.menuItem3.Enabled = false;
+                this.menuItem5.Enabled = false;
+                this.menuItem4.Enabled = false;
+                this.menuItem7.Enabled = false;
+                this.menuItem11.Enabled = false;
+            }
+        }
+        private void Grid_tara()
+        {
+            #region DESIGN
+            DataGridTableStyle myGrid = new DataGridTableStyle();
+            myGrid.PreferredRowHeight = 20;
+            myGrid.MappingName = "Taras";
+            DataGridTextBoxColumn col1 = new DataGridTextBoxColumn();
+            col1.Width = 60;
+            col1.NullText = "";
+            col1.MappingName = "numero";
+            col1.TextBox.MaxLength = 5;
+            DataGridTextBoxColumn col2 = new DataGridTextBoxColumn();
+            col2.Width = 200;
+            col2.NullText = "";
+            col2.MappingName = "descripcion";
+            col2.TextBox.MaxLength = 52;
+            DataGridTextBoxColumn col3 = new DataGridTextBoxColumn();
+            col3.Width = 200;
+            col3.NullText = "";
+            col3.MappingName = "tara";
+            col3.TextBox.MaxLength = 5;
+            col1.HeaderText = Global.M_Error[215, Global.idioma].ToString();
+            col2.HeaderText = Global.M_Error[216, Global.idioma].ToString();
+            col3.HeaderText = Global.M_Error[280, Global.idioma].ToString();
+            para1 = Global.M_Error[215, Global.idioma].ToString();
+            para2 = Global.M_Error[216, Global.idioma].ToString();
+            campo1 = "numero";
+            campo2 = "descripcion";
+            myGrid.GridColumnStyles.Add(col1);
+            myGrid.GridColumnStyles.Add(col2);
+            myGrid.GridColumnStyles.Add(col3);
+
+
+            #endregion
+            #region DATA
+            activo = true;
+            int ff = Global.F_Decimal.Length - 3;
+            string formato_precio = Global.F_Decimal.Substring(3, ff - 1);
+            string CadenaSelect_Maestro = "SELECT * FROM Taras WHERE numemp = " + Global.nempresa + " ORDER BY numero";
+            this.TablaMaestra = "Taras";
+            this.DataSetMaster.Clear();
+            DataSetMaster = db.getData(CadenaSelect_Maestro);
+            this.DGrid.DataSource = this.DataSetMaster;
+            this.DataSetMaster.Tables[0].TableName = TablaMaestra;
+            this.Dato = "";
+            if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGrid);
+            this.DGrid.SetDataBinding(this.DataSetMaster, TablaMaestra);
+            cmGridRegister = (CurrencyManager)this.DGrid.BindingContext[this.DataSetMaster, TablaMaestra];
+            cmGridRegister.Position = 0;
+            #endregion
+
+            if (cmGridRegister.Count > 0)
+            {
+                for (int i = 0; i < Global.privilegio.Length; i++)
+                {
+                    if (Global.privilegio.Substring(i, 1) == "1")
+                    {
+                        if (i == 14)
+                        {
+                            this.toolMaster.Items[0].Enabled = true;
+                            this.toolMaster.Items[1].Enabled = true;
+                            this.toolMaster.Items[2].Enabled = true;
+                            this.menuItem2.Enabled = true;
+                            this.menuItem7.Enabled = true;
+                            this.menuItem3.Enabled = true;
+                        }
+
+                        if (i == 11)
+                        {
+                            this.toolMaster.Items[4].Enabled = true;
+                            this.menuItem10.Enabled = true;
+                        }
+                        if (i == 12)
+                        {
+                            this.menuItem11.Enabled = true;
+                            this.toolMaster.Items[5].Enabled = true;
+                        }
+                        if (i == 13)
+                        {
+                            this.menuItem4.Enabled = true;
+                            this.toolMaster.Items[6].Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        if (i == 14)
+                        {
+                            this.toolMaster.Items[0].Enabled = false;
+                            this.toolMaster.Items[1].Enabled = false;
+                            this.toolMaster.Items[2].Enabled = false;
+                            this.menuItem2.Enabled = false;
+                            this.menuItem7.Enabled = false;
+                            this.menuItem3.Enabled = false;
+                        }
+                        if (i == 11)
+                        {
+                            this.menuItem10.Enabled = false;
+                            this.toolMaster.Items[4].Enabled = false;
+                        }
+                        if (i == 12)
+                        {
+                            this.menuItem11.Enabled = false;
+                            this.toolMaster.Items[5].Enabled = false;
+                        }
+                        if (i == 13)
+                        {
+                            this.menuItem4.Enabled = false;
+                            this.toolMaster.Items[6].Enabled = false;
+                        }
+                    }
+                }
+                this.toolMaster.Items[3].Enabled = true;
+                this.toolMaster.Items[7].Enabled = true;
+            }
+            else
+            {
+
+                if (Global.privilegio.Substring(0, 1) == "1")
+                {
+                    this.toolMaster.Items[0].Enabled = true;
+                    this.toolMaster.Items[4].Enabled = true;
+                    this.menuItem10.Enabled = true;
+                    this.menuItem2.Enabled = true;
+                }
+                else
+                {
+                    this.toolMaster.Items[0].Enabled = false;
+                    this.toolMaster.Items[4].Enabled = false;
+                    this.menuItem10.Enabled = false;
+                    this.menuItem2.Enabled = false;
+                }
+                this.toolMaster.Items[1].Enabled = false;
+                this.toolMaster.Items[2].Enabled = false;
+                this.toolMaster.Items[3].Enabled = false;
+                this.toolMaster.Items[5].Enabled = false;
+                this.toolMaster.Items[6].Enabled = false;
+                this.toolMaster.Items[7].Enabled = false;
+                this.menuItem3.Enabled = false;
+                this.menuItem7.Enabled = false;
+                this.menuItem5.Enabled = false;
+                this.menuItem4.Enabled = false;
+                this.menuItem11.Enabled = false;
+            }
+        }
+        private void Grid_articulo()
+        {
+            activo = true;
+            int ff = Global.F_Decimal.Length - 3;
+            string formato_precio = Global.F_Decimal.Substring(3, ff - 1);
+            #region DESIGN
+            DataGridTableStyle myGrid = new DataGridTableStyle();
+            myGrid.PreferredRowHeight = 20;
+            myGrid.MappingName = "Articulos";
+            DataGridTextBoxColumn col1 = new DataGridTextBoxColumn();
+            col1.Width = 60;
+            col1.NullText = "0";
+            col1.Format = "#####";
+            col1.MappingName = "numero";
+            col1.TextBox.MaxLength = 5;
+            DataGridTextBoxColumn col2 = new DataGridTextBoxColumn();
+            col2.Width = 200;
+            col2.NullText = "";
+            col2.MappingName = "descripcion";
+            col2.TextBox.MaxLength = 52;
+            col1.HeaderText = Global.M_Error[215, Global.idioma].ToString();
+            col2.HeaderText = Global.M_Error[216, Global.idioma].ToString();
+            myGrid.GridColumnStyles.Add(col1);
+            myGrid.GridColumnStyles.Add(col2);
+            if (Global.aplicacion != 0)
+            {
+                DataGridTextBoxColumn col3 = new DataGridTextBoxColumn();
+                col3.Width = 200;
+                col3.NullText = "";
+                col3.MappingName = "familia";
+                col3.TextBox.MaxLength = 5;
+                col3.HeaderText = Global.M_Error[218, Global.idioma].ToString();
+                myGrid.GridColumnStyles.Add(col3);
+            }
+            else
+            {
+                DataGridTextBoxColumn col4 = new DataGridTextBoxColumn();
+                col4.Width = 200;
+                col4.NullText = "";
+                col4.MappingName = "tarifa";
+                col4.TextBox.MaxLength = 5;
+                col4.HeaderText = Global.M_Error[217, Global.idioma].ToString();
+                myGrid.GridColumnStyles.Add(col4);
+            }
+            para1 = Global.M_Error[215, Global.idioma].ToString();
+            para2 = Global.M_Error[216, Global.idioma].ToString();
+            campo1 = "numero";
+            campo2 = "descripcion";
+
+            #endregion
+            #region DATA               
+            string CadenaSelect_Maestro = "SELECT * FROM Articulos WHERE numemp = " + Global.nempresa + " ORDER BY numero";
+            this.TablaMaestra = "Articulos";
+            this.DataSetMaster.Clear();
+            DataSetMaster = db.getData(CadenaSelect_Maestro);
+            this.DGrid.DataSource = this.DataSetMaster;
+            this.DataSetMaster.Tables[0].TableName = TablaMaestra;
+            this.Dato = "";
+            if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGrid);
+            this.DGrid.SetDataBinding(this.DataSetMaster, TablaMaestra);
+            cmGridRegister = (CurrencyManager)this.DGrid.BindingContext[this.DataSetMaster, TablaMaestra];
+            cmGridRegister.Position = 0;
+            #endregion
+
+            if (cmGridRegister.Count > 0)
+            {
+                for (int i = 0; i < Global.privilegio.Length; i++)
+                {
+                    if (Global.privilegio.Substring(i, 1) == "1")
+                    {
+                        if (i == 4)
+                        {
+                            this.toolMaster.Items[0].Enabled = true;  //productos
+                            this.toolMaster.Items[1].Enabled = true;
+                            this.toolMaster.Items[2].Enabled = true;
+                            this.menuItem2.Enabled = true;
+                            this.menuItem7.Enabled = true;
+                            this.menuItem3.Enabled = true;
+                        }
+                        if (i == 11)
+                        {
+                            this.toolMaster.Items[4].Enabled = true;  //importar datos
+                            this.menuItem10.Enabled = true;
+                        }
+                        if (i == 12)
+                        {
+                            this.menuItem11.Enabled = true;   //exportar datos
+                            this.toolMaster.Items[5].Enabled = true;
+                        }
+                        if (i == 13)
+                        {
+                            this.menuItem4.Enabled = true;  //depurar datos
+                            this.toolMaster.Items[6].Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        if (i == 4)
+                        {
+                            this.toolMaster.Items[0].Enabled = false;
+                            this.toolMaster.Items[1].Enabled = false;
+                            this.toolMaster.Items[2].Enabled = false;
+                            this.menuItem2.Enabled = false;
+                            this.menuItem7.Enabled = false;
+                            this.menuItem3.Enabled = false;
+                        }
+                        if (i == 11)
+                        {
+                            this.menuItem10.Enabled = false;
+                            this.toolMaster.Items[4].Enabled = false;
+                        }
+                        if (i == 12)
+                        {
+                            this.menuItem11.Enabled = false;
+                            this.toolMaster.Items[5].Enabled = false;
+                        }
+                        if (i == 13)
+                        {
+                            this.menuItem4.Enabled = false;
+                            this.toolMaster.Items[6].Enabled = false;
+                        }
+                    }
+                }
+                this.toolMaster.Items[3].Enabled = true;
+                this.toolMaster.Items[7].Enabled = true;
+            }
+            else
+            {
+                if (Global.privilegio.Substring(4, 1) == "1")
+                {
+                    this.toolMaster.Items[0].Enabled = true;
+                    this.toolMaster.Items[4].Enabled = true;
+                    this.menuItem10.Enabled = true;
+                    this.menuItem2.Enabled = true;
+                }
+                else
+                {
+                    this.toolMaster.Items[0].Enabled = false;
+                    this.toolMaster.Items[4].Enabled = false;
+                    this.menuItem10.Enabled = false;
+                    this.menuItem2.Enabled = false;
+                }
+                this.toolMaster.Items[1].Enabled = false;
+                this.toolMaster.Items[2].Enabled = false;
+                this.toolMaster.Items[3].Enabled = false;
+                this.toolMaster.Items[5].Enabled = false;
+                this.toolMaster.Items[6].Enabled = false;
+                this.toolMaster.Items[7].Enabled = false;
+                this.menuItem3.Enabled = false;
+                this.menuItem7.Enabled = false;
+                this.menuItem5.Enabled = false;
+                this.menuItem4.Enabled = false;
+                this.menuItem11.Enabled = false;
+            }
+        }
+
+
+
+        private void Grid_transportista()
+        {
+            #region DESIGN
+            DataGridTableStyle myGrid3 = new DataGridTableStyle();
+            myGrid3.MappingName = "transportista";
+            DataGridTextBoxColumn colStyle1 = new DataGridTextBoxColumn();
+            colStyle1.HeaderText = Global.M_Error[215, Global.idioma].ToString();
+            colStyle1.Width = 60;
+            colStyle1.NullText = "0";
+            colStyle1.Format = "####";
+            colStyle1.MappingName = "numero";
+            colStyle1.TextBox.MaxLength = 15;
+            DataGridTextBoxColumn colStyle2 = new DataGridTextBoxColumn();
+            colStyle2.HeaderText = Global.M_Error[216, Global.idioma].ToString();
+            colStyle2.Width = 200;
+            colStyle2.NullText = "";
+            colStyle2.MappingName = "descripcion";
+            colStyle2.TextBox.MaxLength = 255;
+            myGrid3.GridColumnStyles.Add(colStyle1);
+            myGrid3.GridColumnStyles.Add(colStyle2);
+            para1 = Global.M_Error[215, Global.idioma].ToString();
+            para2 = Global.M_Error[216, Global.idioma].ToString();
+            campo1 = "numero";
+            campo2 = "descripcion";
+
+            #endregion
+            #region DATA
+            activo = false;
+            this.Dato = "";
+            string CadenaSelect_Maestro = "SELECT numero,descripcion FROM transportistas WHERE numemp = " + Global.nempresa + " ORDER BY numero";
+            this.TablaMaestra = "transportista";
+            this.DataSetMaster.Clear();
+            DataSetMaster = db.getData(CadenaSelect_Maestro);
+            this.DGrid.DataSource = this.DataSetMaster;
             DataSetMaster.Tables[0].TableName = TablaMaestra;
-			if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGrid3);			
-			this.DGrid.SetDataBinding(this.DataSetMaster,this.TablaMaestra);
-			cmGridRegister = (CurrencyManager)this.BindingContext[this.DataSetMaster,TablaMaestra];
-			cmGridRegister.Position=0;
-			if (cmGridRegister.Count > 0)
-			{
-				for (int i=0; i<Global.privilegio.Length;i++)
-				{
-					if (Global.privilegio.Substring(i,1) == "1")
-					{
-						if (i==14)
-						{
-							this.toolMaster.Items[0].Enabled = true;
-							this.toolMaster.Items[1].Enabled = true;
-							this.toolMaster.Items[2].Enabled = true;
-							this.menuItem2.Enabled = true;
-							this.menuItem3.Enabled = true;
-							this.menuItem7.Enabled = true;
-						}
-						if(i==11)
-						{
-							this.toolMaster.Items[4].Enabled = true;
-							this.menuItem10.Enabled = true;
-						}
-						if(i==12)
-						{
-							this.toolMaster.Items[5].Enabled = true;
-							this.menuItem11.Enabled = true;
-						}
-						if(i==13)
-						{
-							this.toolMaster.Items[6].Enabled = true;
-							this.menuItem4.Enabled = true;
-						}
-					}
-					else
-					{
-						if (i==14)
-						{
-							this.toolMaster.Items[0].Enabled = false;
-							this.toolMaster.Items[1].Enabled = false;
-							this.toolMaster.Items[2].Enabled = false;
-							this.menuItem2.Enabled = false;
-							this.menuItem3.Enabled = false;
-							this.menuItem7.Enabled = false;
-						}
-						if(i==11)
-						{
-							this.toolMaster.Items[4].Enabled = false;
-							this.menuItem10.Enabled = false;
-						}
-						if(i==12)
-						{
-							this.toolMaster.Items[5].Enabled = false;
-							this.menuItem11.Enabled = false;
-						}
-						if(i==13)
-						{
-							this.toolMaster.Items[6].Enabled = false;
-							this.menuItem4.Enabled = false;
-						}
-					}
-					this.toolMaster.Items[3].Enabled = true;
-					this.toolMaster.Items[7].Enabled = true;
-					this.menuItem5.Enabled = true;	
-				}
-			}
-			else
-			{
-				if (Global.privilegio.Substring(14,1) == "1")
-				{
-					this.toolMaster.Items[0].Enabled=true;
-					this.toolMaster.Items[4].Enabled=true;
-					this.menuItem10.Enabled = true;
-					this.menuItem2.Enabled=true;
-				}
-				else
-				{
-					this.toolMaster.Items[0].Enabled=false;
-					this.toolMaster.Items[4].Enabled=false;
-					this.menuItem10.Enabled = false;
-					this.menuItem2.Enabled=false;
-				}
-				this.toolMaster.Items[1].Enabled=false;
-				this.toolMaster.Items[2].Enabled=false;
-				this.toolMaster.Items[3].Enabled=false;
-				this.toolMaster.Items[5].Enabled=false;
-				this.toolMaster.Items[6].Enabled=false;
-				this.toolMaster.Items[7].Enabled=false;
-				this.menuItem3.Enabled = false;
-				this.menuItem7.Enabled = false;
-				this.menuItem5.Enabled = false;				
-				this.menuItem11.Enabled = false;
-				this.menuItem4.Enabled = false;	
-			}
-		}
+            if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGrid3);
+            this.DGrid.SetDataBinding(this.DataSetMaster, this.TablaMaestra);
+            cmGridRegister = (CurrencyManager)this.BindingContext[this.DataSetMaster, TablaMaestra];
+            cmGridRegister.Position = 0;
+            #endregion
 
-		private void Grid_cliente()
-		{
-			try
-			{
-				activo=false;
-				Global.Conexion = Global.Motor + Global.DATABASE;
-				DataGridTableStyle myGridStyle =new DataGridTableStyle();
-				myGridStyle.MappingName = "cliente";			
-				DataGridTextBoxColumn colStyle1 =	new DataGridTextBoxColumn();
-				colStyle1.HeaderText = Global.M_Error[215,Global.idioma].ToString();
-				colStyle1.Width = 60;
-				colStyle1.MappingName = "numero";
-				DataGridTextBoxColumn colStyle2 =	new DataGridTextBoxColumn();
-				colStyle2.HeaderText = Global.M_Error[216,Global.idioma].ToString();
-				colStyle2.Width = 200;
-				colStyle2.MappingName = "nombre";
-				DataGridColumnStyle colStyle3 =	new DataGridTextBoxColumn();
-				colStyle3.HeaderText = Global.M_Error[218,Global.idioma].ToString();
-				colStyle3.Width = 70;
-				colStyle3.MappingName = "tipo";	
-				myGridStyle.GridColumnStyles.Add(colStyle1);
-				myGridStyle.GridColumnStyles.Add(colStyle2);
-				myGridStyle.GridColumnStyles.Add(colStyle3);
-				para1=Global.M_Error[215,Global.idioma].ToString();
-				para2=Global.M_Error[216,Global.idioma].ToString();
-                campo1 = "numero";
-				campo2="nombre";
-				this.Dato = "";
-				string CadenaSelect_Maestro = "SELECT * FROM cliente WHERE numemp = " + Global.nempresa + " ORDER BY numero";
-				this.TablaMaestra="cliente";
-				this.DataSetMaster.Clear();
-                db.getData(CadenaSelect_Maestro);
-				this.DGrid.DataSource = this.DataSetMaster;
-				this.DGrid.DataMember = TablaMaestra;
-                this.DataSetMaster.Tables[0].TableName = TablaMaestra;
-				if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGridStyle);
-				this.DGrid.SetDataBinding(this.DataSetMaster,TablaMaestra);
-				cmGridRegister = (CurrencyManager)this.BindingContext[this.DataSetMaster,TablaMaestra];
-				cmGridRegister.Position=0;
+            if (cmGridRegister.Count > 0)
+            {
+                for (int i = 0; i < Global.privilegio.Length; i++)
+                {
+                    if (Global.privilegio.Substring(i, 1) == "1")
+                    {
+                        if (i == 14)
+                        {
+                            this.toolMaster.Items[0].Enabled = true;
+                            this.toolMaster.Items[1].Enabled = true;
+                            this.toolMaster.Items[2].Enabled = true;
+                            this.menuItem2.Enabled = true;
+                            this.menuItem3.Enabled = true;
+                            this.menuItem7.Enabled = true;
+                        }
+                        if (i == 11)
+                        {
+                            this.toolMaster.Items[4].Enabled = true;
+                            this.menuItem10.Enabled = true;
+                        }
+                        if (i == 12)
+                        {
+                            this.toolMaster.Items[5].Enabled = true;
+                            this.menuItem11.Enabled = true;
+                        }
+                        if (i == 13)
+                        {
+                            this.toolMaster.Items[6].Enabled = true;
+                            this.menuItem4.Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        if (i == 14)
+                        {
+                            this.toolMaster.Items[0].Enabled = false;
+                            this.toolMaster.Items[1].Enabled = false;
+                            this.toolMaster.Items[2].Enabled = false;
+                            this.menuItem2.Enabled = false;
+                            this.menuItem3.Enabled = false;
+                            this.menuItem7.Enabled = false;
+                        }
+                        if (i == 11)
+                        {
+                            this.toolMaster.Items[4].Enabled = false;
+                            this.menuItem10.Enabled = false;
+                        }
+                        if (i == 12)
+                        {
+                            this.toolMaster.Items[5].Enabled = false;
+                            this.menuItem11.Enabled = false;
+                        }
+                        if (i == 13)
+                        {
+                            this.toolMaster.Items[6].Enabled = false;
+                            this.menuItem4.Enabled = false;
+                        }
+                    }
+                    this.toolMaster.Items[3].Enabled = true;
+                    this.toolMaster.Items[7].Enabled = true;
+                    this.menuItem5.Enabled = true;
+                }
+            }
+            else
+            {
+                if (Global.privilegio.Substring(14, 1) == "1")
+                {
+                    this.toolMaster.Items[0].Enabled = true;
+                    this.toolMaster.Items[4].Enabled = true;
+                    this.menuItem10.Enabled = true;
+                    this.menuItem2.Enabled = true;
+                }
+                else
+                {
+                    this.toolMaster.Items[0].Enabled = false;
+                    this.toolMaster.Items[4].Enabled = false;
+                    this.menuItem10.Enabled = false;
+                    this.menuItem2.Enabled = false;
+                }
+                this.toolMaster.Items[1].Enabled = false;
+                this.toolMaster.Items[2].Enabled = false;
+                this.toolMaster.Items[3].Enabled = false;
+                this.toolMaster.Items[5].Enabled = false;
+                this.toolMaster.Items[6].Enabled = false;
+                this.toolMaster.Items[7].Enabled = false;
+                this.menuItem3.Enabled = false;
+                this.menuItem7.Enabled = false;
+                this.menuItem5.Enabled = false;
+                this.menuItem11.Enabled = false;
+                this.menuItem4.Enabled = false;
+            }
 
-				if (cmGridRegister.Count > 0)
-				{
-					for (int i=0; i<Global.privilegio.Length;i++)
-					{
-						if (Global.privilegio.Substring(i,1) == "1")
-						{
-							if (i==9)
-							{
-								this.toolMaster.Items[0].Enabled = true;
-								this.toolMaster.Items[1].Enabled = true;
-								this.toolMaster.Items[2].Enabled = true;
-								this.menuItem2.Enabled = true;
-								this.menuItem3.Enabled = true;
-								this.menuItem7.Enabled = true;
-							}
-							if(i==11)
-							{
-								this.toolMaster.Items[4].Enabled = true;
-								this.menuItem10.Enabled = true;
-							}
-							if(i==12)
-							{
-								this.toolMaster.Items[5].Enabled = true;
-								this.menuItem11.Enabled = true;
-							}
-							if(i==13)
-							{
-								this.toolMaster.Items[6].Enabled = true;
-								this.menuItem4.Enabled = true;
-							}
-						}
-						else
-						{
-							if (i==9)
-							{
-								this.toolMaster.Items[0].Enabled = false;
-								this.toolMaster.Items[1].Enabled = false;
-								this.toolMaster.Items[2].Enabled = false;
-								this.menuItem2.Enabled = false;
-								this.menuItem3.Enabled = false;
-								this.menuItem7.Enabled = false;
-							}
-							if(i==11)
-							{
-								this.toolMaster.Items[4].Enabled = false;
-								this.menuItem10.Enabled = false;
-							}
-							if(i==12)
-							{
-								this.toolMaster.Items[5].Enabled = false;
-								this.menuItem11.Enabled = false;
-							}
-							if(i==13)
-							{
-								this.toolMaster.Items[6].Enabled = false;
-								this.menuItem4.Enabled = false;
-							}
-						}
-					}
-					this.toolMaster.Items[3].Enabled = true;
-					this.toolMaster.Items[7].Enabled = true;
-					this.menuItem5.Enabled = true;
-				}
-				else
-				{
-					if (Global.privilegio.Substring(9,1) == "1")
-					{
-						this.toolMaster.Items[0].Enabled=true;
-						this.toolMaster.Items[4].Enabled=true;
-						this.menuItem10.Enabled = true;
-						this.menuItem2.Enabled=true;
-					}
-					else
-					{
-						this.toolMaster.Items[0].Enabled=false;
-						this.toolMaster.Items[4].Enabled=false;
-						this.menuItem10.Enabled = false;
-						this.menuItem2.Enabled=false;
-					}
-					this.toolMaster.Items[1].Enabled=false;
-					this.toolMaster.Items[2].Enabled=false;
-					this.toolMaster.Items[3].Enabled=false;
-					this.toolMaster.Items[5].Enabled=false;
-					this.toolMaster.Items[6].Enabled=false;
-					this.toolMaster.Items[7].Enabled=false;
-					this.menuItem3.Enabled = false;
-					this.menuItem7.Enabled = false;
-					this.menuItem5.Enabled = false;				
-					this.menuItem11.Enabled = false;
-					this.menuItem4.Enabled = false;	
-				}
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message);
-			}
-
-
-		}
-
+        }        
 		private void Grid_proveedor()
 		{
-			activo=false;
-			//Global.DATABASE =Global.appPath+"\\"+Global.NAME_DATABASE;
-			Global.Conexion = Global.Motor + Global.DATABASE;
-
+            #region DESIGN
+            activo=false;
 			DataGridTableStyle myGridStyle2 =new DataGridTableStyle();
 			myGridStyle2.MappingName = "proveedor";
-		
 			DataGridTextBoxColumn colStyle1 =	new DataGridTextBoxColumn();
 			colStyle1.HeaderText = Global.M_Error[215,Global.idioma].ToString();
 			colStyle1.Width = 60;
@@ -1187,168 +1245,28 @@ namespace TRUCK
 			colStyle2.HeaderText = Global.M_Error[216,Global.idioma].ToString();
 			colStyle2.Width = 200;
 			colStyle2.MappingName = "nombre";
-		
 			myGridStyle2.GridColumnStyles.Add(colStyle1);
 			myGridStyle2.GridColumnStyles.Add(colStyle2); 
-
 			para1=Global.M_Error[215,Global.idioma].ToString();
 			para2=Global.M_Error[216,Global.idioma].ToString();
             campo1 = "numero";
-            campo2 = "nombre";
-			this.Dato = "";
-		
-			string CadenaSelect_Maestro = "SELECT * FROM proveedor WHERE numemp = " + Global.nempresa + " ORDER BY numero";
-			this.TablaMaestra="proveedor";
-
-            //this.DataSetMaster.Clear();
-            //this.AdaptarMaestro = new OleDbDataAdapter(CadenaSelect_Maestro, ConnectionMaestro);
-            //OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(AdaptarMaestro);
-            //this.AdaptarMaestro.Fill(this.DataSetMaster, TablaMaestra);
-            DataSetMaster = db.getData(CadenaSelect_Maestro);
-			this.DGrid.DataSource = this.DataSetMaster;
-			this.DGrid.DataMember = TablaMaestra;
-            this.DataSetMaster.Tables[0].TableName = TablaMaestra;
-			if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGridStyle2);			
-			this.DGrid.SetDataBinding(this.DataSetMaster,TablaMaestra);
-			cmGridRegister = (CurrencyManager)this.BindingContext[this.DataSetMaster,TablaMaestra];
-			cmGridRegister.Position=0;
-			if(cmGridRegister.Count>0)
-			{
-				for (int i=0; i<Global.privilegio.Length;i++)
-				{
-					if (Global.privilegio.Substring(i,1) == "1")
-					{
-						if (i==9)
-						{
-							this.toolMaster.Items[0].Enabled = true;
-							this.toolMaster.Items[1].Enabled = true;
-							this.toolMaster.Items[2].Enabled = true;
-							this.menuItem2.Enabled = true;				
-							this.menuItem3.Enabled = true;
-							this.menuItem7.Enabled = true;
-						}
-						if(i==11)
-						{
-							this.toolMaster.Items[4].Enabled = true;
-							this.menuItem10.Enabled = true;
-						}
-						if(i==12)
-						{
-							this.toolMaster.Items[5].Enabled = true;
-							this.menuItem11.Enabled = true;
-						}
-						if(i==13)
-						{
-							this.toolMaster.Items[6].Enabled = true;
-							this.menuItem4.Enabled = true;
-						}
-					}
-					else
-					{
-						if (i==9)
-						{
-							this.toolMaster.Items[0].Enabled = false;
-							this.toolMaster.Items[1].Enabled = false;
-							this.toolMaster.Items[2].Enabled = false;
-							this.menuItem2.Enabled = false;				
-							this.menuItem3.Enabled = false;
-							this.menuItem7.Enabled = false;
-						}
-						if(i==11)
-						{
-							this.toolMaster.Items[4].Enabled = false;
-							this.menuItem10.Enabled = false;
-						}
-						if(i==12)
-						{
-							this.toolMaster.Items[5].Enabled = false;
-							this.menuItem11.Enabled = false;
-						}
-						if(i==13)
-						{
-							this.toolMaster.Items[6].Enabled = false;
-							this.menuItem4.Enabled = false;
-						}
-					}
-				}
-				this.toolMaster.Items[3].Enabled = true;
-				this.toolMaster.Items[7].Enabled = true;
-				this.menuItem5.Enabled = true;				
-				this.menuItem10.Enabled = false;
-				this.menuItem11.Enabled = false;
-			}
-			else
-			{
-				if (Global.privilegio.Substring(9,1) == "1")
-				{
-					this.toolMaster.Items[0].Enabled=true;
-					this.toolMaster.Items[4].Enabled=true;
-					this.menuItem10.Enabled = true;
-					this.menuItem2.Enabled=true;
-				}
-				else
-				{
-					this.toolMaster.Items[0].Enabled=false;
-					this.toolMaster.Items[4].Enabled=false;
-					this.menuItem10.Enabled = false;
-					this.menuItem2.Enabled=false;
-				}
-                this.toolMaster.Items[1].Enabled=false;
-				this.toolMaster.Items[2].Enabled=false;
-				this.toolMaster.Items[3].Enabled=false;
-				this.toolMaster.Items[5].Enabled=false;
-				this.toolMaster.Items[6].Enabled=false;
-				this.toolMaster.Items[7].Enabled=false;
-				this.menuItem3.Enabled = false;
-				this.menuItem7.Enabled = false;
-				this.menuItem5.Enabled = false;				
-				this.menuItem11.Enabled = false;
-				this.menuItem4.Enabled = false;	
-			}
-		}
-
-        private void Grid_familia()
-        {
-            activo = false;
-            //Global.DATABASE = Global.appPath + "\\" + Global.NAME_DATABASE;
-            Global.Conexion = Global.Motor + Global.DATABASE;
-
-            DataGridTableStyle myGridStyle2 = new DataGridTableStyle();
-            myGridStyle2.MappingName = "familia";
-
-            DataGridTextBoxColumn colStyle1 = new DataGridTextBoxColumn();
-            colStyle1.HeaderText = Global.M_Error[215, Global.idioma].ToString();
-            colStyle1.Width = 60;
-            colStyle1.MappingName = "familia";
-            DataGridTextBoxColumn colStyle2 = new DataGridTextBoxColumn();
-            colStyle2.HeaderText = Global.M_Error[216, Global.idioma].ToString();
-            colStyle2.Width = 200;
-            colStyle2.MappingName = "descripcion";
-
-            myGridStyle2.GridColumnStyles.Add(colStyle1);
-            myGridStyle2.GridColumnStyles.Add(colStyle2);
-
-            para1 = Global.M_Error[215, Global.idioma].ToString();
-            para2 = Global.M_Error[216, Global.idioma].ToString();
-            campo1 = "familia";
-            campo2 = "descripcion";
+            campo2 = "nombre";			
+			
+            #endregion
+            #region DATA
             this.Dato = "";
-
-            string CadenaSelect_Maestro = "SELECT * FROM familia WHERE numemp = " + Global.nempresa + " ORDER BY familia";
-            this.TablaMaestra = "familia";
-
-            this.DataSetMaster.Clear();
-            //this.AdaptarMaestro = new OleDbDataAdapter(CadenaSelect_Maestro, ConnectionMaestro);
-            //OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(AdaptarMaestro);
-            //this.AdaptarMaestro.Fill(this.DataSetMaster, TablaMaestra);
+            string CadenaSelect_Maestro = "SELECT * FROM proveedor WHERE numemp = " + Global.nempresa + " ORDER BY numero";
+            this.TablaMaestra = "proveedor";
             DataSetMaster = db.getData(CadenaSelect_Maestro);
             this.DGrid.DataSource = this.DataSetMaster;
-            this.DGrid.DataMember = TablaMaestra;
             this.DataSetMaster.Tables[0].TableName = TablaMaestra;
             if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGridStyle2);
             this.DGrid.SetDataBinding(this.DataSetMaster, TablaMaestra);
             cmGridRegister = (CurrencyManager)this.BindingContext[this.DataSetMaster, TablaMaestra];
             cmGridRegister.Position = 0;
+            #endregion
+
+
             if (cmGridRegister.Count > 0)
             {
                 for (int i = 0; i < Global.privilegio.Length; i++)
@@ -1443,166 +1361,136 @@ namespace TRUCK
                 this.menuItem4.Enabled = false;
             }
         }
+        private void Grid_familia()
+        {
+            #region DESIGN
+            activo = false;
+            DataGridTableStyle myGridStyle2 = new DataGridTableStyle();
+            myGridStyle2.MappingName = "familia";
+            DataGridTextBoxColumn colStyle1 = new DataGridTextBoxColumn();
+            colStyle1.HeaderText = Global.M_Error[215, Global.idioma].ToString();
+            colStyle1.Width = 60;
+            colStyle1.MappingName = "familia";
+            DataGridTextBoxColumn colStyle2 = new DataGridTextBoxColumn();
+            colStyle2.HeaderText = Global.M_Error[216, Global.idioma].ToString();
+            colStyle2.Width = 200;
+            colStyle2.MappingName = "descripcion";
+            myGridStyle2.GridColumnStyles.Add(colStyle1);
+            myGridStyle2.GridColumnStyles.Add(colStyle2);
+            para1 = Global.M_Error[215, Global.idioma].ToString();
+            para2 = Global.M_Error[216, Global.idioma].ToString();
+            campo1 = "familia";
+            campo2 = "descripcion";
+            
+            #endregion
+            #region DATA
+            this.Dato = "";
+            string CadenaSelect_Maestro = "SELECT * FROM familia WHERE numemp = " + Global.nempresa + " ORDER BY familia";
+            this.TablaMaestra = "familia";
+            this.DataSetMaster.Clear();
+            DataSetMaster = db.getData(CadenaSelect_Maestro);
+            this.DGrid.DataSource = this.DataSetMaster;
+            this.DataSetMaster.Tables[0].TableName = TablaMaestra;
+            if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGridStyle2);
+            this.DGrid.SetDataBinding(this.DataSetMaster, TablaMaestra);
+            cmGridRegister = (CurrencyManager)this.BindingContext[this.DataSetMaster, TablaMaestra];
+            cmGridRegister.Position = 0;
+            #endregion 
 
-		private void Grid_usuarios()
-		{
-			try
-			{
-				activo=false;
-				//Global.DATABASE =Global.appPath+"\\"+Global.NAME_DATABASE;
-				Global.Conexion = Global.Motor + Global.DATABASE;
-
-				DataGridTableStyle myGridStyle =new DataGridTableStyle();
-				myGridStyle.MappingName = "usuarios";
-			
-				DataGridTextBoxColumn colStyle1 =	new DataGridTextBoxColumn();
-				colStyle1.HeaderText = Global.M_Error[207,Global.idioma].ToString();
-				colStyle1.Width = 100;
-				colStyle1.MappingName = "user";
-
-				DataGridTextBoxColumn colStyle2 =	new DataGridTextBoxColumn();
-				colStyle2.HeaderText = Global.M_Error[209,Global.idioma].ToString();
-				colStyle2.Width = 100;
-				colStyle2.MappingName = "iniciales";
-
-                DataGridTextBoxColumn colStyle3 = new DataGridTextBoxColumn();
-                colStyle3.HeaderText = Global.M_Error[216, Global.idioma].ToString();
-                colStyle3.Width = 200;
-                colStyle3.MappingName = "nombre";
-
-                DataGridTextBoxColumn colStyle4 = new DataGridTextBoxColumn();
-                colStyle4.HeaderText = Global.M_Error[295, Global.idioma].ToString();
-                colStyle4.Width = 200;
-                colStyle4.MappingName = "turno";
-						
-				myGridStyle.GridColumnStyles.Add(colStyle1);
-				myGridStyle.GridColumnStyles.Add(colStyle2);
-                myGridStyle.GridColumnStyles.Add(colStyle3);
-                myGridStyle.GridColumnStyles.Add(colStyle4);   
-				
-				para1=Global.M_Error[207,Global.idioma].ToString();
-				para2=Global.M_Error[209,Global.idioma].ToString();
-                campo1 = "user";
-				campo2="iniciales";				
-				this.Dato = "";
-				
-				string CadenaSelect_Maestro = "SELECT * FROM usuarios ORDER BY user";
-				this.TablaMaestra="usuarios";
-				
-				this.DataSetMaster.Clear();
-                //ConnectionMaestro.Open();
-                //this.AdaptarMaestro = new OleDbDataAdapter(CadenaSelect_Maestro, ConnectionMaestro);
-                //OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(AdaptarMaestro);
-                //this.AdaptarMaestro .Fill(this.DataSetMaster, TablaMaestra);
-                DataSetMaster = db.getData(CadenaSelect_Maestro);
-				this.DGrid.DataSource = this.DataSetMaster;
-				this.DGrid.DataMember = TablaMaestra;
-				//ConnectionMaestro.Close();
-                this.DataSetMaster.Tables[0].TableName = TablaMaestra;
-				if (!this.DGrid.TableStyles.Contains(TablaMaestra)) this.DGrid.TableStyles.Add(myGridStyle);			
-				this.DGrid.SetDataBinding(this.DataSetMaster,TablaMaestra);
-				cmGridRegister = (CurrencyManager)this.BindingContext[this.DataSetMaster,TablaMaestra];
-				cmGridRegister.Position=0;
-				if (cmGridRegister.Count > 0)
-				{
-					for (int i=0; i<Global.privilegio.Length;i++)
-					{
-						if (Global.privilegio.Substring(i,1) == "1")
-						{
-							if (i==3)
-							{
-								this.toolMaster.Items[0].Enabled = true;
-								this.toolMaster.Items[1].Enabled = true;
-								this.toolMaster.Items[2].Enabled = true;
-								this.menuItem2.Enabled = true;
-								this.menuItem3.Enabled = true;
-								this.menuItem7.Enabled = true;
-							}
-							if(i==11)
-							{
-								this.toolMaster.Items[4].Enabled = true;
-								this.menuItem10.Enabled = true;
-							}
-							if(i==12)
-							{
-								this.toolMaster.Items[5].Enabled = true;
-								this.menuItem11.Enabled = true;
-							}
-							if(i==13)
-							{
-								this.toolMaster.Items[6].Enabled = true;
-								this.menuItem4.Enabled = true;
-							}
-						}
-						else
-						{
-							if (i==3)
-							{
-								this.toolMaster.Items[0].Enabled = false;
-								this.toolMaster.Items[1].Enabled = false;
-								this.toolMaster.Items[2].Enabled = false;
-								this.menuItem2.Enabled = false;
-								this.menuItem3.Enabled = false;
-								this.menuItem7.Enabled = false;
-							}
-							if(i==11)
-							{
-								this.toolMaster.Items[4].Enabled = false;
-								this.menuItem10.Enabled = false;
-							}
-							if(i==12)
-							{
-								this.toolMaster.Items[5].Enabled = false;
-								this.menuItem11.Enabled = false;
-							}
-							if(i==13)
-							{
-								this.toolMaster.Items[6].Enabled = false;
-								this.menuItem4.Enabled = false;
-							}
-						}
-					}
-					this.toolMaster.Items[4].Enabled = false;
-					this.toolMaster.Items[5].Enabled = false;
-					this.toolMaster.Items[6].Enabled = false;
-					this.toolMaster.Items[3].Enabled = false;
-					this.menuItem5.Enabled = true;
-				}
-				else
-				{
-					if (Global.privilegio.Substring(3,1) == "1")
-					{
-						this.toolMaster.Items[0].Enabled=true;
-						this.toolMaster.Items[4].Enabled=true;
-						this.menuItem10.Enabled = true;
-						this.menuItem2.Enabled=true;
-					}
-					else
-					{
-						this.toolMaster.Items[0].Enabled=false;
-						this.toolMaster.Items[4].Enabled=false;
-						this.menuItem10.Enabled = false;
-						this.menuItem2.Enabled=false;
-					}
-					this.toolMaster.Items[1].Enabled=false;
-					this.toolMaster.Items[2].Enabled=false;
-					this.toolMaster.Items[3].Enabled=false;
-					this.toolMaster.Items[5].Enabled=false;
-					this.toolMaster.Items[6].Enabled=false;
-					this.toolMaster.Items[7].Enabled=false;
-					this.menuItem3.Enabled = false;
-					this.menuItem7.Enabled = false;
-					this.menuItem5.Enabled = false;				
-					this.menuItem11.Enabled = false;
-					this.menuItem4.Enabled = false;	
-				}
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message);
-			}
-		}
-
+            if (cmGridRegister.Count > 0)
+            {
+                for (int i = 0; i < Global.privilegio.Length; i++)
+                {
+                    if (Global.privilegio.Substring(i, 1) == "1")
+                    {
+                        if (i == 9)
+                        {
+                            this.toolMaster.Items[0].Enabled = true;
+                            this.toolMaster.Items[1].Enabled = true;
+                            this.toolMaster.Items[2].Enabled = true;
+                            this.menuItem2.Enabled = true;
+                            this.menuItem3.Enabled = true;
+                            this.menuItem7.Enabled = true;
+                        }
+                        if (i == 11)
+                        {
+                            this.toolMaster.Items[4].Enabled = true;
+                            this.menuItem10.Enabled = true;
+                        }
+                        if (i == 12)
+                        {
+                            this.toolMaster.Items[5].Enabled = true;
+                            this.menuItem11.Enabled = true;
+                        }
+                        if (i == 13)
+                        {
+                            this.toolMaster.Items[6].Enabled = true;
+                            this.menuItem4.Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        if (i == 9)
+                        {
+                            this.toolMaster.Items[0].Enabled = false;
+                            this.toolMaster.Items[1].Enabled = false;
+                            this.toolMaster.Items[2].Enabled = false;
+                            this.menuItem2.Enabled = false;
+                            this.menuItem3.Enabled = false;
+                            this.menuItem7.Enabled = false;
+                        }
+                        if (i == 11)
+                        {
+                            this.toolMaster.Items[4].Enabled = false;
+                            this.menuItem10.Enabled = false;
+                        }
+                        if (i == 12)
+                        {
+                            this.toolMaster.Items[5].Enabled = false;
+                            this.menuItem11.Enabled = false;
+                        }
+                        if (i == 13)
+                        {
+                            this.toolMaster.Items[6].Enabled = false;
+                            this.menuItem4.Enabled = false;
+                        }
+                    }
+                }
+                this.toolMaster.Items[3].Enabled = true;
+                this.toolMaster.Items[7].Enabled = true;
+                this.menuItem5.Enabled = true;
+                this.menuItem10.Enabled = false;
+                this.menuItem11.Enabled = false;
+            }
+            else
+            {
+                if (Global.privilegio.Substring(9, 1) == "1")
+                {
+                    this.toolMaster.Items[0].Enabled = true;
+                    this.toolMaster.Items[4].Enabled = true;
+                    this.menuItem10.Enabled = true;
+                    this.menuItem2.Enabled = true;
+                }
+                else
+                {
+                    this.toolMaster.Items[0].Enabled = false;
+                    this.toolMaster.Items[4].Enabled = false;
+                    this.menuItem10.Enabled = false;
+                    this.menuItem2.Enabled = false;
+                }
+                this.toolMaster.Items[1].Enabled = false;
+                this.toolMaster.Items[2].Enabled = false;
+                this.toolMaster.Items[3].Enabled = false;
+                this.toolMaster.Items[5].Enabled = false;
+                this.toolMaster.Items[6].Enabled = false;
+                this.toolMaster.Items[7].Enabled = false;
+                this.menuItem3.Enabled = false;
+                this.menuItem7.Enabled = false;
+                this.menuItem5.Enabled = false;
+                this.menuItem11.Enabled = false;
+                this.menuItem4.Enabled = false;
+            }
+        }
         #endregion
         #region EVENTS
         private void DGrid_Click(object sender, System.EventArgs e)
@@ -1617,7 +1505,6 @@ namespace TRUCK
 				Dato = reg[cmGridRegister.Position,0].ToString();	
 			}			
 		}
-
 		private void DGrid_CurrentCell(object sender, System.EventArgs e)
 		{
 			this.Cursor = System.Windows.Forms.Cursors.Arrow;
@@ -1626,7 +1513,6 @@ namespace TRUCK
 			reg.Select(cmGridRegister.Position);
 			Dato = reg[cmGridRegister.Position,0].ToString();
 		}
-	
 		private void TreeFile_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
 		{
 			System.Windows.Forms.TreeView nodo_file = (System.Windows.Forms.TreeView)sender;
@@ -1714,7 +1600,6 @@ namespace TRUCK
 				}break;
 			}
 		}
-
 		private void menuItem2_Click(object sender, System.EventArgs e)
 		{
 			if (this.TreeFile.SelectedNode != null)
@@ -1829,7 +1714,6 @@ namespace TRUCK
 				}
 			}
 		}
-
 		private void menuItem3_Click(object sender, System.EventArgs e)
 		{
 			if (this.Dato != null && this.Dato != "")
@@ -1931,7 +1815,6 @@ namespace TRUCK
 				MessageBox.Show(Global.M_Error[305,Global.idioma]);
 			}
 		}		
-
 		private void menuItem7_Click(object sender, System.EventArgs e)
 		{
 			if (this.Dato != null)

@@ -1,28 +1,22 @@
 using System;
 using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
 using System.Data;
-using System.Data.OleDb;
 using System.IO;
 using System.Globalization;
 using System.Threading;
-using System.Resources;
-using System.Reflection;
-using System.Drawing.Design;
-using CrystalDecisions.CrystalReports.Engine;
-using BaseAcces;
 
 
 
 namespace TRUCK
 {
-	/// <summary>
-	/// Descripción breve de Form1.
-	/// </summary>
-	///	
-	public class Menu : System.Windows.Forms.Form
+
+
+    /// <summary>
+    /// Descripción breve de Form1.
+    /// </summary>
+    ///	
+    public class Menu : System.Windows.Forms.Form
     {
         #region VARIABLES
         DataAccesQuery db;
@@ -70,23 +64,13 @@ namespace TRUCK
             Global G = new Global();
 			G.Cargar_Mensajes();
             G.Cargar_puertos();
-
-
-
 			this.TransparencyKey = Color.Empty;
 			this.IsMdiContainer = true;
 			this.BringToFront();
-			
-			/*for (int i=0; i<this.mainMenu.MenuItems.Count;i++)
-			{
-				this.mainMenu.MenuItems[i].Enabled = false;
-				for (int j=0;j<this.mainMenu.MenuItems[i].MenuItems.Count;i++)
-				{
-					this.mainMenu.MenuItems[i].MenuItems[j].Enabled = false;
-				}
-			}*/
 		}
         #endregion
+
+
         #region EVENTS
         private void Menu_Load(object sender, System.EventArgs e)
         {
@@ -141,6 +125,7 @@ namespace TRUCK
                     { fi.Close(); }
 
                     IDataReader Cfg = db.getDataReader("SELECT num_decimal,car_moneda,formato_fecha,tipo,display,scale,aplicacion,puerto,puerto2,puerto3,puerto4,baudrate,baudrate2,baudrate3,baudrate4 FROM configuracion where numemp = " + Global.nempresa);
+
                     if (!Cfg.Read())
                     {
                         Cfg.Close();
@@ -518,9 +503,9 @@ namespace TRUCK
                         } break;
                     case 2:
                         {
-                            Transacciones3m E_S = new Transacciones3m();
-                            E_S.MdiParent = this;
-                            if (!E_S.cancelar_transaccion) E_S.Show();
+                            //Transacciones3m E_S = new Transacciones3m();
+                            //E_S.MdiParent = this;
+                            //if (!E_S.cancelar_transaccion) E_S.Show();
                         } break;
                     /* case 3:
                          {

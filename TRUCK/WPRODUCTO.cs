@@ -376,7 +376,7 @@ namespace TRUCK
             if (this.numero.Text == "")
             {
 
-                IDataReader LP = db.getDataReader("SELECT numero FROM " + Conec.NombreTabla + " WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
+                IDataReader LP = db.getDataReader("SELECT numero FROM familia WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
 
                 if (LP.Read()) { this.numero.Text = Convert.ToString(Convert.ToInt32(LP.GetValue(0)) + 1); }
 
@@ -402,7 +402,6 @@ namespace TRUCK
         {
             if (this.nombre.Text == "")
             {
-                //MessageBox.Show(Global.M_Error[90,Global.idioma].ToString());
                 this.nombre.Focus();
             }
         }
@@ -417,7 +416,7 @@ namespace TRUCK
                         limpiar();
                         //this.cerrar=false;
 
-                        IDataReader LP = db.getDataReader("SELECT numero FROM " + Conec.NombreTabla + " WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
+                        IDataReader LP = db.getDataReader("SELECT numero FROM familia WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
 
                         if (LP.Read()) { cod = Convert.ToInt32(LP.GetValue(0)); }
 
@@ -490,16 +489,16 @@ namespace TRUCK
                     }
                     else
                     {
-                        cod = dt.Tables[Conec.NombreTabla].Rows.Count;
+                        cod = dt.Tables[0].Rows.Count;
                         if (cod < 100)
                         {
-                            if (cod != 0) numero.Text = Convert.ToString(Convert.ToInt32(dt.Tables[Conec.NombreTabla].Rows[cod - 1]["numero"].ToString()) + 1);
-                            else numero.Text = Convert.ToString(dt.Tables[Conec.NombreTabla].Rows.Count + 1);
+                            if (cod != 0) numero.Text = Convert.ToString(Convert.ToInt32(dt.Tables[0].Rows[cod - 1]["numero"].ToString()) + 1);
+                            else numero.Text = Convert.ToString(dt.Tables[0].Rows.Count + 1);
                         }
                         this.numero.Focus();
                         limpiar();
                     }
-                    Conec.Cancel();
+                    
                     break;
                 case 4: // Reg. Anterior
                     if (this.editar_dato)
@@ -508,9 +507,9 @@ namespace TRUCK
                         {
                             this.comando(1);
                         }
-                        else Mostrar_Datos(Conec.Previous(ref cmRegister), 0);
+                        else Mostrar_Datos(Previous(ref cmRegister), 0);
                     }
-                    else Mostrar_Datos(Conec.Previous(ref cmRegister), 0);
+                    else Mostrar_Datos(Previous(ref cmRegister), 0);
                     break;
                 case 5:  // Reg. Siguiente
                     if (this.editar_dato)
@@ -519,9 +518,9 @@ namespace TRUCK
                         {
                             this.comando(1);
                         }
-                        else Mostrar_Datos(Conec.Next(ref cmRegister), 0);
+                        else Mostrar_Datos(Next(ref cmRegister), 0);
                     }
-                    else Mostrar_Datos(Conec.Next(ref cmRegister), 0);
+                    else Mostrar_Datos(Next(ref cmRegister), 0);
                     break;
                 case 6:
                     {
@@ -797,11 +796,6 @@ namespace TRUCK
                     break; // Salir del bucle.
                 }
                 medio = (desde + hasta) / 2; // Divide el array en dos.
-                /*if (String.CompareOrdinal(dbDataSet.Tables[NombreTabla].Rows[medio][clave].ToString() == elemento) // Si coincide con el central:
-                {
-                    posicion = medio; // ese es la solución
-                    break; // y sale del bucle.
-                }*/
                 if (String.CompareOrdinal(dt.Tables[0].Rows[medio][clave].ToString(), elemento) > 0) // si es menor:
                     hasta = medio - 1; // elige el array izquierda.
                 else if (String.CompareOrdinal(dt.Tables[0].Rows[medio][clave].ToString(), elemento) < 0) // y si es mayor:

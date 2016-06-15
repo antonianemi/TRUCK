@@ -112,6 +112,15 @@ namespace TRUCK
                 else this.button1.Focus();
             }
         }
+
+
+
+
+
+
+
+
+
         private void button1_Click(object sender, EventArgs e)
         {
             string nombre_reporte = "";

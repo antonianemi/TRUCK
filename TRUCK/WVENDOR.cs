@@ -48,15 +48,10 @@ namespace TRUCK
 			this.nombre.KeyDown+=new System.Windows.Forms.KeyEventHandler(this.nombre_KeyDown);
 			this.nombre.TextChanged+=new System.EventHandler(this.editar_TextChanged);
             this.toolBar1.ItemClicked += new ToolStripItemClickedEventHandler(this.toolBar1_ButtonClick);
-		
-			// TODO: agregar cualquier inicialización después de llamar a InitializeComponent
-             
-			Conec.NombreTabla = "proveedor";
-			Conec.Condicion = "( numemp = " +Global.nempresa + ")";
-			Conec.CadenaSelect = "SELECT * FROM " + Conec.NombreTabla + " WHERE " + Conec.Condicion + " ORDER BY numero";
-			cmRegister = (CurrencyManager)this.BindingContext[Conec.dbDataSet,Conec.NombreTabla];
+            dt = db.getData("SELECT * FROM proveedor WHERE ( numemp = " + Global.nempresa + ") ORDER BY numero");
+			cmRegister = (CurrencyManager)this.BindingContext[dt, "proveedor"];
 			cmRegister.Position = 0;
-            Conec.dbDataSet.Tables[Conec.NombreTabla].PrimaryKey = new DataColumn[] {Conec.dbDataSet.Tables[Conec.NombreTabla].Columns["numero"]};
+            dt.Tables[0].PrimaryKey = new DataColumn[] {dt.Tables[0].Columns["numero"]};
 		}
         #endregion
         #region Designer generated code
@@ -186,12 +181,13 @@ namespace TRUCK
 		}
         private void New_Dato()
         {
-            Conec.CadenaSelect = "INSERT INTO " + Conec.NombreTabla + " (numemp,numero,nombre) VALUES ( " + Global.nempresa + "," + Convert.ToInt32(this.numero.Text) + ",'" + this.nombre.Text + "')";
+            string query = "INSERT INTO proveedor (numemp,numero,nombre) VALUES ( " + Global.nempresa + "," + Convert.ToInt32(this.numero.Text) + ",'" + this.nombre.Text + "')";
+            
             try
             {
                 if (numero.Text != "" && numero.Text != "0")
                 {
-                    db.ExcetuteQuery(Conec.CadenaSelect);
+                    db.ExcetuteQuery(query);
                 }
                 else
                 {
@@ -204,36 +200,35 @@ namespace TRUCK
                 customErrorMessage = dbcx.Message.ToString();
                 customErrorMessage += dbcx.Row[0].ToString();
                 MessageBox.Show(customErrorMessage.ToString());
-                Conec.dbDataSet.RejectChanges();
+                dt.RejectChanges();
             }
             catch (OleDbException ex)
             {
                 MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Conec.dbDataSet.RejectChanges();
+                dt.RejectChanges();
             }
         }
 		private void Del_Dato()
 		{
+
+            string query = "DELETE * FROM proveedor WHERE ( numero = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
 			if (numero.Text != "")
 			{
-				Conec.Condicion = "( numero = " + Convert.ToInt32(this.numero.Text) +" and numemp = " +Global.nempresa + ")";
-				Conec.CadenaSelect = "DELETE * FROM "+Conec.NombreTabla+" WHERE " + Conec.Condicion;
-				
-				if (Conec.dbDataSet.Tables[Conec.NombreTabla].Rows.Count > 0)
+				if (dt.Tables[0].Rows.Count > 0)
 				{
-					DataRow[] dr =  Conec.dbDataSet.Tables[Conec.NombreTabla].Select("numero = " + Convert.ToInt32(this.numero.Text) );  
+					DataRow[] dr =  dt.Tables[0].Select("numero = " + Convert.ToInt32(this.numero.Text) );  
 					if (dr.Length > 0)
 					{
 						dr[0].Delete();
 
-						DataSet DSChanges = Conec.dbDataSet.GetChanges(DataRowState.Deleted);
+						DataSet DSChanges = dt.GetChanges(DataRowState.Deleted);
 
 						if (DSChanges != null)
 						{
 							try
 							{
-                                db.ExcetuteQuery(Conec.CadenaSelect);
-                                Conec.dbDataSet.AcceptChanges();
+                                db.ExcetuteQuery(query);
+                                dt.AcceptChanges();
 								MessageBox.Show(Global.M_Error[3,Global.idioma].ToString());
 							}
 							catch (DBConcurrencyException ex)
@@ -248,7 +243,7 @@ namespace TRUCK
 							catch (OleDbException ex)
 							{
 								MessageBox.Show(ex.Message,"",MessageBoxButtons.OK,MessageBoxIcon.Error);
-								Conec.dbDataSet.RejectChanges();
+								dt.RejectChanges();
 							}
 						}
 					}
@@ -267,11 +262,10 @@ namespace TRUCK
 		}
         private void Save_Dato()
         {
-            Conec.Condicion = "(numero = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
-            Conec.CadenaSelect = "UPDATE " + Conec.NombreTabla + " SET nombre = '" + this.nombre.Text + "' WHERE " + Conec.Condicion;
+            string query = "UPDATE proveedor SET nombre = '" + this.nombre.Text + "' WHERE (numero = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
             try
             {
-                db.ExcetuteQuery(Conec.CadenaSelect);
+                db.ExcetuteQuery(query);
             }
             catch (DBConcurrencyException dbcx)
             {
@@ -279,12 +273,12 @@ namespace TRUCK
                 customErrorMessage = dbcx.Message.ToString();
                 customErrorMessage += dbcx.Row[0].ToString();
                 MessageBox.Show(customErrorMessage.ToString());
-                Conec.dbDataSet.RejectChanges();
+                dt.RejectChanges();
             }
             catch (OleDbException ex)
             {
                 MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Conec.dbDataSet.RejectChanges();
+                dt.RejectChanges();
             }
         }
 		private bool Find_Numero(string codigo)
@@ -292,11 +286,11 @@ namespace TRUCK
 			bool encontro=false;
             cmRegister.Position = 0;
 			
-			DataRow[] dr =Conec.dbDataSet.Tables[Conec.NombreTabla].Select("numero = "+Convert.ToInt32(codigo));
+			DataRow[] dr = dt.Tables[0].Select("numero = "+Convert.ToInt32(codigo));
 			if (dr.Length > 0)
 			{
 				encontro = true;
-				cmRegister.Position = Conec.buscar_posicion(Convert.ToInt32(codigo),"numero");
+				cmRegister.Position = buscar_posicion(Convert.ToInt32(codigo),"numero");
 			}
 			return encontro;
 		}
@@ -305,11 +299,11 @@ namespace TRUCK
 			bool encontro=false;
 			cmRegister.Position = 0;
 			int len = codigo.Length;
-			DataRow[] dr =Conec.dbDataSet.Tables[Conec.NombreTabla].Select("SUBSTRING(nombre,1," + len+ ") = '"+codigo+"'");
+			DataRow[] dr = dt.Tables[0].Select("SUBSTRING(nombre,1," + len+ ") = '"+codigo+"'");
 			if (dr.Length > 0)
 			{
 				encontro = true;
-				cmRegister.Position = Conec.buscar_posicion(Convert.ToInt32(dr[0]["numero"]),"numero");
+				cmRegister.Position = buscar_posicion(Convert.ToInt32(dr[0]["numero"]),"numero");
 			}
 			return encontro;
 		}
@@ -326,9 +320,9 @@ namespace TRUCK
 		private void Mostrar_Datos(int pos,int op)
 		{	
 
-			if (Conec.dbDataSet.Tables[Conec.NombreTabla].Rows.Count > 0 && pos >= 0)
+			if (dt.Tables[0].Rows.Count > 0 && pos >= 0)
 			{
-				DataRow dr=Conec.dbDataSet.Tables[Conec.NombreTabla].Rows[pos];
+				DataRow dr=dt.Tables[0].Rows[pos];
 				numero.Text = dr["numero"].ToString();
 				nombre.Text = dr["nombre"].ToString();
 				if (op == 0)numero.Focus();
@@ -336,24 +330,134 @@ namespace TRUCK
 				this.editar_dato=false;
 			}
 		}
-		private void limpiar()
-		{
-			this.nombre.Text = "";
-			this.editar_dato=false;
-		}
+        public int Find_Codigo(string n_codigo, string campo)
+        {
+            int encontro = -1;
+
+            dt.Tables[0].PrimaryKey = new System.Data.DataColumn[] { dt.Tables[0].Columns[campo] };
+
+            System.Data.DataRow dr = dt.Tables[0].Rows.Find(Convert.ToInt32(n_codigo));
+
+            if (dr != null)
+            {
+                encontro = buscar_posicion(Convert.ToInt32(n_codigo), campo);
+            }
+            return encontro;
+        }
+        public int Find_Descripcion(string descrip, string campo2, string campo1)
+        {
+            int encontro = -1;
+            int len = descrip.Length;
+
+            System.Data.DataRow[] dr = dt.Tables[0].Select("SUBSTRING(" + campo2 + ",1," + len + ") = '" + descrip + "'");
+
+            if (dr.Length > 0)
+            {
+                encontro = buscar_posicion(Convert.ToInt32(dr[0][campo1]), campo1);
+            }
+            return encontro;
+        }
+        public int buscar_posicion(int elemento, string clave)
+        {
+            int desde, hasta, medio, posicion; // desde y hasta indican los límites del array que se está mirando.
+            posicion = 0;
+
+            for (desde = 0, hasta = dt.Tables[0].Rows.Count - 1; desde <= hasta;)
+            {
+                if (desde == hasta) // si el array sólo tiene un elemento:
+                {
+                    if (Convert.ToInt32(dt.Tables[0].Rows[desde][clave]) == elemento) // si es la solución:
+                        posicion = desde; // darle el valor.
+                    else // si no es el valor:
+                        posicion = -1; // no está en el array.
+                    break; // Salir del bucle.
+                }
+                medio = (desde + hasta) / 2; // Divide el array en dos.
+                if (Convert.ToInt32(dt.Tables[0].Rows[medio][clave]) == elemento) // Si coincide con el central:
+                {
+                    posicion = medio; // ese es la solución
+                    break; // y sale del bucle.
+                }
+                else if (Convert.ToInt32(dt.Tables[0].Rows[medio][clave]) > elemento) // si es menor:
+                    hasta = medio - 1; // elige el array izquierda.
+                else // y si es mayor:
+                    desde = medio + 1; // elige el array de la derecha.
+            }
+            return posicion;
+        }
+        public int buscar_posicion(string elemento, string clave)
+        {
+            int desde, hasta, medio, posicion; // desde y hasta indican los límites del array que se está mirando.
+            posicion = 0;
+
+            for (desde = 0, hasta = dt.Tables[0].Rows.Count - 1; desde <= hasta;)
+            {
+                if (desde == hasta) // si el array sólo tiene un elemento:
+                {
+                    if (String.CompareOrdinal(dt.Tables[0].Rows[desde][clave].ToString(), elemento) == 0) // si es la solución:
+                        posicion = desde; // darle el valor.
+                    else // si no es el valor:
+                        posicion = -1; // no está en el array.
+                    break; // Salir del bucle.
+                }
+                medio = (desde + hasta) / 2; // Divide el array en dos.
+                /*if (String.CompareOrdinal(dbDataSet.Tables[NombreTabla].Rows[medio][clave].ToString() == elemento) // Si coincide con el central:
+                {
+                    posicion = medio; // ese es la solución
+                    break; // y sale del bucle.
+                }*/
+                if (String.CompareOrdinal(dt.Tables[0].Rows[medio][clave].ToString(), elemento) > 0) // si es menor:
+                    hasta = medio - 1; // elige el array izquierda.
+                else if (String.CompareOrdinal(dt.Tables[0].Rows[medio][clave].ToString(), elemento) < 0) // y si es mayor:
+                    desde = medio + 1; // elige el array de la derecha.
+                else
+                {
+                    posicion = medio;
+                    break;
+                }
+            }
+            return posicion;
+        }
+        public int Previous(ref CurrencyManager cmRegister)
+        {
+            if (cmRegister.Position > 0)
+            {
+                return (cmRegister.Position -= 1);
+            }
+            else
+            {
+                //MessageBox.Show(Global.M_Error[1,Global.idioma].ToString());
+                return 0;
+            }
+        }
+        public int Next(ref CurrencyManager cmRegister)
+        {
+            if (cmRegister.Position != cmRegister.Count - 1)
+            {
+                return (cmRegister.Position += 1);
+            }
+            else
+            {
+                //MessageBox.Show(Global.M_Error[0,Global.idioma].ToString());
+                return (cmRegister.Count - 1);
+            }
+        }
+
+
         #endregion
 
         #region EVENTS
+
         private void editar_TextChanged(object sender, System.EventArgs e)
         {
             this.editar_dato = true;
         }
-        private void WVENDOR_Close(object sender, CancelEventArgs e)
-        {
-            //Conec.Desconectar();			
-            this.Close();
 
+        private void WVENDOR_Close(object sender, CancelEventArgs e)
+        {	
+            this.Close();
         }
+
         private void nombre_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -361,6 +465,7 @@ namespace TRUCK
                 this.comando(1);
             }
         }
+
         private void numero_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Insert) { this.comando(0); }
@@ -372,17 +477,19 @@ namespace TRUCK
                 this.nombre.Focus();
             }
         }
+
         private void numero_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (this.numero.Text == "")
             {
-                IDataReader LP = db.getDataReader("SELECT numero FROM " + Conec.NombreTabla + " WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
+                IDataReader LP = db.getDataReader("SELECT numero FROM proveedor WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
                 if (LP.Read()) { this.numero.Text = Convert.ToString(Convert.ToInt32(LP.GetValue(0)) + 1); }
                 else { this.numero.Text = "1"; }
                 LP.Close();
                 this.numero.Focus();
             }
         }
+
         private void numero_LostFocus(object sender, System.EventArgs e)
         {
             if (this.numero.Text != "" && this.numero.Text != "0")
@@ -409,9 +516,9 @@ namespace TRUCK
             {
                 case 0:   // Nuevo vendedor
                     {
-                        limpiar();
+                        //limpiar();
                         //this.cerrar=false;
-                        IDataReader LP = db.getDataReader("SELECT numero FROM " + Conec.NombreTabla + " WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
+                        IDataReader LP = db.getDataReader("SELECT numero FROM proveedor WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
                         if (LP.Read()) { cod = Convert.ToInt32(LP.GetValue(0)); }
                         LP.Close();
                         this.numero.Text = Convert.ToString(cod + 1);
@@ -439,7 +546,7 @@ namespace TRUCK
                         else
                         {
                             this.editar_dato = false;
-                            IDataReader df = db.getDataReader("SELECT numemp,numero FROM " + Conec.NombreTabla + " WHERE numemp = " + Global.nempresa + " and numero = " + Convert.ToInt32(this.numero.Text));
+                            IDataReader df = db.getDataReader("SELECT numemp,numero FROM proveedor WHERE numemp = " + Global.nempresa + " and numero = " + Convert.ToInt32(this.numero.Text));
                             if (!df.Read())
                             {
                                 df.Close();
@@ -465,15 +572,14 @@ namespace TRUCK
                     }
                     else
                     {
-                        cod = Conec.dbDataSet.Tables[Conec.NombreTabla].Rows.Count;
+                        cod = dt.Tables[0].Rows.Count;
 
-                        if (cod != 0) this.numero.Text = Convert.ToString(Convert.ToInt32(Conec.dbDataSet.Tables[Conec.NombreTabla].Rows[cod - 1]["numero"].ToString()) + 1);
-                        else this.numero.Text = Convert.ToString(Conec.dbDataSet.Tables[Conec.NombreTabla].Rows.Count + 1);
+                        if (cod != 0) this.numero.Text = Convert.ToString(Convert.ToInt32(dt.Tables[0].Rows[cod - 1]["numero"].ToString()) + 1);
+                        else this.numero.Text = Convert.ToString(dt.Tables[0].Rows.Count + 1);
 
                         this.numero.Focus();
-                        limpiar();
+                        //limpiar();
                     }
-                    Conec.Cancel();
                     break;
                 case 4: // Reg. Anterior
                     if (this.editar_dato)
@@ -482,9 +588,9 @@ namespace TRUCK
                         {
                             this.comando(1);
                         }
-                        else Mostrar_Datos(Conec.Previous(ref cmRegister), 0);
+                        else Mostrar_Datos(Previous(ref cmRegister), 0);
                     }
-                    else Mostrar_Datos(Conec.Previous(ref cmRegister), 0);
+                    else Mostrar_Datos(Previous(ref cmRegister), 0);
                     break;
                 case 5:  // Reg. Siguiente
                     if (this.editar_dato)
@@ -493,9 +599,9 @@ namespace TRUCK
                         {
                             this.comando(1);
                         }
-                        else Mostrar_Datos(Conec.Next(ref cmRegister), 0);
+                        else Mostrar_Datos(Next(ref cmRegister), 0);
                     }
-                    else Mostrar_Datos(Conec.Next(ref cmRegister), 0);
+                    else Mostrar_Datos(Next(ref cmRegister), 0);
                     break;
                 case 6:
                     {

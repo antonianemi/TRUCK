@@ -47,10 +47,11 @@ namespace TRUCK
             this.nombre.KeyDown += new System.Windows.Forms.KeyEventHandler(this.nombre_KeyDown);
             this.nombre.TextChanged += new System.EventHandler(this.editar_TextChanged);
             this.toolBar1.ItemClicked += new ToolStripItemClickedEventHandler(this.toolBar1_ButtonClick);
-            dt=db.getData("SELECT * FROM cliente WHERE (numemp = " + Global.nempresa + ") ORDER BY numero");
-            cmRegister = (CurrencyManager)this.BindingContext[dt, "cliente"];
+            dt=db.getData("SELECT * FROM CLIENTE WHERE (numemp = " + Global.nempresa + ") ORDER BY NUMERO");
+            dt.Tables[0].TableName = "CLIENTE";
+            cmRegister = (CurrencyManager)this.BindingContext[dt, "CLIENTE"];
             cmRegister.Position = 0;
-            dt.Tables[0].PrimaryKey = new DataColumn[] { dt.Tables[0].Columns["numero"] };
+            //dt.Tables[0].PrimaryKey = new DataColumn[] { dt.Tables[0].Columns["NUMERO"] };
         }
         #endregion
         #region FUNCTIONS
@@ -88,22 +89,16 @@ namespace TRUCK
         }
         private void Del_Dato()
         {
-
-            string query = "DELETE * FROM   cliente  WHERE    ( numero = " + Convert.ToInt32(numero.Text) + " and numemp = " + Global.nempresa + ")";
-
+            string query = "DELETE FROM   cliente  WHERE    ( numero = " + Convert.ToInt32(numero.Text) + " and numemp = " + Global.nempresa + ")";
             if (numero.Text != "")
             {
                 if (dt.Tables[0].Rows.Count > 0)
                 {
-
                     DataRow[] dr = dt.Tables[0].Select("numero = " + Convert.ToInt32(this.numero.Text));  //.Rows[cmAgente.Position];
-
                     if (dr.Length > 0)
                     {
                         dr[0].Delete();
-
                         DataSet DSChanges = dt.GetChanges(DataRowState.Deleted);
-
                         if (DSChanges != null)
                         {
                             try
@@ -140,12 +135,10 @@ namespace TRUCK
         }
         private void Save_Dato()
         {
-            string query = "";
-
-
+            string query = "UPDATE CLIENTE SET NOMBRE = '" + nombre.Text + "' WHERE (NUMERO = " + Convert.ToInt32(numero.Text) + " and NUMEMP = " + Global.nempresa + ")";
             try
             {                
-                db.ExcetuteQuery("UPDATE cliente SET nombre = '" + nombre.Text + "' WHERE (numero = " + Convert.ToInt32(numero.Text) + " and numemp = " + Global.nempresa + ")");
+                db.ExcetuteQuery(query);
             }
             catch (DBConcurrencyException dbcx)
             {
@@ -201,8 +194,8 @@ namespace TRUCK
             if (dt.Tables[0].Rows.Count > 0 && pos >= 0)
             {
                 DataRow dr = dt.Tables[0].Rows[pos];
-                numero.Text = dr["numero"].ToString();
-                nombre.Text = dr["nombre"].ToString();
+                numero.Text = dr["NUMERO"].ToString();
+                nombre.Text = dr["NOMBRE"].ToString();
                 if (op == 0) numero.Focus();
                 else nombre.Focus();
                 this.editar_dato = false;
@@ -425,28 +418,41 @@ namespace TRUCK
                             this.nombre.Focus();
                             break;
                         }
+
+                        //VALIDATE IF CAN ADD OR NOT.
                         if (Convert.ToInt32(this.numero.Text) > 5 && !Keylock.IsPresent())
                         {
                             MessageBox.Show(Global.M_Error[147, Global.idioma], "", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
+
+
                         else
                         {
+
                             this.editar_dato = false;
-                            IDataReader df = db.getDataReader("SELECT numemp,numero FROM cliente WHERE numemp = " + Global.nempresa + " and numero = " + Convert.ToInt32(this.numero.Text));
+
+                            IDataReader df = db.getDataReader("SELECT NUMEMP,NUMERO FROM CLIENTE WHERE NUMEMP = " + Global.nempresa + " and NUMERO = " + Convert.ToInt32(this.numero.Text));
 
                             if (!df.Read())
                             {
                                 df.Close();
-                                New_Dato();
+                                New_Dato();// ADD NEW ITEM.
                             }
                             else
                             {
                                 df.Close();
-                                Save_Dato();
+                                Save_Dato();//SAVE ITEM.
                             }
+
                             this.comando(6);
                         }
-                    } break;
+
+
+                    }
+                    break;
+
+
+
                 case 2:  // Borrar Vendedor
                     {
                         DialogResult df = MessageBox.Show(Global.M_Error[100, Global.idioma].ToString(), "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -504,8 +510,6 @@ namespace TRUCK
                     } break;
             }
         }
-
-
         #endregion
         /// <summary>
         /// Limpiar los recursos que se estén utilizando.

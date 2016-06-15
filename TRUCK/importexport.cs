@@ -30,7 +30,18 @@ namespace TRUCK
 		private OleDbConnection imporconexion;
 		private OleDbCommand imporcomando;
 		private OleDbDataReader tb;
+
+
+
+
+
+        /*WTF DID YOU SWSEA>.AY TO ME NIGGA?????????????*/
 			
+
+
+
+
+
 		public importexport(int opcion,int op)
 		{	
 			//
@@ -231,7 +242,11 @@ namespace TRUCK
 							else MessageBox.Show(Global.M_Error[306,Global.idioma]+ " " + mod+" "+Global.M_Error[307,Global.idioma]);
 							sr.Close();
 							imporconexion.Close();
-						}break;
+						}
+                            break;
+
+
+
 						case 5: //importar Vehiculo Tara
 						{		
 							mod= Global.M_Error[222,Global.idioma].ToString();
@@ -265,9 +280,13 @@ namespace TRUCK
 							else MessageBox.Show(Global.M_Error[306,Global.idioma]+ " " + mod+" "+Global.M_Error[307,Global.idioma]);
 							sr.Close();
 							imporconexion.Close();
-						}break;
+						}
+                            break;
+
+
                         case 6: //importar familia
                             {
+
                                 mod = Global.M_Error[218, Global.idioma].ToString();
                                 OleDbDataAdapter imporDataAdapter = new OleDbDataAdapter("Select * From familia WHERE numemp = " + Global.nempresa.ToString(), imporconexion);
                                 OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(imporDataAdapter);
@@ -308,10 +327,12 @@ namespace TRUCK
 			{	
 				MessageBox.Show(Global.M_Error[56,Global.idioma]);
 				string d=ex.Message;
-			}						
+			}
+            						
 			//
 			// TODO: Agregar código de constructor después de llamar a InitializeComponent
 			//
+
 		}
 
 		public void exportar(int op,System.Windows.Forms.StatusBar status)

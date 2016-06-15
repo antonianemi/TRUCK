@@ -59,8 +59,9 @@ namespace TRUCK
         #region CONSTRUCS
         public WUSER(int x, int y,int opc)
 		{
-			// El Diseñador de Windows Forms requiere esta llamada.
-			InitializeComponent();
+            db = new DataAccesQuery();
+            // El Diseñador de Windows Forms requiere esta llamada.
+            InitializeComponent();
             this.Location = new System.Drawing.Point(x,y);
 			this.TransparencyKey = Color.Empty;
 			this.Tag = Global.M_Error[145,Global.idioma].ToString();
@@ -91,9 +92,9 @@ namespace TRUCK
             this.C_tipo.Items.Add(Global.M_Error[207, Global.idioma]);
             this.C_tipo.SelectedIndex = 1;
             
-            dt = db.getData("SELECT * FROM usuarios ORDER BY user");
-
-            this.cmRegister = (CurrencyManager)this.BindingContext[dt, "usuarios"];
+            dt = db.getData("SELECT * FROM USUARIOS ORDER BY USER");
+            dt.Tables[0].TableName= "USER";
+            this.cmRegister = (CurrencyManager)this.BindingContext[dt, "USER"];
 			this.cmRegister.Position = 0;
 			
 		}
@@ -611,21 +612,17 @@ namespace TRUCK
             System.Windows.Forms.ToolStripItem bt = this.toolBar1.Items[opcion];
             this.toolBar1_ButtonClick(this.toolBar1, new ToolStripItemClickedEventArgs(bt));
 		}
-
-
-
-
 		private void Mostrar_Datos(int pos)
 		{
 			if (dt.Tables[0].Rows.Count > 0)
 			{
 				DataRow dr = dt.Tables[0].Rows[pos];
 
-				this.txt_user.Text = dr["user"].ToString();
-				this.txt_psw.Text = dr["contrasena"].ToString();
-				this.txt_ID.Text = dr["iniciales"].ToString();
-				this.txt_descrip.Text = dr["nombre"].ToString();
-				this.txt_turno = dr["turno"].ToString();
+				this.txt_user.Text = dr["USER"].ToString();
+				this.txt_psw.Text = dr["CONTRASENA"].ToString();
+				this.txt_ID.Text = dr["INICIALES"].ToString();
+				this.txt_descrip.Text = dr["NOMBRE"].ToString();
+				this.txt_turno = dr["TURNO"].ToString();
                 for (int j = 0; j < this.l_turno.Items.Count; j++)
                 {
                     if (this.l_turno.Items[j].ToString() == this.txt_turno)
@@ -634,15 +631,15 @@ namespace TRUCK
                         break;
                     }
                 }
-                this.txt_atributo = dr["privilegios"].ToString();
+                this.txt_atributo = dr["PRIVILEGIOS"].ToString();
 				for (int i=0;i< this.atributo.Length;i++)
 				{
-					if (dr["privilegios"].ToString().Substring(i,1) == "1")
+					if (dr["PRIVILEGIOS"].ToString().Substring(i,1) == "1")
 					{ this.atributo[i].Checked = true;}
 					else
 					{ this.atributo[i].Checked = false;}
 				}
-                if (dr["tipo"].ToString().Length > 0) this.C_tipo.SelectedIndex = Convert.ToInt16(dr["tipo"].ToString());
+                if (dr["TIPO"].ToString().Length > 0) this.C_tipo.SelectedIndex = Convert.ToInt16(dr["TIPO"].ToString());
 			}
 		}
 
@@ -662,20 +659,16 @@ namespace TRUCK
 			}
             this.txt_user.Focus();
 		}
-
-
         private void Guardar_User()
         {
             string atrib = buscar_atributos();
 
-            Conec.Condicion = "( user = '" + this.txt_user.Text + "')";
-            Conec.CadenaSelect = "UPDATE " + Conec.NombreTabla +
-                " SET contrasena = '" + this.txt_psw.Text + "', iniciales = '" + this.txt_ID.Text +
+            string query = "UPDATE usuarios SET contrasena = '" + this.txt_psw.Text + "', iniciales = '" + this.txt_ID.Text +
                 "', privilegios = '" + atrib + "', nombre = '" + this.txt_descrip.Text +
-                "', turno = '" + this.txt_turno + "', tipo = " + this.C_tipo.SelectedIndex + " WHERE " + Conec.Condicion;
+                "', turno = '" + this.txt_turno + "', tipo = " + this.C_tipo.SelectedIndex + " WHERE ( user = '" + this.txt_user.Text + "')";
             try
             {
-                db.ExcetuteQuery(Conec.CadenaSelect);
+                db.ExcetuteQuery(query);
                 dt.AcceptChanges();
             }
             catch (Exception ex)
@@ -683,19 +676,17 @@ namespace TRUCK
                 MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
 		private void Nuevo_User()
 		{		
 			string atrib = buscar_atributos();
-						
-			Conec.CadenaSelect ="INSERT INTO usuarios ([user], contrasena, iniciales, privilegios, nombre, turno, tipo )" +
-				" VALUES ('" + this.txt_user.Text + "','" + this.txt_psw.Text + "','" + this.txt_ID.Text + "','" + atrib.ToString() + "','" + this.txt_descrip.Text + "','" + this.txt_turno + "',"+ this.C_tipo.SelectedIndex + ")" ;
+
+            string query = "INSERT INTO usuarios ([user], contrasena, iniciales, privilegios, nombre, turno, tipo )" +
+                " VALUES ('" + this.txt_user.Text + "','" + this.txt_psw.Text + "','" + this.txt_ID.Text + "','" + atrib.ToString() + "','" + this.txt_descrip.Text + "','" + this.txt_turno + "'," + this.C_tipo.SelectedIndex + ")";
             try
             {
                 if (this.txt_user.Text != "")
                 {                   
-                    db.ExcetuteQuery(Conec.CadenaSelect);                    
+                    db.ExcetuteQuery(query);                    
                 }
             }
             catch (DBConcurrencyException dbcx)
@@ -713,18 +704,15 @@ namespace TRUCK
             }					
 					MessageBox.Show(Global.M_Error[5,Global.idioma].ToString());
 		}
-
-
 		private void Borrar_User()
 		{			
-			Conec.Condicion = "( user = '" + this.txt_user.Text + "')";
-			Conec.CadenaSelect = "DELETE * FROM " + Conec.NombreTabla + " WHERE " + Conec.Condicion;
+            string query = "DELETE FROM USUARIOS WHERE ( USER = '" + this.txt_user.Text + "')";
 
 			if (dt.Tables[0].Rows.Count > 0)
 			{
                 if (this.txt_user.Text.ToUpper() != "ADMIN" && this.txt_user.Text.ToUpper() != "OPERADOR" && this.txt_user.Text.ToUpper() != "OPERATOR")
                 {
-                    DataRow[] dr = dt.Tables[0].Select("user = '" + this.txt_user.Text + "'");  //.Rows[cmAgente.Position];
+                    DataRow[] dr = dt.Tables[0].Select("USER = '" + this.txt_user.Text + "'"); 
                     if (dr.Length > 0)
                     {
                         dr[0].Delete();
@@ -735,7 +723,7 @@ namespace TRUCK
                         {
                             try
                             {
-                                db.ExcetuteQuery(Conec.CadenaSelect);
+                                db.ExcetuteQuery(query);
                                 dt.AcceptChanges();
                                 MessageBox.Show(Global.M_Error[3, Global.idioma].ToString());
                             }
@@ -751,7 +739,7 @@ namespace TRUCK
                             catch (OleDbException ex)
                             {
                                 MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                Conec.dbDataSet.RejectChanges();
+                                dt.RejectChanges();
                             }
                         }
                     }
@@ -770,9 +758,8 @@ namespace TRUCK
 			int i;
 			bool buscar = false;
 
-			Conec.Condicion = "(user = '" + n_user + "')"; 
-			Conec.CadenaSelect = "SELECT * FROM " + Conec.NombreTabla + " WHERE " + Conec.Condicion;
-			cmRegister.Position = 0;
+            dt = db.getData("SELECT * FROM usuarios WHERE (user = '" + n_user + "')");
+            cmRegister.Position = 0;
 
 			for (i = 0; i < dt.Tables[0].Rows.Count;i++)
 			{
@@ -790,8 +777,6 @@ namespace TRUCK
 			}
 			return buscar;
 		}
-
-
 		private string buscar_atributos()
 		{
 			string privilegio = "";
@@ -805,8 +790,6 @@ namespace TRUCK
 
 			return privilegio;
 		}
-
-
 		public bool muestra_ususario(string codigo)
 		{
 			if(this.Find_User(codigo))
@@ -817,6 +800,119 @@ namespace TRUCK
 			else return false;
 
 		}
+
+        public int Find_Codigo(string n_codigo, string campo)
+        {
+            int encontro = -1;
+
+            dt.Tables[0].PrimaryKey = new System.Data.DataColumn[] { dt.Tables[0].Columns[campo] };
+
+            System.Data.DataRow dr = dt.Tables[0].Rows.Find(Convert.ToInt32(n_codigo));
+
+            if (dr != null)
+            {
+                encontro = buscar_posicion(Convert.ToInt32(n_codigo), campo);
+            }
+            return encontro;
+        }
+        public int Find_Descripcion(string descrip, string campo2, string campo1)
+        {
+            int encontro = -1;
+            int len = descrip.Length;
+
+            System.Data.DataRow[] dr = dt.Tables[0].Select("SUBSTRING(" + campo2 + ",1," + len + ") = '" + descrip + "'");
+
+            if (dr.Length > 0)
+            {
+                encontro = buscar_posicion(Convert.ToInt32(dr[0][campo1]), campo1);
+            }
+            return encontro;
+        }
+        public int buscar_posicion(int elemento, string clave)
+        {
+            int desde, hasta, medio, posicion; // desde y hasta indican los límites del array que se está mirando.
+            posicion = 0;
+
+            for (desde = 0, hasta = dt.Tables[0].Rows.Count - 1; desde <= hasta;)
+            {
+                if (desde == hasta) // si el array sólo tiene un elemento:
+                {
+                    if (Convert.ToInt32(dt.Tables[0].Rows[desde][clave]) == elemento) // si es la solución:
+                        posicion = desde; // darle el valor.
+                    else // si no es el valor:
+                        posicion = -1; // no está en el array.
+                    break; // Salir del bucle.
+                }
+                medio = (desde + hasta) / 2; // Divide el array en dos.
+                if (Convert.ToInt32(dt.Tables[0].Rows[medio][clave]) == elemento) // Si coincide con el central:
+                {
+                    posicion = medio; // ese es la solución
+                    break; // y sale del bucle.
+                }
+                else if (Convert.ToInt32(dt.Tables[0].Rows[medio][clave]) > elemento) // si es menor:
+                    hasta = medio - 1; // elige el array izquierda.
+                else // y si es mayor:
+                    desde = medio + 1; // elige el array de la derecha.
+            }
+            return posicion;
+        }
+        public int buscar_posicion(string elemento, string clave)
+        {
+            int desde, hasta, medio, posicion; // desde y hasta indican los límites del array que se está mirando.
+            posicion = 0;
+
+            for (desde = 0, hasta = dt.Tables[0].Rows.Count - 1; desde <= hasta;)
+            {
+                if (desde == hasta) // si el array sólo tiene un elemento:
+                {
+                    if (String.CompareOrdinal(dt.Tables[0].Rows[desde][clave].ToString(), elemento) == 0) // si es la solución:
+                        posicion = desde; // darle el valor.
+                    else // si no es el valor:
+                        posicion = -1; // no está en el array.
+                    break; // Salir del bucle.
+                }
+                medio = (desde + hasta) / 2; // Divide el array en dos.
+                /*if (String.CompareOrdinal(dbDataSet.Tables[NombreTabla].Rows[medio][clave].ToString() == elemento) // Si coincide con el central:
+                {
+                    posicion = medio; // ese es la solución
+                    break; // y sale del bucle.
+                }*/
+                if (String.CompareOrdinal(dt.Tables[0].Rows[medio][clave].ToString(), elemento) > 0) // si es menor:
+                    hasta = medio - 1; // elige el array izquierda.
+                else if (String.CompareOrdinal(dt.Tables[0].Rows[medio][clave].ToString(), elemento) < 0) // y si es mayor:
+                    desde = medio + 1; // elige el array de la derecha.
+                else
+                {
+                    posicion = medio;
+                    break;
+                }
+            }
+            return posicion;
+        }
+        public int Previous(ref CurrencyManager cmRegister)
+        {
+            if (cmRegister.Position > 0)
+            {
+                return (cmRegister.Position -= 1);
+            }
+            else
+            {
+                //MessageBox.Show(Global.M_Error[1,Global.idioma].ToString());
+                return 0;
+            }
+        }
+        public int Next(ref CurrencyManager cmRegister)
+        {
+            if (cmRegister.Position != cmRegister.Count - 1)
+            {
+                return (cmRegister.Position += 1);
+            }
+            else
+            {
+                //MessageBox.Show(Global.M_Error[0,Global.idioma].ToString());
+                return (cmRegister.Count - 1);
+            }
+        }
         #endregion
 
 

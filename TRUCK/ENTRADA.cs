@@ -203,6 +203,8 @@ namespace TRUCK
             this.ResumeLayout(false);
             this.PerformLayout();
 
+            this.inicio_password.Text = "TLSFBT";
+
         }
         #endregion
         #region EVENTS

@@ -914,9 +914,9 @@ namespace TRUCK
             dt2.Tables[0].TableName = "Historia";
             dt2.Tables[0].PrimaryKey = new DataColumn[] { dt2.Tables[0].Columns["FOLIO"] };   
             this.bindingSource1.DataSource = dt1;
-            this.bindingSource1.DataMember = dt2.Tables[0].TableName;
+            //this.bindingSource1.DataMember = dt2.Tables[0].TableName;
             this.bindingNavigator1.BindingSource = this.bindingSource1;
-            cmRegister = (CurrencyManager)this.BindingContext[dt1, dt2.Tables[0].TableName];
+            cmRegister = (CurrencyManager)this.BindingContext[dt1, dt1.Tables[0].TableName];
 
         }
         private void Llenar_Producto(int n_empresa)
@@ -1050,6 +1050,8 @@ namespace TRUCK
                 Peso_Neto(text, um);
             }
         }
+
+
         private void Peso_Neto(string text, string txt_um)
         {
             try
@@ -1836,7 +1838,6 @@ namespace TRUCK
         }
         #endregion
 
-
         public int buscar_posicion(int elemento, string clave)
         {
             int desde, hasta, medio, posicion; // desde y hasta indican los límites del array que se está mirando.
@@ -1889,7 +1890,6 @@ namespace TRUCK
                 return (cmRegister.Count - 1);
             }
         }
-
         public int Find_Codigo(string n_codigo, string campo)
         {
             int encontro = -1;
@@ -1901,7 +1901,6 @@ namespace TRUCK
             }
             return encontro;
         }
-
         public int Find_Descripcion(string descrip, string campo2, string campo1)
         {
             int encontro = -1;
@@ -1915,9 +1914,6 @@ namespace TRUCK
             }
             return encontro;
         }
-
-
-
 
     }
 

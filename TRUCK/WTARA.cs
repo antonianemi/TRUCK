@@ -11,6 +11,13 @@ using CrystalDecisions.CrystalReports.Engine;
 
 namespace TRUCK
 {	
+
+
+
+
+    /// <summary>
+    /// Permite Administrar la tara con la base de datos. 
+    /// </summary>
 	public class WTARA : Form1
     {
 
@@ -34,12 +41,10 @@ namespace TRUCK
 		private MaskedTextBox.MaskedTextBox tara;
         #endregion
 
-
-
-
         #region CONSTRUCTORS
         public WTARA(int x, int y,int ventana)
 		{
+            db = new DataAccesQuery();
 			InitializeComponent();
 			this.Location = new System.Drawing.Point(x,y);
 			this.TransparencyKey = Color.Empty;
@@ -53,10 +58,11 @@ namespace TRUCK
             this.nombre.TextChanged+=new System.EventHandler(this.editar_TextChanged);
 			this.tara.KeyDown+=new System.Windows.Forms.KeyEventHandler(this.tara_KeyDown);
             this.toolBar1.ItemClicked += new ToolStripItemClickedEventHandler(this.toolBar1_ButtonClick);
-            dt=db.getData("SELECT * FROM Taras WHERE (numemp = " + Global.nempresa + ") ORDER BY numero");
-			cmRegister = (CurrencyManager)this.BindingContext[dt, "Taras"];
+            dt=db.getData("SELECT * FROM TARAS WHERE (numemp = " + Global.nempresa + ") ORDER BY NUMERO");
+            dt.Tables[0].TableName = "TARAS";
+            cmRegister = (CurrencyManager)this.BindingContext[dt, "TARAS"];
 			cmRegister.Position = 0;
-            dt.Tables[0].PrimaryKey = new DataColumn[] {dt.Tables[0].Columns["numero"]};
+            dt.Tables[0].PrimaryKey = new DataColumn[] {dt.Tables[0].Columns["NUMERO"]};
 		}
         #endregion
         #region Designer generated code
@@ -204,7 +210,6 @@ namespace TRUCK
 			base.Dispose( disposing );
 		}
         #region FUNCTIONS
-
         public int Find_Codigo(string n_codigo, string campo)
         {
             int encontro = -1;
@@ -317,22 +322,6 @@ namespace TRUCK
                 return (cmRegister.Count - 1);
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public void comando(int opcion)
 		{
             System.Windows.Forms.ToolStripItem bt = this.toolBar1.Items[opcion];
@@ -342,8 +331,6 @@ namespace TRUCK
         {
             string query = "INSERT INTO Taras (numemp,numero,descripcion,tara) VALUES ( " + Global.nempresa + ",'" + this.numero.Text.Trim() + "','" + this.nombre.Text + "','" + this.tara.Text + "')";
             DataRow dr = dt.Tables[0].NewRow();
-
-
             try
             {
                 if (this.numero.Text != "" && this.numero.Text != "0")
@@ -369,13 +356,13 @@ namespace TRUCK
         }
 		private void Del_Dato()
 		{
-            string query = "DELETE * FROM Taras WHERE ( numero = '" + this.numero.Text.Trim() + "' and numemp = " + Global.nempresa + ")";
+            string query = "DELETE FROM TARAS WHERE ( NUMERO = '" + this.numero.Text.Trim() + "' and NUMEMP = " + Global.nempresa + ")";
 
 			if (numero.Text != "")
 			{
 				if (dt.Tables[0].Rows.Count > 0)
 				{
-					DataRow[] dr =  dt.Tables[0].Select("numero = '" + this.numero.Text.Trim() +"'" );  //.Rows[cmAgente.Position];
+					DataRow[] dr =  dt.Tables[0].Select("NUMERO = '" + this.numero.Text.Trim() +"'" );  //.Rows[cmAgente.Position];
 					if (dr.Length > 0)
 					{
 						dr[0].Delete();
@@ -417,9 +404,6 @@ namespace TRUCK
 				cmRegister.Position = 0;
 			}
 		}
-
-
-
         private void Save_Dato()
         {
 
@@ -505,6 +489,8 @@ namespace TRUCK
             this.editar_dato = false;
         }
         #endregion
+
+
         #region EVENTS
         private void WTARA_Close(object sender, CancelEventArgs e)
 		{		
@@ -523,7 +509,7 @@ namespace TRUCK
 			}
 		}		
 		private void numero_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-		{
+	    {
 			if (e.KeyCode == Keys.Insert){this.comando(0);}			
 			if (e.KeyCode == Keys.Left){this.comando(4);}
 			if (e.KeyCode == Keys.Right){this.comando(5);}
