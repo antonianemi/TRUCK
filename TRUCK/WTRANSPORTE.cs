@@ -1,17 +1,13 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Data.OleDb;
 using System.Data;
-using System.IO;
-using CrystalDecisions.CrystalReports.Engine;
 
 namespace TRUCK
-{	
-	public class WTRANSPORTE : Form1
+{
+    public class WTRANSPORTE : Form1
     {
         #region VARIABLES
         DataAccesQuery db;
@@ -35,7 +31,7 @@ namespace TRUCK
         public WTRANSPORTE(int x, int y,int ventana)
 		{
 			InitializeComponent();
-
+            db = new DataAccesQuery();
 			this.Location = new System.Drawing.Point(x,y);
 			this.TransparencyKey = Color.Empty;
 			this.Tag = Global.M_Error[141,Global.idioma].ToString();
@@ -48,6 +44,7 @@ namespace TRUCK
 			this.nombre.TextChanged+=new System.EventHandler(this.editar_TextChanged);
             this.toolBar1.ItemClicked += new ToolStripItemClickedEventHandler(this.toolBar1_ButtonClick);
             dt = db.getData("SELECT * FROM transportistas WHERE ( numemp = " + Global.nempresa + ") ORDER BY numero");
+            dt.Tables[0].TableName = "transportistas";
             cmRegister = (CurrencyManager)this.BindingContext[dt,"transportistas"];
 			cmRegister.Position = 0;
             dt.Tables[0].PrimaryKey = new DataColumn[] {dt.Tables[0].Columns["numero"]};
@@ -300,84 +297,33 @@ namespace TRUCK
             System.Windows.Forms.ToolStripItem bt = this.toolBar1.Items[opcion];
             this.toolBar1_ButtonClick(this.toolBar1, new ToolStripItemClickedEventArgs(bt));
 		}
+
+
+
+
+
 		private void New_Dato()
-		{  	
-            try
-            {
-                if (numero.Text != "" && numero.Text != "0")
-                {
-                    db.ExcetuteQuery("INSERT INTO Transporte (numemp,numero,descripcion) VALUES ( " + Global.nempresa + "," + Convert.ToInt32(numero.Text) + ",'" + this.nombre.Text + "')");
-                }
-                else
-                {
-                    MessageBox.Show(Global.M_Error[89, Global.idioma].ToString());
-                }
-            }
-            catch (DBConcurrencyException dbcx)
-            {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-                dt.RejectChanges();
-            }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                dt.RejectChanges();
-            }
+		{ 
+         if (numero.Text != "" && numero.Text != "0")
+         {
+             db.ExcetuteQuery("INSERT INTO transportistas (numemp,numero,descripcion) VALUES ( " + Global.nempresa + "," + Convert.ToInt32(numero.Text) + ",'" + this.nombre.Text + "')");
+         }
+         else
+         {
+             MessageBox.Show(Global.M_Error[89, Global.idioma].ToString());
+         }
 		}
 
 
 
 		private void Del_Dato()
 		{
-            string query = "";
-
-
-			if (numero.Text != "")
+            string query = "DELETE FROM transportistas WHERE ( numero = " + Convert.ToInt32(numero.Text) + " and numemp = " + Global.nempresa + ")"; ;
+            if (numero.Text != "")
 			{
-                query= "DELETE * FROM transporte WHERE ( numero = " + Convert.ToInt32(numero.Text) + " and numemp = " + Global.nempresa + ")";
-                
-                if (dt.Tables[0].Rows.Count > 0)
-				{
-					DataRow[] dr =  dt.Tables[0].Select("numero = " + Convert.ToInt32(numero.Text) );  
-					if (dr.Length > 0)
-					{
-						dr[0].Delete();
-
-						DataSet DSChanges = dt.GetChanges(DataRowState.Deleted);
-
-						if (DSChanges != null)
-						{
-							try
-							{
-                                db.ExcetuteQuery(query);
-                                dt.AcceptChanges();
-								MessageBox.Show(Global.M_Error[3,Global.idioma].ToString());
-							}
-							catch (DBConcurrencyException ex)
-							{
-								string customErrorMessage;
-
-								customErrorMessage = ex.Message.ToString();
-								customErrorMessage += ex.Row[0].ToString();
-								MessageBox.Show(customErrorMessage.ToString());
-										
-							}
-							catch (OleDbException ex)
-							{
-								MessageBox.Show(ex.Message,"",MessageBoxButtons.OK,MessageBoxIcon.Error);
-								dt.RejectChanges();
-							}
-						}
-					}
-				}
-				else
-				{				
-					MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
-					cmRegister.Position = 0;
-				}
+                db.ExcetuteQuery(query);
+                dt.AcceptChanges();
+			    MessageBox.Show(Global.M_Error[3,Global.idioma].ToString());
 			}
 			else
 			{
@@ -390,29 +336,10 @@ namespace TRUCK
 
 		private void Save_Dato()
 		{
-            string query = "";
-            query= "UPDATE transporte SET descripcion = '" + nombre.Text + "' WHERE (numero = " + Convert.ToInt32(numero.Text) + " and numemp = " + Global.nempresa + ")";
-
-                try
-				{
-                db.ExcetuteQuery(query);
-                dt.AcceptChanges();
-				}
-                catch (DBConcurrencyException dbcx)
-                {
-                    string customErrorMessage;
-                    customErrorMessage = dbcx.Message.ToString();
-                    customErrorMessage += dbcx.Row[0].ToString();
-                    MessageBox.Show(customErrorMessage.ToString());
-                    dt.RejectChanges();
-                }
-                catch (OleDbException ex)
-                {
-                    MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    dt.RejectChanges();
-                }
-                Mostrar_Datos(cmRegister.Position,0);
-			//}		
+            string query = "UPDATE transportistas SET descripcion = '" + nombre.Text + "' WHERE (numero = " + Convert.ToInt32(numero.Text) + " and numemp = " + Global.nempresa + ")";
+            db.ExcetuteQuery(query);
+            dt.AcceptChanges();
+            Mostrar_Datos(cmRegister.Position,0);
 		}
 
 
@@ -503,7 +430,7 @@ namespace TRUCK
 		{
 			if (this.numero.Text == "" )
 			{
-                IDataReader LP = db.getDataReader("SELECT numero FROM transporte WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
+                IDataReader LP = db.getDataReader("SELECT numero FROM transportistas WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
                 if (LP.Read()) { this.numero.Text = Convert.ToString(Convert.ToInt32(LP.GetValue(0)) + 1); }
                 else { this.numero.Text = "1"; }
                 LP.Close();
@@ -538,7 +465,7 @@ namespace TRUCK
 				{		
 					limpiar();
 					//this.cerrar=false;
-                    IDataReader LP = db.getDataReader("SELECT numero FROM transporte WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
+                    IDataReader LP = db.getDataReader("SELECT numero FROM TRANSPORTISTAS WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
                     if (LP.Read()) { cod = Convert.ToInt32(LP.GetValue(0)); }
                     LP.Close();
                     this.numero.Text = Convert.ToString(cod + 1);				
@@ -566,7 +493,7 @@ namespace TRUCK
                     else
                     {
                         this.editar_dato = false;
-                        IDataReader df = db.getDataReader("SELECT numemp,numero FROM transporte WHERE numemp = " + Global.nempresa + " and numero = " + Convert.ToInt32(this.numero.Text));
+                        IDataReader df = db.getDataReader("SELECT numemp,numero FROM transportistas WHERE numemp = " + Global.nempresa + " and numero = " + Convert.ToInt32(this.numero.Text));
                         if (!df.Read())
                         {
                             df.Close();

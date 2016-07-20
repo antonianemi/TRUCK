@@ -27,28 +27,14 @@ namespace TRUCK
 		string ifam;
 		private int pos,n=0;
 		private char cc = (char)9;
-		private OleDbConnection imporconexion;
-		private OleDbCommand imporcomando;
-		private OleDbDataReader tb;
-
-
-
-
-
-        /*WTF DID YOU SWSEA>.AY TO ME NIGGA?????????????*/
-			
-
-
-
-
-
+        DataAccesQuery db;
 		public importexport(int opcion,int op)
-		{	
-			//
-			// Necesario para admitir el Diseñador de Windows Forms
-			//
+		{
+            //
+            // Necesario para admitir el Diseñador de Windows Forms
+            //
+            db = new DataAccesQuery();
 		}
-	
 		public void importar(int op,System.Windows.Forms.StatusBar status)
 		{			
 			Global.MyDateShort = new DateTime(Global.year,Global.mes,Global.dia);
@@ -58,19 +44,18 @@ namespace TRUCK
 
 			try
 			{
-				imporconexion = new OleDbConnection(Global.Conexion);
-				imporcomando = new OleDbCommand();
-				imporconexion.Open();
 				DataSet dataset2 = new DataSet();
 				
 				OpenFileDialog dlgOpenFile = new OpenFileDialog();
 				dlgOpenFile.ShowReadOnly = true;
 				dlgOpenFile.InitialDirectory = Global.syspath + "\\data";
+
 				if (op == 2)
 				{
 					dlgOpenFile.DefaultExt = "*.txt";
 					dlgOpenFile.Filter = "Data files(*.TXT)|*.txt|All files(*.*)|*.*";
 				}
+
 				else
 				{
 					dlgOpenFile.DefaultExt = ".TXT";
@@ -104,23 +89,23 @@ namespace TRUCK
 					fi = new FileStream(path,FileMode.Open,FileAccess.ReadWrite);
 					sr = new StreamReader(fi,System.Text.Encoding.Unicode);
 					sr.BaseStream.Seek(0,SeekOrigin.Begin);
-					switch (op)
+
+
+
+
+                    switch (op)
 					{
 						case 1:  //importar Productos
 						{		
 							mod= Global.M_Error[136,Global.idioma].ToString();
-							OleDbDataAdapter imporDataAdapter = new OleDbDataAdapter("Select * From Articulos WHERE numemp = " + Global.nempresa.ToString() , imporconexion);
-							OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(imporDataAdapter);
-							imporDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-							imporDataAdapter.Fill(dataset2, "articulos");
-							
-							if (n_tab >= 4)
+                                string query = "Select * From Articulos WHERE numemp = " + Global.nempresa.ToString();
+                                dataset2 = db.getData(query);
+                                dataset2.Tables[0].TableName = "Articulos";
+
+                            if (n_tab >= 4)
 							{
 								proceso pro = new proceso(Convert.ToInt32(sr.BaseStream.Length));
 								pro.Show();
-
-								try
-								{
 									while ((renglon = sr.ReadLine()) != null)
 									{
 										tama = renglon.Length;
@@ -129,32 +114,22 @@ namespace TRUCK
 										pro.UpdateProgress(tama,Global.M_Error[133,Global.idioma].ToString() + n + Global.M_Error[135,Global.idioma].ToString());
 									}
 									MessageBox.Show(n.ToString() + " " + Global.M_Error[123,Global.idioma].ToString());
-								}
-								catch (OleDbException exdb)
-								{
-									string d=exdb.Message;
-									MessageBox.Show(Global.M_Error[306,Global.idioma]+ " " + mod+" "+Global.M_Error[307,Global.idioma]);
-								}		
+										
 								pro.Close();								
 							}
 							else MessageBox.Show(Global.M_Error[306,Global.idioma]+ " " + mod+" "+Global.M_Error[307,Global.idioma]);
-							sr.Close();
-							imporconexion.Close();
 						}break;
+
 						case 2: //importar Proveedores
 						{		
 							mod= Global.M_Error[132,Global.idioma].ToString();
-							OleDbDataAdapter imporDataAdapter = new OleDbDataAdapter("Select * From proveedor WHERE numemp = " + Global.nempresa.ToString(), imporconexion);
-							OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(imporDataAdapter);
-							imporDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-							imporDataAdapter.Fill(dataset2, "proveedor");
-						
-							if (n_tab >= 2)
+                            dataset2 = db.getData("Select * From proveedor WHERE numemp = " + Global.nempresa.ToString());
+                            dataset2.Tables[0].TableName = "proveedor";
+
+                            if (n_tab >= 2)
 							{								
 								proceso pro = new proceso(Convert.ToInt32(sr.BaseStream.Length));
-								pro.Show();
-								try
-								{
+								pro.Show();								
 									while ((renglon = sr.ReadLine()) != null)
 									{							
 										tama = renglon.Length;
@@ -162,33 +137,23 @@ namespace TRUCK
 										status.Panels[1].Text = Global.M_Error[133,Global.idioma].ToString() + n + Global.M_Error[136,Global.idioma].ToString();
 										pro.UpdateProgress(tama,Global.M_Error[133,Global.idioma].ToString() + n + Global.M_Error[136,Global.idioma].ToString());
 									}
-									MessageBox.Show(n.ToString() + " " + Global.M_Error[123,Global.idioma].ToString());
-								}
-								catch (OleDbException exdb)
-								{
-									string d=exdb.Message;
-									MessageBox.Show(Global.M_Error[306,Global.idioma]+ " " + mod+" "+Global.M_Error[307,Global.idioma]);
-								}		
+									MessageBox.Show(n.ToString() + " " + Global.M_Error[123,Global.idioma].ToString());										
 								pro.Close();
 							}
 							else MessageBox.Show(Global.M_Error[306,Global.idioma]+ " " + mod+" "+Global.M_Error[307,Global.idioma]);
-							sr.Close();
-							imporconexion.Close();
 						}break;
+
 						case 3: //importar Clientes
 						{
 							mod= Global.M_Error[135,Global.idioma].ToString();
-							OleDbDataAdapter imporDataAdapter = new OleDbDataAdapter("Select * From cliente WHERE numemp = " + Global.nempresa.ToString(), imporconexion);
-							OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(imporDataAdapter);
-							imporDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-							imporDataAdapter.Fill(dataset2, "cliente");
-							//dataset2.Tables["cliente"].PrimaryKey = new DataColumn[] {dataset2.Tables["cliente"].Columns["numero"]}; 							
-							if (n_tab >= 2)
+                            dataset2 = db.getData("Select * From cliente WHERE numemp = " + Global.nempresa.ToString());
+                            dataset2.Tables[0].TableName = "cliente";
+
+                            if (n_tab >= 2)
 							{
 								proceso pro = new proceso(Convert.ToInt32(sr.BaseStream.Length));
 								pro.Show();
-								try
-								{
+								
 									while ((renglon = sr.ReadLine()) != null)
 									{
 										tama = renglon.Length;
@@ -197,32 +162,23 @@ namespace TRUCK
 										pro.UpdateProgress(tama,Global.M_Error[133,Global.idioma].ToString() + n + Global.M_Error[137,Global.idioma].ToString());								
 									}
 									MessageBox.Show(n.ToString() + " " + Global.M_Error[123,Global.idioma].ToString());
-								}
-								catch (OleDbException exdb)
-								{
-									string c=exdb.Message;
-									MessageBox.Show(Global.M_Error[306,Global.idioma]+ " " + mod+" "+Global.M_Error[307,Global.idioma]);
-								}
+								
 								pro.Close();
 							}
 							else MessageBox.Show(Global.M_Error[306,Global.idioma]+ " " + mod+" "+Global.M_Error[307,Global.idioma]);
-							sr.Close();
-							imporconexion.Close();
 						}break;
+
+
 						case 4: //importar Transportista
 						{		
 							mod= Global.M_Error[130,Global.idioma].ToString();
-							OleDbDataAdapter imporDataAdapter = new OleDbDataAdapter("Select * From transportistas WHERE numemp = " + Global.nempresa.ToString(), imporconexion);
-							OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(imporDataAdapter);
-							imporDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-							imporDataAdapter.Fill(dataset2, "transportistas");
-						
-							if (n_tab >= 2)
+                            dataset2 = db.getData("Select * From transportistas WHERE numemp = " + Global.nempresa.ToString());
+                            dataset2.Tables[0].TableName = "transportistas";
+                                if (n_tab >= 2)
 							{								
 								proceso pro = new proceso(Convert.ToInt32(sr.BaseStream.Length));
 								pro.Show();
-								try
-								{
+								
 									while ((renglon = sr.ReadLine()) != null)
 									{							
 										tama = renglon.Length;
@@ -231,17 +187,10 @@ namespace TRUCK
 										pro.UpdateProgress(tama,Global.M_Error[133,Global.idioma].ToString() + n + Global.M_Error[136,Global.idioma].ToString());
 									}
 									MessageBox.Show(n.ToString() + " " + Global.M_Error[123,Global.idioma].ToString());
-								}
-								catch (OleDbException exdb)
-								{
-									string d=exdb.Message;
-									MessageBox.Show(Global.M_Error[306,Global.idioma]+ " " + mod+" "+Global.M_Error[307,Global.idioma]);
-								}		
+									
 								pro.Close();
 							}
 							else MessageBox.Show(Global.M_Error[306,Global.idioma]+ " " + mod+" "+Global.M_Error[307,Global.idioma]);
-							sr.Close();
-							imporconexion.Close();
 						}
                             break;
 
@@ -250,12 +199,10 @@ namespace TRUCK
 						case 5: //importar Vehiculo Tara
 						{		
 							mod= Global.M_Error[222,Global.idioma].ToString();
-							OleDbDataAdapter imporDataAdapter = new OleDbDataAdapter("Select * From taras WHERE numemp = " + Global.nempresa.ToString(), imporconexion);
-							OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(imporDataAdapter);
-							imporDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-							imporDataAdapter.Fill(dataset2, "taras");
-						
-							if (n_tab >= 3)
+                            dataset2 = db.getData("Select * From tara WHERE numemp = " + Global.nempresa.ToString());
+                            dataset2.Tables[0].TableName = "tara";
+
+                            if (n_tab >= 3)
 							{								
 								proceso pro = new proceso(Convert.ToInt32(sr.BaseStream.Length));
 								pro.Show();
@@ -278,8 +225,6 @@ namespace TRUCK
 								pro.Close();
 							}
 							else MessageBox.Show(Global.M_Error[306,Global.idioma]+ " " + mod+" "+Global.M_Error[307,Global.idioma]);
-							sr.Close();
-							imporconexion.Close();
 						}
                             break;
 
@@ -288,17 +233,15 @@ namespace TRUCK
                             {
 
                                 mod = Global.M_Error[218, Global.idioma].ToString();
-                                OleDbDataAdapter imporDataAdapter = new OleDbDataAdapter("Select * From familia WHERE numemp = " + Global.nempresa.ToString(), imporconexion);
-                                OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder(imporDataAdapter);
-                                imporDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-                                imporDataAdapter.Fill(dataset2, "familia");
+                               
+                                dataset2 = db.getData("Select * From familia WHERE numemp = " + Global.nempresa.ToString());
+                                dataset2.Tables[0].TableName = "familia";
 
                                 if (n_tab >= 2)
                                 {
                                     proceso pro = new proceso(Convert.ToInt32(sr.BaseStream.Length));
                                     pro.Show();
-                                    try
-                                    {
+                                   
                                         while ((renglon = sr.ReadLine()) != null)
                                         {
                                             tama = renglon.Length;
@@ -307,17 +250,10 @@ namespace TRUCK
                                             pro.UpdateProgress(tama, Global.M_Error[133, Global.idioma].ToString() + n + Global.M_Error[136, Global.idioma].ToString());
                                         }
                                         MessageBox.Show(n.ToString() + " " + Global.M_Error[123, Global.idioma].ToString());
-                                    }
-                                    catch (OleDbException exdb)
-                                    {
-                                        string d = exdb.Message;
-                                        MessageBox.Show(Global.M_Error[306, Global.idioma] + " " + mod + " " + Global.M_Error[307, Global.idioma]);
-                                    }
+                                    
                                     pro.Close();
                                 }
                                 else MessageBox.Show(Global.M_Error[306, Global.idioma] + " " + mod + " " + Global.M_Error[307, Global.idioma]);
-                                sr.Close();
-                                imporconexion.Close();
                             } break;
 					}					
 					System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
@@ -329,18 +265,13 @@ namespace TRUCK
 				string d=ex.Message;
 			}
             						
-			//
-			// TODO: Agregar código de constructor después de llamar a InitializeComponent
-			//
-
+			
 		}
-
 		public void exportar(int op,System.Windows.Forms.StatusBar status)
 		{
+
 			Global.MyDateShort = new DateTime(Global.year,Global.mes,Global.dia);
-			
-			imporconexion = new OleDbConnection(Global.Conexion);
-			imporcomando = new OleDbCommand();
+
 			
 			SaveFileDialog dlgOpenFile = new SaveFileDialog();
 			dlgOpenFile.InitialDirectory = Global.syspath + "\\data";
@@ -380,90 +311,66 @@ namespace TRUCK
 					
 					switch (op)
 					{
+
+
 						case 1:  // Exportar producto
 						{	
-							string sele = "SELECT numemp,numero,descripcion,familia,tarifa FROM Articulos WHERE numemp = " + Global.nempresa + " ORDER BY numero"; 
-							imporcomando.CommandText = sele;
-							imporcomando.Connection = imporconexion;
-							imporconexion.Open();
-							tb = imporcomando.ExecuteReader();
-							while (tb.Read())
-							{
-								exportaprod(ref n,ref tb,ref sr);					
-							}		
-							tb.Close();
-							sr.Close();
-						}break;
+							string sele = "SELECT numemp,numero,descripcion,familia,tarifa FROM Articulos WHERE numemp = " + Global.nempresa + " ORDER BY numero";
+                            IDataReader reader = db.getDataReader(sele);
+                            while (reader.Read()) { exportaprod(ref n, ref reader, ref sr); }
+                            sr.Close();
+                        }
+                        break;
+
+
 						case 2: // Exportar Proveedor
 						{	
 							string sele = "SELECT numemp,numero,nombre FROM proveedor WHERE numemp = " + Global.nempresa + " ORDER BY numero";
-							imporcomando.CommandText = sele;
-							imporcomando.Connection = imporconexion;
-							imporconexion.Open();
-							tb = imporcomando.ExecuteReader();
-							while (tb.Read())
-							{
-								exportadato(ref n,ref tb,ref sr);					
-							}		
-							tb.Close();
+                            IDataReader reader = db.getDataReader(sele);
+							while (reader.Read()){exportadato(ref n,ref reader, ref sr);}
 							sr.Close();
 						}break;
+
+
 						case 3:  // Export cliente
 						{
 							string sele = "SELECT numemp,numero,nombre FROM cliente WHERE numemp = " + Global.nempresa + " ORDER BY numero";
-							imporcomando.CommandText = sele;
-							imporcomando.Connection = imporconexion;
-							imporconexion.Open();
-							tb = imporcomando.ExecuteReader();
-							while (tb.Read())
-							{
-								exportadato(ref n,ref tb,ref sr);					
-							}	
-							tb.Close();
-							sr.Close();
-						}break;
+                            IDataReader reader = db.getDataReader(sele);
+                            while (reader.Read()) { exportadato(ref n, ref reader, ref sr); }
+                            sr.Close();
+                        }
+                        break;
+
+
 						case 4: // Exportar transportista
 						{
 							string sele = "SELECT numemp,numero,descripcion FROM transportistas WHERE numemp = " + Global.nempresa + " ORDER BY numero";
-							imporcomando.CommandText = sele;
-							imporcomando.Connection = imporconexion;
-							imporconexion.Open();
-							tb = imporcomando.ExecuteReader();
-							while (tb.Read())
-							{
-								exportadato(ref n,ref tb,ref sr);					
-							}
-							tb.Close();
-							sr.Close();
-						}break;
+                            IDataReader reader = db.getDataReader(sele);
+                            while (reader.Read()) { exportadato(ref n, ref reader, ref sr); }
+                            sr.Close();
+                        }
+                        break;
+
+
 						case 5:  // Exportar Taras
 						{	
-							string sele = "SELECT numemp,numero,descripcion,tara FROM Taras WHERE numemp = " + Global.nempresa + " ORDER BY numero"; 
-							imporcomando.CommandText = sele;
-							imporcomando.Connection = imporconexion;
-							imporconexion.Open();
-							tb = imporcomando.ExecuteReader();
-							while (tb.Read())
-							{
-								exportatara(ref n,ref tb,ref sr);					
-							}		
-							tb.Close();
-							sr.Close();
-						}break;
+							string sele = "SELECT numemp,numero,descripcion,tara FROM Tara WHERE numemp = " + Global.nempresa + " ORDER BY numero";
+                            IDataReader reader = db.getDataReader(sele);
+                            while (reader.Read()) { exportatara(ref n, ref reader, ref sr); }
+                            sr.Close();
+                        }
+                        break;
+
+
                         case 6: // Exportar Familia
                             {
-                                string sele = "SELECT numemp,familia,descripcion FROM familia WHERE numemp = " + Global.nempresa + " ORDER BY familia";
-                                imporcomando.CommandText = sele;
-                                imporcomando.Connection = imporconexion;
-                                imporconexion.Open();
-                                tb = imporcomando.ExecuteReader();
-                                while (tb.Read())
-                                {
-                                    exportadato(ref n, ref tb, ref sr);
-                                }
-                                tb.Close();
-                                sr.Close();
-                            } break;
+                             string sele = "SELECT numemp,familia,descripcion FROM familia WHERE numemp = " + Global.nempresa + " ORDER BY familia";
+                             IDataReader reader = db.getDataReader(sele);
+                             while (reader.Read()) { exportadato(ref n, ref reader, ref sr); }
+                             sr.Close();
+                            }
+                        break;
+
 					}
 					System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
 					MessageBox.Show(n.ToString() + Global.M_Error[123,Global.idioma].ToString());
@@ -479,23 +386,11 @@ namespace TRUCK
 			// TODO: Agregar código de constructor después de llamar a InitializeComponent
 			//
 		}
-
-		/// <summary>
-		/// Limpiar los recursos que se estén utilizando.
-		/// </summary>
-
 		public bool Find_dato(string sele1 )
 		{
-			bool busca = false;
-
-			OleDbCommand selecomando;
-			OleDbDataReader finddatareader;
-
-			try
-			{	
-				selecomando = new OleDbCommand(sele1,imporconexion);
-				imporconexion.Open();
-				finddatareader = selecomando.ExecuteReader();
+			bool busca = false;			
+			IDataReader finddatareader;
+                finddatareader = db.getDataReader(sele1);
 				if (!finddatareader.Read())
 				{
 					busca = false;
@@ -505,17 +400,9 @@ namespace TRUCK
 					busca = true;
 				}
 				finddatareader.Close();
-				imporconexion.Close();
 				return busca;
-			}
-			catch (Exception objExeption)
-			{
-				System.Diagnostics.EventLog.WriteEntry("ClaseGeneral",objExeption.Message,System.Diagnostics.EventLogEntryType.Error);
-				throw objExeption;
-				//return busca;
-			}
-		}
 
+		}
 		private void importatara(ref int n, ref DataSet dataset2)
 		{			
 			int l_pos;
@@ -574,14 +461,11 @@ namespace TRUCK
 						n++;
 						string sele = "INSERT INTO taras (numemp,numero,descripcion,tara)"+
 							" VALUES ( " + Global.nempresa + ",'" + inum+ "','" + inom + "','" + itar + "')";
-						imporcomando.CommandText = sele;
-						imporcomando.Connection = imporconexion;
-						imporcomando.ExecuteNonQuery();
+                        db.ExcetuteQuery(sele);
 					}
 				}
 			}
 		}
-
 		private void importacte(ref int n,ref DataSet dataset2)
 		{			
 			int l_pos;
@@ -633,14 +517,11 @@ namespace TRUCK
 						n++;
 						string sele = "INSERT INTO cliente (numemp,numero,nombre)"+
 							" VALUES ( " + Global.nempresa + "," + Convert.ToInt32(inum) + ",'" + inom + "')";
-						imporcomando.CommandText = sele;
-						imporcomando.Connection = imporconexion;
-						imporcomando.ExecuteNonQuery();
+                        db.ExcetuteQuery(sele);
 					}
 				}
 			}
 		}
-
 		private void importatran(ref int n,ref DataSet dataset2)
 		{			
 			int l_pos;
@@ -692,9 +573,7 @@ namespace TRUCK
 						n++;
 						string sele = "INSERT INTO transportistas (numemp,numero,descripcion)"+
 							" VALUES ( " + Global.nempresa + "," + Convert.ToInt32(inum) + ",'" + inom + "')";
-						imporcomando.CommandText = sele;
-						imporcomando.Connection = imporconexion;
-						imporcomando.ExecuteNonQuery();
+                        db.ExcetuteQuery(sele);
 					}
 				}
 			}
@@ -750,14 +629,11 @@ namespace TRUCK
 						n++;
 						string sele = "INSERT INTO proveedor (numemp,numero,nombre)"+
 							" VALUES ( " + Global.nempresa + "," + Convert.ToInt32(inum) + ",'" + inom + "')";
-						imporcomando.CommandText = sele;
-						imporcomando.Connection = imporconexion;
-						imporcomando.ExecuteNonQuery();
+                        db.ExcetuteQuery(sele);
 					}
 				}
 			}
 		}
-
         private void importafam(ref int n, ref DataSet dataset2)
         {
             int l_pos;
@@ -809,9 +685,7 @@ namespace TRUCK
                         n++;
                         string sele = "INSERT INTO familia (numemp,familia,descripcion)" +
                             " VALUES ( " + Global.nempresa + "," + Convert.ToInt32(inum) + ",'" + inom + "')";
-                        imporcomando.CommandText = sele;
-                        imporcomando.Connection = imporconexion;
-                        imporcomando.ExecuteNonQuery();
+                        db.ExcetuteQuery(sele);
                     }
                 }
             }
@@ -885,9 +759,7 @@ namespace TRUCK
 						n++;
 						string sele = "INSERT INTO articulos (numemp,numero,descripcion,tarifa,familia)"+
 							" VALUES ( " + Global.nempresa + "," + Convert.ToInt32(inum) + ",'" + inom + "'," + Convert.ToInt32(ipre) + "," + Convert.ToInt32(ifam) + ")";
-						imporcomando.CommandText = sele;
-						imporcomando.Connection = imporconexion;
-						imporcomando.ExecuteNonQuery();
+                        db.ExcetuteQuery(sele);
 					}
 					else
 					{
@@ -896,17 +768,15 @@ namespace TRUCK
 				}
 			}	
 		}
-
-		private void exportadato(ref int n,ref OleDbDataReader tb,ref StreamWriter sr )
+		private void exportadato(ref int n,ref IDataReader tb,ref StreamWriter sr )
 		{
 			iemp = tb.GetInt16(0).ToString() + (char)9;
 			inum = tb.GetInt32(1).ToString() + (char)9;
 			inom = tb.GetString(2) + (char)9;
 			sr.WriteLine(iemp + inum + inom);
 			n++;
-		}
-		
-		private void exportaprod(ref int n,ref OleDbDataReader tb,ref StreamWriter sr )
+		}		
+		private void exportaprod(ref int n,ref IDataReader tb,ref StreamWriter sr )
 		{
 			iemp = tb.GetInt16(0).ToString() + cc; //numero de empresa
 			inum = tb.GetInt32(1).ToString() + cc;  //numero del producto
@@ -915,9 +785,8 @@ namespace TRUCK
 			ifam = tb.GetInt32(4).ToString() + cc;	//familia del producto
 			sr.WriteLine(iemp + inum + inom + ifam + ipre);
 			n++;
-		}	
-		
-		private void exportatara(ref int n,ref OleDbDataReader tb,ref StreamWriter sr )
+		}			
+		private void exportatara(ref int n,ref IDataReader tb,ref StreamWriter sr )
 		{
 			iemp = tb.GetInt16(0).ToString() + (char)9;
 			inum = tb.GetString(1).ToString() + (char)9;
@@ -926,7 +795,5 @@ namespace TRUCK
 			sr.WriteLine(iemp + inum + inom + itar);
 			n++;
 		}
-
-		
 	}
 }

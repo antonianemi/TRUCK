@@ -38,6 +38,7 @@ namespace TRUCK
         public WFAMILIA(int x, int y,int ventana)
 		{
 			InitializeComponent();
+            db = new DataAccesQuery();
    			this.Location = new System.Drawing.Point(x,y);
 			this.TransparencyKey = Color.Empty;
 			this.Tag = Global.M_Error[141,Global.idioma].ToString();
@@ -50,6 +51,7 @@ namespace TRUCK
 			this.nombre.TextChanged+=new System.EventHandler(this.editar_TextChanged);
             this.toolBar1.ItemClicked += new ToolStripItemClickedEventHandler(this.toolBar1_ButtonClick);            
             dt=db.getData("SELECT * FROM familia WHERE ( numemp = " + Global.nempresa + ") ORDER BY familia");
+            dt.Tables[0].TableName = "familia";
             dt.Tables[0].PrimaryKey = new DataColumn[] { dt.Tables[0].Columns["familia"] };
             cmRegister = (CurrencyManager)this.BindingContext[dt, "familia"];
             cmRegister.Position = 0;           
@@ -223,10 +225,6 @@ namespace TRUCK
 		}
         private void New_Dato()
         {
-            
-
-            try
-            {
                 if (numero.Text != "" && numero.Text != "0")
                 {                    
                     db.ExcetuteQuery("INSERT INTO familia (numemp,familia,descripcion) VALUES ( " + Global.nempresa + "," + Convert.ToInt32(this.numero.Text) + ",'" + this.nombre.Text + "')");
@@ -235,61 +233,15 @@ namespace TRUCK
                 {
                     MessageBox.Show(Global.M_Error[89, Global.idioma].ToString());
                 }
-            }
-            catch (DBConcurrencyException dbcx)
-            {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-            }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 		private void Del_Dato()
 		{
             string query = "";
 			if (numero.Text != "")
 			{
-                query = "DELETE * FROM  familia  WHERE ( familia = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
-				if (dt.Tables[0].Rows.Count > 0)
-				{
-					DataRow[] dr =  dt.Tables[0].Select("familia = " + Convert.ToInt32(this.numero.Text) );  
-					if (dr.Length > 0)
-					{
-						dr[0].Delete();
-						DataSet DSChanges = dt.GetChanges(DataRowState.Deleted);
-
-						if (DSChanges != null)
-						{
-							try
-							{                                
-                                db.ExcetuteQuery(query);
-                                dt.AcceptChanges();
-								MessageBox.Show(Global.M_Error[3,Global.idioma].ToString());
-							}
-							catch (DBConcurrencyException ex)
-							{
-								string customErrorMessage;
-								customErrorMessage = ex.Message.ToString();
-								customErrorMessage += ex.Row[0].ToString();
-								MessageBox.Show(customErrorMessage.ToString());										
-							}
-							catch (OleDbException ex)
-							{
-								MessageBox.Show(ex.Message,"",MessageBoxButtons.OK,MessageBoxIcon.Error);
-								dt.RejectChanges();
-							}
-						}
-					}
-				}
-				else
-				{				
-					MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
-					cmRegister.Position = 0;
-				}
+                query = "DELETE FROM  familia  WHERE ( familia = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
+				db.ExcetuteQuery(query);
+				MessageBox.Show(Global.M_Error[3,Global.idioma].ToString());					
 			}
 			else
 			{
@@ -299,24 +251,9 @@ namespace TRUCK
 		}
         private void Save_Dato()
         {
-            string query = "";
-            query = "UPDATE  familia  SET descripcion = '" + this.nombre.Text + "' WHERE (familia = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
-
-            try
-            {               
-                db.ExcetuteQuery(query);	
-            }
-            catch (DBConcurrencyException dbcx)
-            {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-            }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+        string query = "";
+        query = "UPDATE  familia  SET descripcion = '" + this.nombre.Text + "' WHERE (familia = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
+        db.ExcetuteQuery(query);	
         }
 		private bool Find_Numero(string codigo)
 		{

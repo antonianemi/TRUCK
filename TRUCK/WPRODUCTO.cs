@@ -1,17 +1,14 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Data.OleDb;
 using System.Data;
-using System.IO;
-using CrystalDecisions.CrystalReports.Engine;
+using System.Collections.Generic;
 
 namespace TRUCK
-{	
-	public class WPRODUCTO : Form1
+{ 
+    public class WPRODUCTO : Form1
     {
         #region VARIABLES
         private DataAccesQuery db;
@@ -69,7 +66,7 @@ namespace TRUCK
                 this.tarifa.Validating += new System.ComponentModel.CancelEventHandler(this.tarifa_Validating);
             }
             this.toolBar1.ItemClicked += new ToolStripItemClickedEventHandler(this.toolBar1_ButtonClick);
-            dt = db.getData("SELECT * FROM articulos WHERE (numemp = " + Global.nempresa + " ORDER BY numero)");
+            dt = db.getData("SELECT * FROM articulos WHERE (numemp = " + Global.nempresa + ")");
             dt.Tables[0].TableName = "articulos";
             cmRegister = (CurrencyManager)this.BindingContext[dt, "articulos"];
             cmRegister.Position = 0;
@@ -411,26 +408,23 @@ namespace TRUCK
 
             switch (this.toolBar1.Items.IndexOf(e.ClickedItem))
             {
-                case 0:   // Nuevo Producto
+
+
+                case 0:// Nuevo Producto
                     {
                         limpiar();
-                        //this.cerrar=false;
-
-                        IDataReader LP = db.getDataReader("SELECT numero FROM familia WHERE (numemp = " + Global.nempresa + ") ORDER BY numero desc");
-
-                        if (LP.Read()) { cod = Convert.ToInt32(LP.GetValue(0)); }
-
+                        IDataReader LP = db.getDataReader("SELECT first 1 NUMERO FROM Articulos order by NUMERO desc");
+                        if (LP.Read()) cod = Convert.ToInt16(LP.GetValue(0));
                         LP.Close();
-
                         this.numero.Text = Convert.ToString(cod + 1);
-
                         this.editar_dato = false;
-
                         this.numero.Focus();
-
                     }
+                break;
 
-                    break;
+
+
+
 
                 case 1: // Guardar Producto
                     {
@@ -458,6 +452,7 @@ namespace TRUCK
                         else
                         {
                             this.editar_dato = false;
+
                             IDataReader df = db.getDataReader("SELECT numemp, NUMERO FROM Articulos WHERE numemp = " + Global.nempresa + " and NUMERO = " + Convert.ToInt32(this.numero.Text));
 
                             if (!df.Read())
@@ -473,16 +468,19 @@ namespace TRUCK
                             this.comando(6);
                         }
                     }
-                    break;
+                break;
+
 
                 case 2:  // Borrar Vendedor
                     {
                         DialogResult df = MessageBox.Show(Global.M_Error[100, Global.idioma].ToString(), "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                         if (df == DialogResult.Yes) { Del_Dato(); }
                     }
-                    break;
+                break;
+
 
                 case 3:  // Cancelar
+
                     if (this.Find_Numero(numero.Text))
                     {
                         Mostrar_Datos(this.cmRegister.Position, 0);
@@ -499,8 +497,11 @@ namespace TRUCK
                         limpiar();
                     }
                     
-                    break;
+                break;
+
+
                 case 4: // Reg. Anterior
+
                     if (this.editar_dato)
                     {
                         if (MessageBox.Show(Global.M_Error[303, Global.idioma].ToString(), "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
@@ -510,8 +511,12 @@ namespace TRUCK
                         else Mostrar_Datos(Previous(ref cmRegister), 0);
                     }
                     else Mostrar_Datos(Previous(ref cmRegister), 0);
-                    break;
+
+                break;
+
+
                 case 5:  // Reg. Siguiente
+
                     if (this.editar_dato)
                     {
                         if (MessageBox.Show(Global.M_Error[303, Global.idioma].ToString(), "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
@@ -521,14 +526,16 @@ namespace TRUCK
                         else Mostrar_Datos(Next(ref cmRegister), 0);
                     }
                     else Mostrar_Datos(Next(ref cmRegister), 0);
-                    break;
+
+                break;
+
+
                 case 6:
                     {
                         if (this.editar_dato)
                         {
                             if (MessageBox.Show(Global.M_Error[303, Global.idioma].ToString(), "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                             {
-                                // this.cerrar = true;
                                 this.comando(1);
                             }
                             else
@@ -542,8 +549,47 @@ namespace TRUCK
                             this.Close();
                             this.Dispose();
                         }
-                    } break;
+                    }
+
+                break;
+
+
             }
+        }
+        #endregion
+        #region AccesData
+        private void New_Dato()
+        {
+            string query = "";
+            query = "INSERT INTO ARTICULOS (numemp,numero,descripcion,tarifa,familia) VALUES ( " + Global.nempresa + "," + Convert.ToInt32(this.numero.Text) + ",'" + this.nombre.Text + "'," + Convert.ToDecimal(this.tarifa.Text) + "," + Convert.ToInt32(this.familia.Text) + ")";
+            if (this.numero.Text != "" && this.numero.Text != "0"){
+                db.ExcetuteQuery(query);
+            }
+            else
+            {
+                MessageBox.Show(Global.M_Error[89, Global.idioma].ToString());
+            }
+        }
+        private void Del_Dato()
+        {
+            string query = "";
+            if (numero.Text != "")
+            {
+                query = "DELETE FROM ARTICULOS WHERE ( NUMERO = " + Convert.ToInt32(this.numero.Text) + " and NUMEMP = " + Global.nempresa + ")";
+                db.ExcetuteQuery(query);
+            }
+            else
+            {
+                MessageBox.Show(Global.M_Error[305, Global.idioma].ToString());
+                cmRegister.Position = 0;
+            }
+        }
+        private void Save_Dato()
+        {
+        string query = "";
+        query = "UPDATE  ARTICULOS  SET descripcion = '" + this.nombre.Text + "'," +
+        "tarifa = " + Convert.ToDecimal(this.tarifa.Text) + ", familia = " + Convert.ToInt32(this.familia.Text) + " WHERE (numero = " + Convert.ToInt32(numero.Text) + " and numemp = " + Global.nempresa + ")";
+        db.ExcetuteQuery(query);
         }
         #endregion
         #region FUNCTIOS
@@ -555,115 +601,8 @@ namespace TRUCK
 		private void editar_TextChanged(object sender, System.EventArgs e)
 		{
 			this.editar_dato=true;           
-		}		
-        private void New_Dato()
-		{
-            string query = "";
-
-			query= "INSERT INTO articulos (numemp,numero,descripcion,tarifa,familia) VALUES ( " + Global.nempresa + "," + Convert.ToInt32(this.numero.Text) + ",'" + this.nombre.Text + "'," + Convert.ToDecimal(this.tarifa.Text) + "," + Convert.ToInt32(this.familia.Text) + ")";
-
-            try
-            {
-
-                if (this.numero.Text != "" && this.numero.Text != "0")
-                {                                          
-                    db.ExcetuteQuery(query);                    
-                }
-                else
-                {
-                    MessageBox.Show(Global.M_Error[89, Global.idioma].ToString());
-                }
-            }
-            catch (DBConcurrencyException dbcx)
-            {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-                dt.RejectChanges();
-            }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                dt.RejectChanges();
-            }		
 		}
-		private void Del_Dato()
-		{
-            string query = "";
-			if (numero.Text != "")
-			{
-                query = "DELETE * FROM articulos WHERE ( numero = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
-				if (dt.Tables[0].Rows.Count > 0)
-				{
-					DataRow[] dr = dt.Tables[0].Select("numero = " + Convert.ToInt32(this.numero.Text) );  //.Rows[cmAgente.Position];
-
-                    if (dr.Length > 0)
-                    {
-                        dr[0].Delete();
-
-						DataSet DSChanges = dt.GetChanges(DataRowState.Deleted);
-
-						if (DSChanges != null)
-						{
-							try
-							{
-                                dt.AcceptChanges();
-                                db.ExcetuteQuery(query);
-                                MessageBox.Show(Global.M_Error[3,Global.idioma].ToString());
-							}
-							catch (DBConcurrencyException ex)
-							{
-								string customErrorMessage;
-								customErrorMessage = ex.Message.ToString();
-								customErrorMessage += ex.Row[0].ToString();
-								MessageBox.Show(customErrorMessage.ToString());
-							}
-							catch (OleDbException ex)
-							{
-								MessageBox.Show(ex.Message,"",MessageBoxButtons.OK,MessageBoxIcon.Error);
-                                dt.RejectChanges();
-							}
-						}
-					}
-				}
-				else
-				{				
-					MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
-					cmRegister.Position = 0;
-				}
-			}
-			else
-			{
-				MessageBox.Show(Global.M_Error[305,Global.idioma].ToString());
-				cmRegister.Position = 0;
-			}
-		}
-		private void Save_Dato()
-		{
-
-            string query = "";
-            try
-            {          
-                query = "UPDATE    SET descripcion = '" + this.nombre.Text + "'," +
-                    "tarifa = " + Convert.ToDecimal(this.tarifa.Text) + ", familia = " + Convert.ToInt32(this.familia.Text) + " WHERE (numero = " + Convert.ToInt32(numero.Text) + " and numemp = " + Global.nempresa + ")";
-                db.ExcetuteQuery(query);
-            }
-            catch (DBConcurrencyException dbcx)
-            {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-                dt.RejectChanges();
-            }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                dt.RejectChanges();
-            }		
-		}
-		private bool Find_Numero(string codigo)
+        private bool Find_Numero(string codigo)
 		{
 			bool encontro=false;
             cmRegister.Position = 0;
@@ -832,7 +771,6 @@ namespace TRUCK
                 return (cmRegister.Count - 1);
             }
         }
-
         #endregion
         /// <summary>
         /// Limpiar los recursos que se estén utilizando.
@@ -848,7 +786,7 @@ namespace TRUCK
             }
             base.Dispose(disposing);
         }
-        
     }			
+
 }
 

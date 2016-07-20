@@ -63,9 +63,9 @@ namespace TRUCK
             // 
             // pto1
             // 
+            resources.ApplyResources(this.pto1, "pto1");
             this.pto1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.pto1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            resources.ApplyResources(this.pto1, "pto1");
             this.pto1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.pto1.Name = "pto1";
             // 
@@ -114,19 +114,22 @@ namespace TRUCK
             // Read all the data waiting in the buffer
             mensaje += S_RS232.ReadExisting();
             // Display the text to the user in the terminal
-            if (mensaje.IndexOf((char)13) > 0)
-            {
-                if (mensaje.IndexOf("OVER") < 0 && mensaje.IndexOf("SOBRE") < 0 && mensaje.IndexOf("&&") < 0)
-                {
-                    if (mensaje.Length > 0)
-                    {
-                        if (mensaje.IndexOf("NEG") < 0) mensaje = RS232.obtiene_peso(mensaje);
-                        else mensaje = "0";
-                        SetText(mensaje);
-                    }
-                }
-                else mensaje = "0";
-            }
+
+            SetText(RS232.obtiene_peso(mensaje));
+
+            //if (mensaje.IndexOf((char)13) > 0)
+            //{
+            //    if (mensaje.IndexOf("OVER") < 0 && mensaje.IndexOf("SOBRE") < 0 && mensaje.IndexOf("&&") < 0)
+            //    {
+            //        if (mensaje.Length > 0)
+            //        {
+            //            if (mensaje.IndexOf("NEG") < 0) mensaje = RS232.obtiene_peso(mensaje);
+            //            else mensaje = "0";
+            //            SetText(mensaje);
+            //        }
+            //    }
+            //    else mensaje = "0";
+            //}
         }
         private void SetText(string text)
         {
@@ -137,6 +140,9 @@ namespace TRUCK
             }
             else
             {
+
+                pto1.Height = 300;
+                pto1.Width =  600;
                 this.pto1.Text = text;
             }
         }

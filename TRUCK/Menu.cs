@@ -663,6 +663,7 @@ namespace TRUCK
 			this.LayoutMdi(MdiLayout.TileVertical);
 		}
         #endregion
+
         /// <summary>
         /// Punto de entrada principal de la aplicación.
         /// </summary>
@@ -687,6 +688,7 @@ namespace TRUCK
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(Global.idioma2);
             Application.Run(new Menu());
         }
+
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();

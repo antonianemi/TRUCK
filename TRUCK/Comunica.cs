@@ -8,6 +8,7 @@ namespace TRUCK
     class Comunica
     {
         public bool inicia(ref SerialPort S_RS232, int puerto, int baud, ref string mensaje)
+
         {
             try
             {
@@ -96,6 +97,8 @@ namespace TRUCK
             }
         }
 
+
+
         public string obtiene_peso(string txt_peso)
         {
             if (Global.aplicacion != 2)
@@ -128,6 +131,8 @@ namespace TRUCK
             }
             else return txt_peso;
         }
+
+
 
         public string obtiene_um(string txt_um)
         {

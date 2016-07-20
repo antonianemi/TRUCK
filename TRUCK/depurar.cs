@@ -186,7 +186,7 @@ namespace TRUCK
         public depurar(int ventana)
         {
             InitializeComponent();
-
+            db = new DataAccesQuery();
             this.TransparencyKey = Color.Empty;
 
             if (ventana == 6)
@@ -230,13 +230,13 @@ namespace TRUCK
         }
 		private void depura(int ran1, int ran2,string nombre_tabla,int n_mensaje)  //29
 		{				
-			string sele = "DELETE * FROM "+ nombre_tabla + " WHERE ( numero >= " + ran1 + " AND numero <= "+ ran2 + " AND numemp = " + Global.nempresa + ")";
+			string sele = "DELETE FROM "+ nombre_tabla + " WHERE ( numero >= " + ran1 + " AND numero <= "+ ran2 + " AND numemp = " + Global.nempresa + ")";
             db.ExcetuteQuery(sele);
             txtStatus.Text = Global.M_Error[n_mensaje, Global.idioma] + Global.M_Error[28, Global.idioma];            
         }
         private void depura(string ran1, string ran2, string nombre_tabla, int n_mensaje) //269
 		{
-			string sele = "DELETE * FROM " + nombre_tabla + " WHERE ( numero >= '" + ran1 + "' AND numero <= '"+ ran2 + "' AND numemp = " + Global.nempresa + ")";
+			string sele = "DELETE FROM " + nombre_tabla + " WHERE ( numero >= '" + ran1 + "' AND numero <= '"+ ran2 + "' AND numemp = " + Global.nempresa + ")";
             db.ExcetuteQuery(sele);
             txtStatus.Text = Global.M_Error[n_mensaje, Global.idioma] + Global.M_Error[28, Global.idioma];
         }

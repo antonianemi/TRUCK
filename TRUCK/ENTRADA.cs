@@ -14,7 +14,6 @@ namespace TRUCK
 	/// </summary>
 	public class ENTRADA : System.Windows.Forms.Form
     {
-
         #region VARIABLES
         private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Button button1;
@@ -30,6 +29,7 @@ namespace TRUCK
 		private System.ComponentModel.IContainer components = null;
         DataAccesQuery db;
         #endregion
+
         #region CONSTRUCTOR
         public ENTRADA()
 		{
@@ -50,6 +50,7 @@ namespace TRUCK
             }
         }
         #endregion
+
         #region Windows Form Designer generated code
         /// <summary>
         /// Método necesario para admitir el Diseñador, no se puede modificar
@@ -207,6 +208,7 @@ namespace TRUCK
 
         }
         #endregion
+
         #region EVENTS
         private void inicio_user_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
@@ -233,7 +235,11 @@ namespace TRUCK
 
             Global.Empresa = this.inicio_empresa.Text;
 
-            string sele = "SELECT user,contrasena,privilegios,nombre FROM usuarios WHERE (user = '" + this.inicio_user.Text.Trim() + "')";
+            string sele = "SELECT \"user\" ,contrasena,privilegios,nombre FROM usuarios WHERE (\"user\" = '" + this.inicio_user.Text.Trim() + "')";
+
+           var data = db.getData(sele);
+
+
 
             IDataReader DB = db.getDataReader(sele);
 
@@ -252,10 +258,8 @@ namespace TRUCK
                         DB.Close();
                         Close();
                     }// DON'T MATCH PASSWORD.
-
                     else
                     {
-                        //MessageBox.Show(Global.M_Error[120,Global.idioma].ToString());
                         this.inicio_password.Focus();
                         TRUCK.Menu.User_exit = false;
                     }
@@ -288,6 +292,7 @@ namespace TRUCK
             Global.Empresa = this.inicio_empresa.Text;
         }
         #endregion
+
         /// <summary>
 		/// Limpiar los recursos que se estén utilizando.
 		/// </summary>

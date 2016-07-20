@@ -663,94 +663,53 @@ namespace TRUCK
         {
             string atrib = buscar_atributos();
 
-            string query = "UPDATE usuarios SET contrasena = '" + this.txt_psw.Text + "', iniciales = '" + this.txt_ID.Text +
-                "', privilegios = '" + atrib + "', nombre = '" + this.txt_descrip.Text +
-                "', turno = '" + this.txt_turno + "', tipo = " + this.C_tipo.SelectedIndex + " WHERE ( user = '" + this.txt_user.Text + "')";
-            try
-            {
-                db.ExcetuteQuery(query);
-                dt.AcceptChanges();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            string query = "UPDATE usuarios SET contrasena = '" 
+                + this.txt_psw.Text + "', iniciales = '" 
+                + this.txt_ID.Text + "', privilegios = '"
+                + atrib + "', nombre = '"
+                + this.txt_descrip.Text + "', turno = '"
+                + this.txt_turno + "', tipo = "
+                + this.C_tipo.SelectedIndex + " WHERE ( \"user\" = '" 
+                + this.txt_user.Text + "')";
+
+            db.ExcetuteQuery(query);
         }
+
 		private void Nuevo_User()
 		{		
 			string atrib = buscar_atributos();
 
-            string query = "INSERT INTO usuarios ([user], contrasena, iniciales, privilegios, nombre, turno, tipo )" +
-                " VALUES ('" + this.txt_user.Text + "','" + this.txt_psw.Text + "','" + this.txt_ID.Text + "','" + atrib.ToString() + "','" + this.txt_descrip.Text + "','" + this.txt_turno + "'," + this.C_tipo.SelectedIndex + ")";
-            try
-            {
+            string query = "INSERT INTO usuarios" +
+                " VALUES ('" + this.txt_user.Text + 
+                "','" + this.txt_psw.Text + 
+                "','" + atrib.ToString() + 
+                "','" + this.txt_ID.Text + 
+                "','" + this.txt_descrip.Text + 
+                "','" + this.txt_turno + 
+                "'," + this.C_tipo.SelectedIndex + ")";
+            
                 if (this.txt_user.Text != "")
                 {                   
                     db.ExcetuteQuery(query);                    
                 }
-            }
-            catch (DBConcurrencyException dbcx)
-            {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-                dt.RejectChanges();
-            }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                dt.RejectChanges();
-            }					
-					MessageBox.Show(Global.M_Error[5,Global.idioma].ToString());
+            			
+			MessageBox.Show(Global.M_Error[5,Global.idioma].ToString());
 		}
 		private void Borrar_User()
 		{			
-            string query = "DELETE FROM USUARIOS WHERE ( USER = '" + this.txt_user.Text + "')";
-
-			if (dt.Tables[0].Rows.Count > 0)
-			{
-                if (this.txt_user.Text.ToUpper() != "ADMIN" && this.txt_user.Text.ToUpper() != "OPERADOR" && this.txt_user.Text.ToUpper() != "OPERATOR")
-                {
-                    DataRow[] dr = dt.Tables[0].Select("USER = '" + this.txt_user.Text + "'"); 
-                    if (dr.Length > 0)
-                    {
-                        dr[0].Delete();
-
-                        DataSet DSChanges = dt.GetChanges(DataRowState.Deleted);
-
-                        if (DSChanges != null)
-                        {
-                            try
-                            {
-                                db.ExcetuteQuery(query);
-                                dt.AcceptChanges();
-                                MessageBox.Show(Global.M_Error[3, Global.idioma].ToString());
-                            }
-                            catch (DBConcurrencyException ex)
-                            {
-                                string customErrorMessage;
-
-                                customErrorMessage = ex.Message.ToString();
-                                customErrorMessage += ex.Row[0].ToString();
-                                MessageBox.Show(customErrorMessage.ToString());
-
-                            }
-                            catch (OleDbException ex)
-                            {
-                                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                dt.RejectChanges();
-                            }
-                        }
-                    }
-                }
-			}
-			else
-			{				
-				MessageBox.Show(Global.M_Error[2,Global.idioma]);
-				cmRegister.Position = 0;
-			}
+            string query = "delete from usuarios WHERE ( \"user\" = '" + this.txt_user.Text + "')";
+            			
+            if (this.txt_user.Text.ToUpper() != "ADMIN" && this.txt_user.Text.ToUpper() != "OPERADOR" && this.txt_user.Text.ToUpper() != "OPERATOR")
+            {  
+                 db.ExcetuteQuery(query);
+                 MessageBox.Show(Global.M_Error[3, Global.idioma].ToString());
+            }			
 		}
+
+
+
+
+
 
 
 		private bool Find_User(string n_user)
@@ -758,7 +717,7 @@ namespace TRUCK
 			int i;
 			bool buscar = false;
 
-            dt = db.getData("SELECT * FROM usuarios WHERE (user = '" + n_user + "')");
+            dt = db.getData("SELECT * FROM usuarios WHERE (\"user\" = '" + n_user + "')");
             cmRegister.Position = 0;
 
 			for (i = 0; i < dt.Tables[0].Rows.Count;i++)
@@ -914,8 +873,6 @@ namespace TRUCK
             }
         }
         #endregion
-
-
         #region EVENTS
         private void editar_TextChanged(object sender, System.EventArgs e)
         {
@@ -934,13 +891,17 @@ namespace TRUCK
 
             switch (this.toolBar1.Items.IndexOf(e.ClickedItem))
 			{
+
 				case 0: 
 				{
 					limpiar();
-					this.cerrar=false;
-					this.editar_dato=false;
-					this.txt_user.Focus();
-				}break;
+					cerrar=false;
+					editar_dato=false;
+					txt_user.Focus();
+				}
+               break;
+
+
                 case 1:
                     {
                         this.editar_dato = false;
@@ -967,13 +928,21 @@ namespace TRUCK
                         if (cerrar) this.comando(6);
                         else this.comando(0);
                     } break;
-				case 2:{Borrar_User();}break;
+
+				case 2:{Borrar_User();}break;//ELEIMINAR USER
+
+
 				case 3:
 				{					
-					limpiar();
+					limpiar();//LIMPIAR
 				}break;
-				case 4:{Mostrar_Datos(Previous(ref cmRegister));}break;
-				case 5:{Mostrar_Datos(Next(ref cmRegister));}break;
+
+
+				case 4:{Mostrar_Datos(Previous(ref cmRegister));}break;//REGISTRO ANTERIOR
+
+				case 5:{Mostrar_Datos(Next(ref cmRegister));}break;//REGISTRO SIGUIENTE
+
+
 				case 6:
 				{
                     if (editar_dato)
@@ -987,6 +956,8 @@ namespace TRUCK
                     }
                     else this.Close();
 				}break;
+
+
 			}		
 		}		
 

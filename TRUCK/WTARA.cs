@@ -58,7 +58,7 @@ namespace TRUCK
             this.nombre.TextChanged+=new System.EventHandler(this.editar_TextChanged);
 			this.tara.KeyDown+=new System.Windows.Forms.KeyEventHandler(this.tara_KeyDown);
             this.toolBar1.ItemClicked += new ToolStripItemClickedEventHandler(this.toolBar1_ButtonClick);
-            dt=db.getData("SELECT * FROM TARAS WHERE (numemp = " + Global.nempresa + ") ORDER BY NUMERO");
+            dt=db.getData("SELECT * FROM TARA WHERE (numemp = " + Global.nempresa + ") ORDER BY NUMERO");
             dt.Tables[0].TableName = "TARAS";
             cmRegister = (CurrencyManager)this.BindingContext[dt, "TARAS"];
 			cmRegister.Position = 0;
@@ -265,6 +265,7 @@ namespace TRUCK
             }
             return posicion;
         }
+
         public int buscar_posicion(string elemento, string clave)
         {
             int desde, hasta, medio, posicion; // desde y hasta indican los límites del array que se está mirando.
@@ -329,7 +330,7 @@ namespace TRUCK
 		}
         private void New_Dato()
         {
-            string query = "INSERT INTO Taras (numemp,numero,descripcion,tara) VALUES ( " + Global.nempresa + ",'" + this.numero.Text.Trim() + "','" + this.nombre.Text + "','" + this.tara.Text + "')";
+            string query = "INSERT INTO Tara (numemp,numero,descripcion,tara) VALUES ( " + Global.nempresa + ",'" + this.numero.Text.Trim() + "','" + this.nombre.Text + "','" + this.tara.Text + "')";
             DataRow dr = dt.Tables[0].NewRow();
             try
             {
@@ -356,7 +357,7 @@ namespace TRUCK
         }
 		private void Del_Dato()
 		{
-            string query = "DELETE FROM TARAS WHERE ( NUMERO = '" + this.numero.Text.Trim() + "' and NUMEMP = " + Global.nempresa + ")";
+            string query = "DELETE FROM TARA WHERE ( NUMERO = '" + this.numero.Text.Trim() + "' and NUMEMP = " + Global.nempresa + ")";
 
 			if (numero.Text != "")
 			{
@@ -427,29 +428,33 @@ namespace TRUCK
                 dt.RejectChanges();
             }
         }
+
+
 		private bool Find_Numero(string codigo)
 		{
 			bool encontro=false;
             cmRegister.Position = 0;
 			
-			DataRow[] dr = dt.Tables[0].Select("numero = '"+codigo.Trim()+"'");
+			DataRow[] dr = dt.Tables[0].Select("NUMERO = '"+codigo.Trim()+"'");
 			if (dr.Length > 0)
 			{
 				encontro = true;
-				cmRegister.Position = buscar_posicion(codigo.Trim(),"numero");
+				cmRegister.Position = buscar_posicion(Convert.ToInt32(codigo.Trim()),"NUMERO");
 			}
 			return encontro;
 		}
+
+
 		private bool Find_Nombre(string codigo)
 		{
 			bool encontro=false;
 			cmRegister.Position = 0;
 			int len = codigo.Length;
-			DataRow[] dr = dt.Tables[0].Select("SUBSTRING(descripcion,1," + len+ ") = '"+codigo+"'");
+			DataRow[] dr = dt.Tables[0].Select("SUBSTRING(DESCRIPCION,1," + len+ ") = '"+codigo+"'");
 			if (dr.Length > 0)
 			{
 				encontro = true;
-				cmRegister.Position = buscar_posicion(dr[0]["numero"].ToString(),"numero");
+				cmRegister.Position = buscar_posicion(Convert.ToInt32(dr[0]["NUMERO"].ToString()),"NUMERO");
 			}
 			return encontro;
 		}
@@ -556,24 +561,33 @@ namespace TRUCK
 		{
 			switch (this.toolBar1.Items.IndexOf(e.ClickedItem))
 			{
-				case 0 :  
-				{		
-					limpiar();
-					this.editar_dato=false;
-					this.numero.Focus();
-				}break;
-				case 1 : 
+
+				case 0 :  //NUEVA TARA
+				{
+                        int cod = 0;					
+                        limpiar();
+                        IDataReader LP = db.getDataReader("SELECT first 1 NUMERO FROM Tara order by NUMERO desc");
+                        if (LP.Read()) cod = Convert.ToInt16(LP.GetValue(0));
+                        LP.Close();
+                        numero.Text = Convert.ToString(cod + 1);
+                        editar_dato = false;
+                        numero.Focus();
+                }
+                break;
+
+
+				case 1 : //GUARDAR TARA
 				{
 					if (this.numero.Text == "" || this.numero.Text == "0")
 					{
 						MessageBox.Show(Global.M_Error[89,Global.idioma].ToString());
-						this.numero.Focus();
+						numero.Focus();
 						break;
 					}					
-					if (this.nombre.Text == "")
+					if (nombre.Text == "")
 					{
 						MessageBox.Show(Global.M_Error[90,Global.idioma].ToString());
-						this.nombre.Focus();
+						nombre.Focus();
 						break;
 					}
                     if (dt.Tables[0].Rows.Count > 5 && !Keylock.IsPresent())
@@ -582,28 +596,37 @@ namespace TRUCK
                     }
                     else
                     {
-                        this.editar_dato = false;
-                        IDataReader df = db.getDataReader("SELECT numemp,numero FROM Taras WHERE numemp = " + Global.nempresa + " and numero = '" + this.numero.Text.Trim()+ "'");
+                        editar_dato = false;
+
+                        IDataReader df = db.getDataReader("SELECT numemp,numero FROM Tara WHERE numemp = " + Global.nempresa + " and numero = '" + numero.Text.Trim()+ "'");
 
                         if (!df.Read())
                         {
                             df.Close();
                             New_Dato();
                         }
+
                         else
                         {
                             df.Close();
                             Save_Dato();
                         }
-                        this.comando(6);
+
+                        comando(6);
                     }
-				}break;
-				case 2 :
+				}
+                    break;
+
+
+				case 2://BORRAR TARA
 				{
 					DialogResult df = MessageBox.Show(Global.M_Error[100,Global.idioma].ToString(),"",MessageBoxButtons.YesNo,MessageBoxIcon.Warning);
 					if (df == DialogResult.Yes){Del_Dato();}
-				}break;				
-				case 3 :
+				}
+                break;
+                    
+                    				
+				case 3:// CANCELAR
 					if (this.Find_Numero(numero.Text))
 					{
 					   Mostrar_Datos(this.cmRegister.Position,0);
@@ -613,8 +636,10 @@ namespace TRUCK
 						this.numero.Focus();
 						limpiar();
 					}
-					break;
-				case 4 : // Reg. Anterior
+			   break;
+
+
+			   case 4: // Reg. Anterior
 					if (this.editar_dato)
 					{
 						if (MessageBox.Show(Global.M_Error[303,Global.idioma].ToString(),"",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes)
@@ -624,8 +649,10 @@ namespace TRUCK
 						else Mostrar_Datos(Previous(ref cmRegister),0);
 					}
 					else Mostrar_Datos(Previous(ref cmRegister),0);
-					break;
-				case 5 :  // Reg. Siguiente
+			   break;
+
+
+			   case 5:  // Reg. Siguiente
 					if (this.editar_dato)
 					{
 						if (MessageBox.Show(Global.M_Error[303,Global.idioma].ToString(),"",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes)
@@ -635,7 +662,9 @@ namespace TRUCK
 						else Mostrar_Datos(Next(ref cmRegister),0);
 					}
 					else Mostrar_Datos(Next(ref cmRegister),0);
-					break;
+			   break;
+
+
 				case 6  :
 				{
 					if (this.editar_dato)
@@ -647,7 +676,9 @@ namespace TRUCK
 						else this.Close();
 					}
 					else this.Close();
-				}break;
+				}
+                break;
+
 			}		
 		}
         #endregion

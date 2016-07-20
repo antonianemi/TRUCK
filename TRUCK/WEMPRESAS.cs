@@ -575,111 +575,58 @@ namespace TRUCK
         #endregion
         #region FUNCTIONS
         private void New_Dato()
-        {
-            try
-            {               
-                db.ExcetuteQuery("INSERT INTO empresa (numemp,empresa,direccion1,direccion2,direccion3,cp,telf,logo)" +
-                " VALUES ( " + Convert.ToInt32(this.id_empresa.Text) + ",'" + this.empresa.Text + "','" + this.dir1.Text + "','" + this.dir2.Text + "','" + this.dir3.Text + "','" +
-                this.txt_cp.Text + "','" + this.txt_telf.Text + "','" + this.ruta_logo + "')");     
-            }
-            catch (DBConcurrencyException dbcx)
-            {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-                dt.RejectChanges();
-            }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                dt.RejectChanges();
-            }
+        {   
+                string query = "INSERT INTO empresa (numemp,empresa,direccion1,direccion2,direccion3,cp,telf,logo)" +
+                " VALUES ( " 
+                + Convert.ToInt32(this.id_empresa.Text) + 
+                ",'" 
+                + this.empresa.Text + "','" 
+                + this.dir1.Text + "','" 
+                + this.dir2.Text + "','" 
+                + this.dir3.Text + "',"
+                + this.txt_cp.Text + ",'"
+                + this.txt_telf.Text + "','"
+                + this.ruta_logo + "')";
+                db.ExcetuteQuery(query); 
         }
+
         private void Save_Dato()
-        {
-            try
-            {  
-                db.ExcetuteQuery("UPDATE empresa SET empresa = '" + this.empresa.Text + "', direccion1 = '" + this.dir1.Text + "', direccion2 = '" + this.dir2.Text + "', direccion3 = '" + this.dir3.Text + "'," +
+        {            
+                string query = "UPDATE empresa SET empresa = '" + this.empresa.Text + "', direccion1 = '" + this.dir1.Text + "', direccion2 = '" + this.dir2.Text + "', direccion3 = '" + this.dir3.Text + "'," +
                 " cp = '" + this.txt_cp.Text + "',telf = '" + this.txt_telf.Text + "', logo = '" + this.ruta_logo + "'" +
-                " WHERE ");
-            }
-            catch (DBConcurrencyException dbcx)
-            {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-                dt.RejectChanges();
-            }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                dt.RejectChanges();
-            }
+                " WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")";
+                db.ExcetuteQuery(query);           
         }
-
         private void Del_Dato()
-        {
-
-            if (dt.Tables[0].Rows.Count > 0)
-            {
-                DataRow[] dr = dt.Tables[0].Select("numemp = " + Convert.ToInt32(this.id_empresa.Text));  //.Rows[cmAgente.Position];
-                if (dr.Length > 0)
-                {
-                    dr[0].Delete();
-
-                    DataSet DSChanges = dt.GetChanges(DataRowState.Deleted);
-
-                    if (DSChanges != null)
-                    {
-                        try
-                        {
-                            db.ExcetuteQuery("DELETE * FROM CLIENTE WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")");
-                            dt.AcceptChanges();
-                            string seleccion = "DELETE * FROM ARTICULOS WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")";
-                            db.ExcetuteQuery(seleccion);
-                            seleccion = "DELETE * FROM PROVEEDOR WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")";
-                            db.ExcetuteQuery(seleccion);
-                            seleccion = "DELETE * FROM CLIENTE WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")";
-                            db.ExcetuteQuery(seleccion);
-                            seleccion = "DELETE * FROM TRANSPORTISTAS WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")";
-                            db.ExcetuteQuery(seleccion);
-                            seleccion = "DELETE * FROM TARAS WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")" ;
-                            db.ExcetuteQuery(seleccion);
-
-                            MessageBox.Show(Global.M_Error[3, Global.idioma].ToString());
-                        }
-                        catch (DBConcurrencyException ex)
-                        {
-                            string customErrorMessage;
-
-                            customErrorMessage = ex.Message.ToString();
-                            customErrorMessage += ex.Row[0].ToString();
-                            MessageBox.Show(customErrorMessage.ToString());
-
-                        }
-                        catch (OleDbException ex)
-                        {
-                            MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            dt.RejectChanges();
-                        }
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show(Global.M_Error[2, Global.idioma]);
-                cmRegister.Position = 0;
-            }
+        {                                 
+         string query = "DELETE FROM empresa WHERE NUMEMP = " + Convert.ToInt32(this.id_empresa.Text);
+         db.ExcetuteQuery(query);
+         query = "DELETE FROM CLIENTE WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")";
+         db.ExcetuteQuery(query);
+         query = "DELETE FROM ARTICULOS WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")";
+         db.ExcetuteQuery(query);
+         query = "DELETE FROM PROVEEDOR WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")";
+         db.ExcetuteQuery(query);
+         query = "DELETE FROM CLIENTE WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")";
+         db.ExcetuteQuery(query);
+         query = "DELETE FROM TRANSPORTISTAS WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")";
+         db.ExcetuteQuery(query);
+         query = "DELETE FROM TARA WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")" ;
+         db.ExcetuteQuery(query);
+         MessageBox.Show(Global.M_Error[3, Global.idioma].ToString());
         }
+
         private bool Find_Numero(string nombre)
         {
+
             bool encontro = false;
+
             int len = nombre.Length;
 
             dt.Tables[0].PrimaryKey = new DataColumn[] { dt.Tables[0].Columns["numemp"] };
+
             DataRow dr = dt.Tables[0].Rows.Find(nombre);
+
             if (dr != null)
             {
                 encontro = true;
@@ -687,6 +634,8 @@ namespace TRUCK
             }
             return encontro;
         }
+
+
         public bool muestra_empresa(string codigo)
         {
             if (this.Find_Numero(codigo))
@@ -697,6 +646,8 @@ namespace TRUCK
             else return false;
 
         }
+
+
         private void Mostrar_Datos(int pos, int op)
         {
             if (dt.Tables[0].Rows.Count > 0 && pos >= 0)
@@ -709,13 +660,16 @@ namespace TRUCK
                 this.dir3.Text = dr["direccion3"].ToString();
                 this.txt_cp.Text = dr["cp"].ToString();
                 this.txt_telf.Text = dr["telf"].ToString();
-                this.ruta_logo = dr["logo"].ToString();
-                if (this.ruta_logo.Length > 0) this.pictureLogo.Image = new Bitmap(this.ruta_logo);
+                this.ruta_logo = dr["logo"].ToString().Trim();
+
+                if (this.ruta_logo.Length > 0 && ruta_logo!=null&& ruta_logo !=string.Empty) this.pictureLogo.Image = new Bitmap(this.ruta_logo);
                 if (op == 0) this.id_empresa.Focus();
                 else this.empresa.Focus();
                 this.editar_dato = false;
             }
         }
+
+
         private void limpiar()
         {
             this.id_empresa.Text = "";
@@ -727,6 +681,8 @@ namespace TRUCK
             this.txt_telf.Text = "";
             this.id_empresa.Enabled = true;
         }
+
+
         private void ver_empre()
         {
             this.toolBar1.Items[1].Enabled = false;
@@ -738,6 +694,8 @@ namespace TRUCK
             this.datos_empresa.Visible = false;
             this.nicePanel1.Visible = false;
         }
+
+
         public void comando(int opcion)
         {
             System.Windows.Forms.ToolStripItem bt = this.toolBar1.Items[opcion];   //= new MSComctlLib.ButtonClass();
@@ -760,6 +718,8 @@ namespace TRUCK
             }
             return encontro;
         }
+
+
         public int Find_Descripcion(string descrip, string campo2, string campo1)
         {
             int encontro = -1;
@@ -773,6 +733,8 @@ namespace TRUCK
             }
             return encontro;
         }
+
+
         public int buscar_posicion(int elemento, string clave)
         {
             int desde, hasta, medio, posicion; // desde y hasta indican los límites del array que se está mirando.
@@ -860,12 +822,12 @@ namespace TRUCK
         }
 
 
-
         #endregion
         #region EVENTS
         private void toolBar1_ButtonClick(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
         {
             int cod = 0;
+
             switch (this.toolBar1.Items.IndexOf(e.ClickedItem))
             {
                 case 0: //Nueva empresa
@@ -887,7 +849,7 @@ namespace TRUCK
                             this.datos_empresa.BringToFront();
                             this.editar_dato = false;
                             limpiar();
-                            IDataReader LP = db.getDataReader("SELECT numemp FROM cliente WHERE (numemp = " + Global.nempresa + ") ORDER BY numemp desc");
+                            IDataReader LP = db.getDataReader("SELECT first 1 numemp FROM empresa order by numemp desc");
                             if (LP.Read()) cod = Convert.ToInt16(LP.GetValue(0));
                             LP.Close();
                             this.id_empresa.Text = Convert.ToString(cod + 1);
@@ -895,6 +857,9 @@ namespace TRUCK
                             this.empresa.Focus();
                         }
                     } break;
+
+
+
                 case 1: //Guardar informacion
                     {
                         if (this.id_empresa.Text == "")
@@ -918,15 +883,21 @@ namespace TRUCK
                             bool existe = false;
                             cancelar = false;
                             this.editar_dato = false;
-                            IDataReader Cfg = db.getDataReader("SELECT * FROM cliente WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")");
+                            IDataReader Cfg = db.getDataReader("SELECT * FROM empresa WHERE ( numemp = " + Convert.ToInt32(this.id_empresa.Text) + ")");
+
                             if (Cfg.Read()) existe = true;
                             Cfg.Close();
+
                             if (!existe) New_Dato();
                             else Save_Dato();
+
                         }
                         this.Close();
                         this.Dispose();
                     } break;
+
+
+
                 case 2://Borrar empresa
 
                     if (Global.clv_aceptada && Global.privilegio.Substring(0, 1) == "1")
@@ -945,8 +916,12 @@ namespace TRUCK
                     }
                     break;
 
+
+
                 case 3: // Deshacer la edicion
+
                     this.editar_dato = false;
+
                     if (this.Find_Numero(this.id_empresa.Text)) Mostrar_Datos(cmRegister.Position, 0);
                     else
                     {
@@ -962,6 +937,9 @@ namespace TRUCK
                         limpiar();
                     }
                     break;
+
+
+
                 case 4: // Cambiar Password
                     Global.clv_aceptada = false;
                     clave clv1 = new clave(2);
@@ -974,19 +952,25 @@ namespace TRUCK
                     }
                     else { MessageBox.Show(Global.M_Error[51, Global.idioma]); }
                     break;
+
+
+
                 case 5: //ir hacia atras
                     Mostrar_Datos(Previous(ref cmRegister), 0);
                     break;
+
+
                 case 6: //ir hacia adelante
                     Mostrar_Datos(Next(ref cmRegister), 0);
                     break;
+
+
                 case 7:	//cerrar y regresar al listado
                     cancelar = true;
                     if (this.editar_dato)
                     {
                         if (MessageBox.Show(Global.M_Error[303, Global.idioma].ToString(), "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                        {
-                            //this.cerrar = true;
+                        {                            
                             this.comando(1);
                         }
                         else
@@ -1002,60 +986,12 @@ namespace TRUCK
                     }
                     break;
             }
-        }
-        private void empresa_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (this.empresa.Text == "" || this.empresa.Text == null)
-                {
-                    MessageBox.Show(Global.M_Error[49, Global.idioma].ToString());
-                    this.empresa.Focus();
-                }
-                else this.dir1.Focus();
-            }
 
-        }
-        private void dir1_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            { this.dir2.Focus(); }
-        }
-        private void dir2_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            { this.dir3.Focus(); }
-        }
-        private void dir3_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            { this.txt_cp.Focus(); }
-        }
-        private void txt_cp_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            { this.txt_telf.Focus(); }
-        }
-        private void txt_telf_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (this.id_empresa.Text == "" || this.id_empresa.Text == "0")
-                {
-                    MessageBox.Show(Global.M_Error[90, Global.idioma].ToString() + " " + Global.M_Error[67, Global.idioma].ToString());
-                    this.id_empresa.Focus();
-                }
-                if (this.empresa.Text == "")
-                {
-                    MessageBox.Show(Global.M_Error[49, Global.idioma].ToString());
-                    this.empresa.Focus();
-                }
-                this.editar_dato = false;
-                DataRow DB = dt.Tables[0].Rows.Find(Convert.ToInt32(this.id_empresa.Text));
-                if (DB == null) New_Dato();
-                else Save_Dato();
-            }
-        }
+
+
+
+        }      
+        
         private void id_empresa_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1105,6 +1041,64 @@ namespace TRUCK
         {
             Global.aplicacion = tipo_com.SelectedIndex;
         }
+
+
+
+
+
+        private void dir1_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            { this.dir2.Focus(); }
+        }
+        private void dir2_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            { this.dir3.Focus(); }
+        }
+        private void dir3_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            { this.txt_cp.Focus(); }
+        }
+        private void txt_cp_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            { this.txt_telf.Focus(); }
+        }
+        private void txt_telf_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (this.id_empresa.Text == "" || this.id_empresa.Text == "0")
+                {
+                    MessageBox.Show(Global.M_Error[90, Global.idioma].ToString() + " " + Global.M_Error[67, Global.idioma].ToString());
+                    this.id_empresa.Focus();
+                }
+                if (this.empresa.Text == "")
+                {
+                    MessageBox.Show(Global.M_Error[49, Global.idioma].ToString());
+                    this.empresa.Focus();
+                }
+                this.editar_dato = false;
+                DataRow DB = dt.Tables[0].Rows.Find(Convert.ToInt32(this.id_empresa.Text));
+                if (DB == null) New_Dato();
+                else Save_Dato();
+            }
+        }
+        private void empresa_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (this.empresa.Text == "" || this.empresa.Text == null)
+                {
+                    MessageBox.Show(Global.M_Error[49, Global.idioma].ToString());
+                    this.empresa.Focus();
+                }
+                else this.dir1.Focus();
+            }
+
+        }
         private void button2_Click(object sender, System.EventArgs e)
         {
             bool existe;
@@ -1126,7 +1120,7 @@ namespace TRUCK
                 else pas = true;
                 if (pas)
                 {
-                    if (!existe) db.ExcetuteQuery("INSERT INTO Usuarios ([user],contrasena,privilegios,nombre,tipo,iniciales) VALUES ('" + this.user_txt.Text + "','" + this.pswd2.Text + "','111111111111111','" + Global.M_Error[145,Global.idioma] + "',0,'ADMIN')");
+                    if (!existe) db.ExcetuteQuery("INSERT INTO Usuarios ([user],contrasena,privilegios,nombre,tipo,iniciales) VALUES ('" + this.user_txt.Text + "','" + this.pswd2.Text + "','111111111111111','" + Global.M_Error[145, Global.idioma] + "',0,'ADMIN')");
                     else db.ExcetuteQuery("UPDATE Usuarios SET contrasena = '" + this.pswd1.Text + "', privilegios = '111111111111111',nombre = '" + Global.M_Error[145, Global.idioma] + "' WHERE ( user = '" + this.user_txt.Text + "')");
 
                     this.nicePanel1.Visible = false;
@@ -1176,7 +1170,7 @@ namespace TRUCK
                 }
                 catch (Exception exp)
                 {
-                    MessageBox.Show(Global.M_Error[300,Global.idioma]+ System.Environment.NewLine + exp.ToString() + System.Environment.NewLine);
+                    MessageBox.Show(Global.M_Error[300, Global.idioma] + System.Environment.NewLine + exp.ToString() + System.Environment.NewLine);
                 }
             }
         }

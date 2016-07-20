@@ -1,6 +1,6 @@
 ﻿using BaseAcces;
 using System.Data;
-using System;
+using System.Collections.Generic;
 
 namespace TRUCK
 {
@@ -13,7 +13,10 @@ namespace TRUCK
             _dll = new DLL(_StringConexion, TypeDataBase.Firebird);
         }
 
-
+        public List<string> getListData(string query)
+        {
+           return _dll.getListData(query);
+        }
 
         public DataSet getData(string query)
         {

@@ -1,31 +1,30 @@
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
 using System.IO;
 
 namespace TRUCK
 {
-	/// <summary>
-	/// Descripción breve de Registro.
-	/// </summary>
-	public class Registro : System.Windows.Forms.Form
+
+
+    /// <summary>
+    /// Descripción breve de Registro.
+    /// </summary>
+    public class Registro : Form
     {
         #region VARIABLES
         private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.TextBox text1;
-		private System.Windows.Forms.TextBox text2;
-		private System.Windows.Forms.TextBox text3;
-		private System.Windows.Forms.TextBox text4;
-		private System.Windows.Forms.TextBox text5;
-		private System.Windows.Forms.TextBox text6;
-		private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox text1;
+        private System.Windows.Forms.TextBox text2;
+        private System.Windows.Forms.TextBox text3;
+        private System.Windows.Forms.TextBox text4;
+        private System.Windows.Forms.TextBox text5;
+        private System.Windows.Forms.TextBox text6;
+        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.Label ntran;
-		private System.Windows.Forms.Label label3;
-		private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.Label ntran;
+        private System.Windows.Forms.Label label3;
+        private System.ComponentModel.IContainer components = null;
         #endregion
         #region CONSTRUCTORS
         public Registro()
@@ -178,8 +177,21 @@ namespace TRUCK
             text6.Text = text6.Text.ToUpper();
             text6.Text = text6.Text.PadLeft(6, '0');
         }
+
+        void licencia()
+        {
+            /**/
+            text1.Text = "00F606";
+            text2.Text = "00D564";
+            text3.Text = "009D62";
+            text4.Text = "005EA9";
+            text5.Text = "00D3BF";
+            text6.Text = "009ACC";
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
+            //licencia();
             text1.Text = text1.Text.PadLeft(6, '0');
             text2.Text = text2.Text.PadLeft(6, '0');
             text3.Text = text3.Text.PadLeft(6, '0');
@@ -193,7 +205,7 @@ namespace TRUCK
             Keylock.ValidateCode3 = Convert.ToUInt16(this.text3.Text.Substring(2), 16);
             Keylock.ClientIDCode1 = Convert.ToUInt16(this.text4.Text.Substring(2), 16);
             Keylock.ClientIDCode2 = Convert.ToUInt16(this.text5.Text.Substring(2), 16);
-            Keylock.ReadCode1 = Convert.ToUInt16(this.text6.Text.Substring(2), 16);
+            Keylock.ReadCode1     = Convert.ToUInt16(this.text6.Text.Substring(2), 16);
 
             if (!Keylock.IsPresent())
             {
@@ -217,6 +229,8 @@ namespace TRUCK
             this.Close();
             this.Dispose();
         }
+
+
         #endregion
         #region Windows Form Designer generated code
         /// <summary>
@@ -397,6 +411,5 @@ namespace TRUCK
 			}
 			base.Dispose( disposing );
 		}
-
 	}
 }

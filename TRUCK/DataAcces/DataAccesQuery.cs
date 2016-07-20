@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 
 namespace TRUCK
 {
@@ -12,6 +13,10 @@ namespace TRUCK
             _bll = new BLL();
         }
 
+        public List<string> getListData(string query)
+        {
+            return _bll.getListData(query);
+        }
 
         public DataSet getData(string query)
         {

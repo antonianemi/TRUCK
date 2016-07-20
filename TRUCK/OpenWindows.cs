@@ -9,8 +9,6 @@ using System.Data;
 
 namespace TRUCK
 {
-
-
     /// <summary>
 	/// Descripción breve de OpenWindows.
 	/// </summary>
@@ -33,9 +31,7 @@ namespace TRUCK
 		private System.Windows.Forms.MenuItem menuItem7;
 		private System.Windows.Forms.MenuItem menuItem10;
 		private System.Windows.Forms.MenuItem menuItem11;
-		private System.Data.OleDb.OleDbDataAdapter AdaptarMaestro;
 		private System.Data.DataSet DataSetMaster = new DataSet();
-		private System.Data.OleDb.OleDbConnection ConnectionMaestro;
 		private string TablaMaestra;
 		private System.Windows.Forms.TreeView TreeFile;
 		private System.Windows.Forms.Splitter splitter1;
@@ -74,17 +70,22 @@ namespace TRUCK
 			this.DGrid.Click+=new System.EventHandler(this.DGrid_Click);
 			this.DGrid.CurrentCellChanged+=new System.EventHandler(this.DGrid_CurrentCell);
             this.TreeFile.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeFile_AfterSelect);
+
+            Global.aplicacion = 2;
+
             switch (Global.aplicacion)
             {
-                case 0:
+                case 0://PUBLICO
                     {
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[137, Global.idioma].ToString(), 0, 0));  // Empresa 
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[146, Global.idioma].ToString(), 1, 1));  // Tarifa
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[140, Global.idioma].ToString(), 4, 4));  // Cliente
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[143, Global.idioma].ToUpper(), 0, 0));   // Vehiculo Tara o tara manual
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[142, Global.idioma].ToString(), 6, 6));  // Usuario
-                    } break;
-                case 1:
+                    }
+                    break;
+
+                case 1://PRIVADO
                     {
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[137, Global.idioma].ToString(), 0, 0));  // Empresa 
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[138, Global.idioma].ToString(), 1, 1));  // Producto
@@ -94,8 +95,10 @@ namespace TRUCK
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[143, Global.idioma].ToString(), 5, 5));  // Vehiculo Tara
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[218, Global.idioma].ToUpper(), 0, 0));   // Familia
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[142, Global.idioma].ToString(), 6, 6));  // Usuario
-                    } break;
-                case 2:
+                    }
+                break;
+
+                case 2://PRIVADO
                     {
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[137, Global.idioma].ToString(), 0, 0));  // Empresa 
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[138, Global.idioma].ToString(), 1, 1));  // Producto
@@ -103,8 +106,11 @@ namespace TRUCK
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[140, Global.idioma].ToString(), 3, 3));  // Cliente
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[218, Global.idioma].ToUpper(), 0, 0));   // Familia
                         this.TreeFile.Nodes.Add(new TreeNode(Global.M_Error[142, Global.idioma].ToString(), 6, 6));  // Usuario
-                    } break;
-            }            			
+                    }
+                break;
+
+            }
+                        			
             this.codigoToolStripMenuItem.Click +=new EventHandler(codigoToolStripMenuItem_Click);
             this.nombreToolStripMenuItem.Click +=new EventHandler(nombreToolStripMenuItem_Click);   
             IDataReader usua = db.getDataReader("SELECT user FROM Usuarios");
@@ -190,19 +196,19 @@ namespace TRUCK
             // 
             resources.ApplyResources(this.menuItem2, "menuItem2");
             this.menuItem2.Index = 0;
-            this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
+            this.menuItem2.Click += new System.EventHandler(this.ADD);
             // 
             // menuItem3
             // 
             resources.ApplyResources(this.menuItem3, "menuItem3");
             this.menuItem3.Index = 1;
-            this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
+            this.menuItem3.Click += new System.EventHandler(this.EDIT);
             // 
             // menuItem7
             // 
             resources.ApplyResources(this.menuItem7, "menuItem7");
             this.menuItem7.Index = 2;
-            this.menuItem7.Click += new System.EventHandler(this.menuItem7_Click);
+            this.menuItem7.Click += new System.EventHandler(this.DELETE);
             // 
             // menuItem5
             // 
@@ -279,7 +285,7 @@ namespace TRUCK
             this.toolMaster.Name = "toolMaster";
             // 
             // toolStripButton1
-            // 
+            //  
             resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
@@ -397,7 +403,7 @@ namespace TRUCK
             #endregion
             #region DATA
             this.Dato = "";
-            string CadenaSelect_Maestro = "SELECT * FROM usuarios ORDER BY user";
+            string CadenaSelect_Maestro = "SELECT * FROM usuarios";
             this.TablaMaestra = "usuarios";
             this.DataSetMaster.Clear();
             DataSetMaster = db.getData(CadenaSelect_Maestro);
@@ -833,7 +839,7 @@ namespace TRUCK
             activo = true;
             int ff = Global.F_Decimal.Length - 3;
             string formato_precio = Global.F_Decimal.Substring(3, ff - 1);
-            string CadenaSelect_Maestro = "SELECT * FROM Taras WHERE numemp = " + Global.nempresa + " ORDER BY numero";
+            string CadenaSelect_Maestro = "SELECT * FROM Tara WHERE numemp = " + Global.nempresa + " ORDER BY numero";
             this.TablaMaestra = "Taras";
             this.DataSetMaster.Clear();
             DataSetMaster = db.getData(CadenaSelect_Maestro);
@@ -1094,9 +1100,6 @@ namespace TRUCK
                 this.menuItem11.Enabled = false;
             }
         }
-
-
-
         private void Grid_transportista()
         {
             #region DESIGN
@@ -1513,108 +1516,147 @@ namespace TRUCK
 			reg.Select(cmGridRegister.Position);
 			Dato = reg[cmGridRegister.Position,0].ToString();
 		}
+        
 		private void TreeFile_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
 		{
 			System.Windows.Forms.TreeView nodo_file = (System.Windows.Forms.TreeView)sender;
 			nodo_file.Select();
 			nodo_file.Focus();
+            #region Determinar que catalogo se muestra en la aplicacion
 
-			switch (nodo_file.SelectedNode.Index)
+
+            switch (nodo_file.SelectedNode.Index)
 			{
-				case 0: // Catalogo de Empresa
+
+				case 0: //CATALOGO DE EMPRESAS
 				{  				
-					this.Grid_Empresa();
+					this.Grid_Empresa();//EMPRESAS
                     this.tipo_opcion = 0;
-				}break;
-				case 1:  //Catalogo de Articulos
+				}
+                break;
+
+
+				case 1:  //CATALOGO DE ARTICULOS
 				{	
-					this.Grid_articulo();
+					this.Grid_articulo();//ARTICULOS
                     this.tipo_opcion = 1;
-			    }break;
-				case 2: //Catalogo de Proveedor
+			    }
+                break;
+
+
+				case 2: //CATALOGO DE CLIENTE O DE PROVEEDOR
                     {
                         if (Global.aplicacion == 0)
                         {
-                            this.Grid_cliente();
+                            this.Grid_cliente();//CLIENTE
                             this.tipo_opcion = 3;
                         }
                         else
                         {
-                            this.Grid_proveedor();
+                            this.Grid_proveedor();//PROVEEDOR
                             this.tipo_opcion = 2;
                         }
-				}break;
-				case 3: // Catalogo de Cliente
+				}
+                break;
+
+
+				case 3: //CATALOGO DE TARA O DE CLIENTE
 				{
                     if (Global.aplicacion == 0)
                     {
-                        this.Grid_tara();
+                        this.Grid_tara();//TARAS
                         this.tipo_opcion = 5;
                     }
                     else
                     {
-                        this.Grid_cliente();
+                        this.Grid_cliente();//CLIENTES
                         this.tipo_opcion = 3;
                     }
-				}break;
-				case 4: //Catalogo de Transportista
+				}
+                break;
+
+
+				case 4: //CATALOGO DE TRANSPORTISTA O DE USUARIOS O DE FAMILIA
 				{
                     if (Global.aplicacion == 0)
                     {
-                        this.Grid_usuarios();
+                        this.Grid_usuarios();//USUARIOS
                         this.tipo_opcion = 7;
                     }
                     if (Global.aplicacion == 1)
                     {
-                        this.Grid_transportista();
+                        this.Grid_transportista();//TRANSPORTISTAS
                         this.tipo_opcion = 4;
                     }
                     if (Global.aplicacion == 2)
                     {
-                        this.Grid_familia();
+                        this.Grid_familia();//FAMILIA
                         this.tipo_opcion = 6;
                     }
-				}break;	
-				case 5: //Catalogo de Transportista
+				}
+                break;	
+
+
+				case 5: //CATALOGO DE TARAS O DE USUARIOS
 				{
                     if (Global.aplicacion == 2)
                     {
-                        this.Grid_usuarios();
+                        this.Grid_usuarios();//USUARIOS
                         this.tipo_opcion = 7;
                     }
                     else
                     {
-                        this.Grid_tara();
+                        this.Grid_tara();//TARAS
                         this.tipo_opcion = 5;
                     }
-				}break;
+				}
+                break;
+
+
                 case 6: //Catalogo de familia
                     {
-                        this.Grid_familia();
+                        this.Grid_familia();//FAMILIAS
                         this.tipo_opcion = 6;
-                    } break;
+                    }
+                break;
+
+
+
 				case 7: //Catalogo de usuarios
 				{	
-					this.Grid_usuarios();
+					this.Grid_usuarios();//USUARIOS
                     this.tipo_opcion = 7;
-				}break;
+				}
+                break;
+
+
+
 			}
-		}
-		private void menuItem2_Click(object sender, System.EventArgs e)
+            #endregion
+        }
+
+
+
+
+		private void ADD(object sender, System.EventArgs e)
 		{
 			if (this.TreeFile.SelectedNode != null)
 			{
 				switch (this.tipo_opcion)
 				{
+                    #region NUEVA COMPAÑIA
 
-					case 0: // Nuevo Empresa
+                    case 0: // NEW COMPANY
 					{ 										
 						WEMPRESAS sca = new WEMPRESAS(x,y,3);
-                        Global.clv_aceptada = false;
-                        clave clv2 = new clave(2);
-                        clv2.inicio_user.Text = this.usuario;
-                        clv2.ShowDialog(this);
-                        if (Global.clv_aceptada && Global.privilegio.Substring(0, 1) == "1")
+                            //Global.clv_aceptada = true;
+                            //sca.comando(0);
+                            //sca.ShowDialog(this);
+                            Global.clv_aceptada = false;
+                            clave clv2 = new clave(2);
+                            clv2.inicio_user.Text = this.usuario;
+                            clv2.ShowDialog(this);
+                            if (Global.clv_aceptada && Global.privilegio.Substring(0, 1) == "1")
                         {
                             sca.comando(0);
                             sca.ShowDialog(this);
@@ -1623,9 +1665,10 @@ namespace TRUCK
                         this.Grid_Empresa();
 					}
 
-                        break;
-
-					case 1:  //Nuevo Articulos
+                    break;
+                    #endregion
+                    #region NUEVO ARTICULO
+                    case 1:  //NEW ARTICLES
 					{
                         if (Global.nempresa != 0)
                         {
@@ -1637,8 +1680,9 @@ namespace TRUCK
                         else MessageBox.Show(Global.M_Error[48, Global.idioma], "", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					}
                         break;
-
-                    case 2: //Nuevo proveedor
+                    #endregion
+                    #region NUEVO PROVEEDOR
+                    case 2: //NEW PROVIDER
 					{
                         if (Global.nempresa != 0)
                         {
@@ -1650,8 +1694,9 @@ namespace TRUCK
                         this.Grid_proveedor();
 					}
                         break;
-
-                    case 3: // Nuevo Cliente
+                    #endregion
+                    #region NUEVO CLIENTE
+                    case 3: // NEW CLIENT
 					{
                         if (Global.nempresa != 0)
                         {
@@ -1663,8 +1708,9 @@ namespace TRUCK
                         this.Grid_cliente();
 					}
                         break;
-
-                    case 4: //Nuevo Transporte
+                    #endregion
+                    #region NUEVO TRANSPORTE
+                    case 4: //NEW TRANSPORT
 					{
                         if (Global.nempresa != 0)
                         {
@@ -1676,8 +1722,9 @@ namespace TRUCK
                         this.Grid_transportista();
 					}
                         break;
-
-                    case 5: //Nuevo Tara
+                    #endregion
+                    #region NUEVA TARA
+                    case 5: //NEW TARA
 					{
                         if (Global.nempresa != 0)
                         {
@@ -1690,8 +1737,9 @@ namespace TRUCK
                         this.Grid_tara();
 					}
                         break;
-
-                    case 6: //Nuevo familia
+                    #endregion
+                    #region NUEVA FAMILIA
+                    case 6: //NEW FAMILY
                         {
                             if (Global.nempresa != 0)
                             {
@@ -1703,24 +1751,27 @@ namespace TRUCK
                             this.Grid_familia();
                         }
                         break;
-
-                    case 7: //Nuevo usuarios
+                    #endregion
+                    #region NUEVO USUARIO
+                    case 7: //NEW USER
 					{	
 						WUSER use = new WUSER(x,y,3);
 						use.comando(0);
 						use.ShowDialog(this);
 						this.Grid_usuarios();
-					}break;	
-				}
+					}break;
+                        #endregion
+                }
 			}
 		}
-		private void menuItem3_Click(object sender, System.EventArgs e)
+		private void EDIT(object sender, System.EventArgs e)
 		{
 			if (this.Dato != null && this.Dato != "")
 			{
 				switch (this.tipo_opcion)
 				{
-					case 0: //Editar Empresa
+                    #region EDITAR EMPRESA
+                    case 0: //Editar Empresa
 					{  							
 						WEMPRESAS sca = new WEMPRESAS(x,y,3);
 						sca.id_empresa.Text = this.Dato;
@@ -1730,8 +1781,11 @@ namespace TRUCK
 							this.Grid_Empresa();
 						}
 						else MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
-					}break;
-					case 1:  //Editar Articulos
+					}
+                        break;
+                    #endregion
+                    #region EDITAR ARTICULOS
+                    case 1:  //Editar Articulos
 					{	
 						WPRODUCTO art = new WPRODUCTO(x,y,3);
 						art.numero.Text=this.Dato;
@@ -1741,8 +1795,11 @@ namespace TRUCK
 							this.Grid_articulo();
 						}
 						else MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
-					}break;
-					case 2: //Editar Proveedor
+					}
+                        break;
+                    #endregion
+                    #region EDITAR PROVEEDOR
+                    case 2: //Editar Proveedor
 					{	
 						WVENDOR ven = new WVENDOR(x,y,3);
 						ven.numero.Text = this.Dato;
@@ -1752,8 +1809,11 @@ namespace TRUCK
 							this.Grid_proveedor();
 						}
 						else MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
-					}break;	
-					case 3: // Editar Cliente
+					}
+                        break;
+                    #endregion
+                    #region EDITAR CLIENTE
+                    case 3: // Editar Cliente
 					{	
 						WCUSTOMER age = new WCUSTOMER(x,y,3);
 						age.numero.Text=this.Dato;
@@ -1763,8 +1823,11 @@ namespace TRUCK
 							this.Grid_cliente();
 						}
 						else MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
-					}break;
-					case 4: //Editar Transporte
+					}
+                        break;
+                    #endregion
+                    #region EDITAR TRANSPORTE
+                    case 4: //Editar Transporte
 					{	
 						WTRANSPORTE ing = new WTRANSPORTE(x,y,3);
 						ing.numero.Text = this.Dato;
@@ -1774,8 +1837,11 @@ namespace TRUCK
 							this.Grid_transportista();
 						}
 						else MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
-					}break;	
-					case 5:  //Editar Tara
+					}
+                        break;
+                    #endregion
+                    #region EDITAR TARA
+                    case 5:  //Editar Tara
 					{	
 						WTARA tar = new WTARA(x,y,3);
 						tar.numero.Text=this.Dato;
@@ -1785,7 +1851,10 @@ namespace TRUCK
 							this.Grid_tara();
 						}
 						else MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
-					}break;
+					}
+                        break;
+                    #endregion
+                    #region EDITAR FAMILIA
                     case 6: //Editar Familia
                         {
                             WFAMILIA fam = new WFAMILIA(x, y, 3);
@@ -1796,8 +1865,11 @@ namespace TRUCK
                                 this.Grid_familia();
                             }
                             else MessageBox.Show(Global.M_Error[2, Global.idioma].ToString());
-                        } break;	
-					case 7: //Editar Usuarios
+                        }
+                        break;
+                    #endregion
+                    #region EDITAR USUARIOS
+                    case 7: //Editar Usuarios
 					{	
 						WUSER use = new WUSER(x,y,3);
 						use.txt_user.Text = this.Dato;
@@ -1807,90 +1879,116 @@ namespace TRUCK
 							this.Grid_usuarios();
 						}
 						else MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
-					}break;	
-				}
+					}
+                        break;
+                    #endregion
+                }
 			}
 			else
 			{
 				MessageBox.Show(Global.M_Error[305,Global.idioma]);
 			}
 		}		
-		private void menuItem7_Click(object sender, System.EventArgs e)
+		private void DELETE(object sender, System.EventArgs e)
 		{
 			if (this.Dato != null)
 			{
 				switch (this.tipo_opcion)
 				{
-					case 0: //Borrar Empresa
-					{  				
 
-						WEMPRESAS sca = new WEMPRESAS(x,y,3);
-                        Global.clv_aceptada = false;
-                        clave clv2 = new clave(2);
-                        clv2.inicio_user.Text = this.usuario;
-                        clv2.ShowDialog(this);
-                        if (Global.clv_aceptada && Global.privilegio.Substring(0, 1) == "1")
-                        {
-                            sca.id_empresa.Text = this.Dato;
-                            sca.comando(2);
-                        }
-                        else { MessageBox.Show(Global.M_Error[51, Global.idioma]); }
-                        this.Grid_Empresa();
-					}break;
-					case 1:  //Borrar Articulos
+                    #region ELIMINAR EMPRESA
+                    case 0: //Borrar Empresa
+					{  	
+						    WEMPRESAS sca = new WEMPRESAS(x,y,3);
+                            Global.clv_aceptada = false;
+                            clave clv2 = new clave(2);
+                            clv2.inicio_user.Text = this.usuario;
+                            clv2.ShowDialog(this);
+                            if (Global.clv_aceptada && Global.privilegio.Substring(0, 1) == "1")
+                            {
+                                sca.id_empresa.Text = this.Dato;
+                                sca.comando(2);
+                            }
+                            else { MessageBox.Show(Global.M_Error[51, Global.idioma]); }
+                            this.Grid_Empresa();
+					}
+                    break;
+                    #endregion
+                    #region ELIMINAR ARTICULOS
+                    case 1:  //Borrar Articulos
 					{ 	
 						WPRODUCTO art = new WPRODUCTO(x,y,3);
 						art.numero.Text=this.Dato;
 						art.comando(2);
 						this.Grid_articulo();
-					}break;
-					case 2: //Borrar proveedor
+					}
+                    break;
+                    #endregion
+                    #region ELIMINAR PROVEEDOR
+                    case 2: //Borrar proveedor
 					{	
 						WVENDOR ven = new WVENDOR(x,y,3);
 						ven.numero.Text = this.Dato;
 						ven.comando(2);
 						this.Grid_proveedor();
-					}break;	
-					case 3: // Borrar Cliente
+					}
+                    break;
+                    #endregion
+                    #region ELIMINAR CLIENTES
+                    case 3: // Borrar Cliente
 					{	
 						WCUSTOMER age = new WCUSTOMER(x,y,3);
 						age.numero.Text=this.Dato;
 						age.comando(2);
 						this.Grid_cliente();
-					}break;
-					case 4: //Borrar Transporte
+					}
+                    break;
+                    #endregion
+                    #region ELIMINAR TRANSPORTE
+                    case 4: //Borrar Transporte
 					{	
 						WTRANSPORTE ing = new WTRANSPORTE(x,y,3);
 						ing.numero.Text = this.Dato;
 						ing.comando(2);
 						this.Grid_transportista();
-					}break;
-					case 5:  //Borrar Tara
+					}
+                    break;
+                    #endregion
+                    #region ELIMINAR TARA
+                    case 5:  //Borrar Tara
 					{ 	
 						WTARA tara = new WTARA(x,y,3);
 						tara.numero.Text=this.Dato;
 						tara.comando(2);
 						this.Grid_tara();
-					}break;
+					}
+                    break;
+                    #endregion
+                    #region ELIMINAR FAMILIA
                     case 6: //Borrar familia
                         {
                             WFAMILIA fam = new WFAMILIA(x, y, 3);
                             fam.numero.Text = this.Dato;
                             fam.comando(2);
                             this.Grid_familia();
-                        } break;	
-					case 7: //Borrar usuarios
+                        }
+                    break;
+                    #endregion
+                    #region ELIMINAR USUARIOS
+                    case 7: //Borrar usuarios
 					{	
 						WUSER use = new WUSER(x,y,3);
 						use.txt_user.Text = this.Dato;
 						use.comando(2);
 						this.Grid_usuarios();
-					}break;	
-				}
+					}
+                    break;
+                        #endregion
+
+                }
 			}
 			else MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
 		}
-
 		private void menuItem10_Click(object sender, System.EventArgs e)
 		{
 			this.Cursor = System.Windows.Forms.Cursors.WaitCursor;
@@ -1940,7 +2038,6 @@ namespace TRUCK
 			this.Focus();
 			this.Cursor = System.Windows.Forms.Cursors.Default;
 		}
-
 		private void menuItem11_Click(object sender, System.EventArgs e)
 		{
 			this.Cursor = System.Windows.Forms.Cursors.WaitCursor;
@@ -1985,11 +2082,6 @@ namespace TRUCK
 			this.Focus();
 			this.Cursor = System.Windows.Forms.Cursors.Default;
 		}
-
-
-
-
-
 		private void OpenDepurar(object sender, System.EventArgs e)
 		{
 
@@ -2044,12 +2136,7 @@ namespace TRUCK
                 }
 			}
 			this.DGrid.Refresh();	
-		}
-
-
-
-
-		
+		}		
         private void nombreToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (this.cmGridRegister.Count > 0)
@@ -2071,7 +2158,6 @@ namespace TRUCK
                 }
             }
         }
-
         private void codigoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
             if (this.cmGridRegister.Count > 0)
@@ -2094,7 +2180,6 @@ namespace TRUCK
             }
             else MessageBox.Show(Global.M_Error[2, Global.idioma].ToString());
 		}
-
 		private bool Find_Codigo(string n_codigo,string campo1)
 		{	
 			bool encontro = false;
@@ -2109,8 +2194,7 @@ namespace TRUCK
 				cmGridRegister.Position = buscar_posicion(Convert.ToInt32(n_codigo),campo1);
 			}
 			return encontro;
-		}
-	
+		}	
 		private bool Find_Descripcion(string descrip,string campo2,string campo1)
 		{	
 			bool encontro = false;
@@ -2125,7 +2209,6 @@ namespace TRUCK
 			}
 			return encontro;
 		}
-
         private void menuItem6_Click(object sender, System.EventArgs e)
         {
             this.Cursor = System.Windows.Forms.Cursors.WaitCursor;
@@ -2182,7 +2265,6 @@ namespace TRUCK
             this.Focus();
             this.Cursor = System.Windows.Forms.Cursors.Default;
         }
-
 		private int buscar_posicion(int elemento,string clave)
 		{
 			int desde,hasta,medio,posicion; // desde y hasta indican los límites del array que se está mirando.
@@ -2211,42 +2293,34 @@ namespace TRUCK
 			}
 			return posicion;
 		}
-
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            menuItem2_Click(null, new System.EventArgs());  // nuevo
+            ADD(null, new System.EventArgs());  // nuevo
         }
-
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            menuItem3_Click(null, new System.EventArgs()); //editar
+            EDIT(null, new System.EventArgs()); //editar
         }
-
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            menuItem7_Click(null, new System.EventArgs()); //borrar
+            DELETE(null, new System.EventArgs()); //borrar
         }
-
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
             menuItem10_Click(null, new System.EventArgs()); // importar
         }
-
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
             menuItem11_Click(null, new System.EventArgs()); //exportar
         }
-
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
             OpenDepurar(null, new System.EventArgs());  //depurar
         }
-
         private void toolStripButton7_Click(object sender, EventArgs e)
         {
             menuItem6_Click(null, new System.EventArgs()); // Listados de maestros
         }
-
         private void toolStripButton8_Click(object sender, EventArgs e)
         {
             this.Close();

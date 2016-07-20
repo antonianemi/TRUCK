@@ -89,7 +89,7 @@ namespace TRUCK
         public static string Logo_activo;           //Ruta del Logo Activo;
 		public static string Nombre;				//Nombre del Usuario
 		public static string INVENTARIO = "";       //Movimiento del Inventario
-		public static int P_COMM1 = 1;				//Nombre de puerto serial para el indicador 1
+		public static int P_COMM1 = 0;				//Nombre de puerto serial para el indicador 1
         public static int P_COMM2 = 0;				//Nombre de puerto serial para el indicador 2
         public static int P_COMM3 = 0;				//Nombre de puerto serial para el indicador 3
         public static int P_COMM = 0;				//Nombre de puerto serial para el display

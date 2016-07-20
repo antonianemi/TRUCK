@@ -87,14 +87,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Librerias\FirebirdSql.Data.FirebirdClient.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.ADODB">
-      <HintPath>..\..\..\..\..\..\..\Librerias\Interop.ADODB.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Interop.JRO">
-      <HintPath>..\..\..\..\..\..\..\Librerias\Interop.JRO.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="MaskEdit">
       <HintPath>..\..\..\..\..\..\..\Librerias\MaskEdit.dll</HintPath>
     </Reference>
@@ -122,7 +114,6 @@
     <Compile Include="Acerca.Designer.cs">
       <DependentUpon>Acerca.cs</DependentUpon>
     </Compile>
-    <Compile Include="ADOutil.cs" />
     <Compile Include="Buscar.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -355,6 +346,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ENTRADA.en-US.resx">
       <DependentUpon>ENTRADA.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ENTRADA.en.resx">
       <DependentUpon>ENTRADA.cs</DependentUpon>

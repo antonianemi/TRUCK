@@ -36,7 +36,7 @@ namespace TRUCK
         public WVENDOR(int x, int y,int ventana)
 		{
 			InitializeComponent();
-
+            db = new DataAccesQuery();
 			this.Location = new System.Drawing.Point(x,y);
 			this.TransparencyKey = Color.Empty;
 			this.Tag = Global.M_Error[141,Global.idioma].ToString();
@@ -49,7 +49,8 @@ namespace TRUCK
 			this.nombre.TextChanged+=new System.EventHandler(this.editar_TextChanged);
             this.toolBar1.ItemClicked += new ToolStripItemClickedEventHandler(this.toolBar1_ButtonClick);
             dt = db.getData("SELECT * FROM proveedor WHERE ( numemp = " + Global.nempresa + ") ORDER BY numero");
-			cmRegister = (CurrencyManager)this.BindingContext[dt, "proveedor"];
+            dt.Tables[0].TableName = "proveedor";
+            cmRegister = (CurrencyManager)this.BindingContext[dt, "proveedor"];
 			cmRegister.Position = 0;
             dt.Tables[0].PrimaryKey = new DataColumn[] {dt.Tables[0].Columns["numero"]};
 		}
@@ -179,108 +180,45 @@ namespace TRUCK
             System.Windows.Forms.ToolStripItem bt = this.toolBar1.Items[opcion];
             this.toolBar1_ButtonClick(this.toolBar1, new ToolStripItemClickedEventArgs(bt));
 		}
+
+
         private void New_Dato()
         {
             string query = "INSERT INTO proveedor (numemp,numero,nombre) VALUES ( " + Global.nempresa + "," + Convert.ToInt32(this.numero.Text) + ",'" + this.nombre.Text + "')";
-            
-            try
-            {
-                if (numero.Text != "" && numero.Text != "0")
-                {
-                    db.ExcetuteQuery(query);
-                }
-                else
-                {
-                    MessageBox.Show(Global.M_Error[89, Global.idioma].ToString());
-                }
-            }
-            catch (DBConcurrencyException dbcx)
-            {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-                dt.RejectChanges();
-            }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                dt.RejectChanges();
-            }
-        }
-		private void Del_Dato()
-		{
-
-            string query = "DELETE * FROM proveedor WHERE ( numero = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
-			if (numero.Text != "")
-			{
-				if (dt.Tables[0].Rows.Count > 0)
-				{
-					DataRow[] dr =  dt.Tables[0].Select("numero = " + Convert.ToInt32(this.numero.Text) );  
-					if (dr.Length > 0)
-					{
-						dr[0].Delete();
-
-						DataSet DSChanges = dt.GetChanges(DataRowState.Deleted);
-
-						if (DSChanges != null)
-						{
-							try
-							{
-                                db.ExcetuteQuery(query);
-                                dt.AcceptChanges();
-								MessageBox.Show(Global.M_Error[3,Global.idioma].ToString());
-							}
-							catch (DBConcurrencyException ex)
-							{
-								string customErrorMessage;
-
-								customErrorMessage = ex.Message.ToString();
-								customErrorMessage += ex.Row[0].ToString();
-								MessageBox.Show(customErrorMessage.ToString());
-										
-							}
-							catch (OleDbException ex)
-							{
-								MessageBox.Show(ex.Message,"",MessageBoxButtons.OK,MessageBoxIcon.Error);
-								dt.RejectChanges();
-							}
-						}
-					}
-				}
-				else
-				{				
-					MessageBox.Show(Global.M_Error[2,Global.idioma].ToString());
-					cmRegister.Position = 0;
-				}
-			}
-			else
-			{
-				MessageBox.Show(Global.M_Error[305,Global.idioma].ToString());
-				cmRegister.Position = 0;
-			}
-		}
-        private void Save_Dato()
-        {
-            string query = "UPDATE proveedor SET nombre = '" + this.nombre.Text + "' WHERE (numero = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
-            try
+            if (numero.Text != "" && numero.Text != "0")
             {
                 db.ExcetuteQuery(query);
             }
-            catch (DBConcurrencyException dbcx)
+            else
             {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-                dt.RejectChanges();
+                MessageBox.Show(Global.M_Error[89, Global.idioma].ToString());
             }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                dt.RejectChanges();
-            }
+            
         }
+
+		private void Del_Dato()
+		{
+            string query = "DELETE FROM proveedor WHERE ( numero = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
+			if (numero.Text != "")
+			{		
+            db.ExcetuteQuery(query);
+            dt.AcceptChanges();
+			MessageBox.Show(Global.M_Error[3,Global.idioma].ToString());
+			}
+			else
+			{
+			MessageBox.Show(Global.M_Error[305,Global.idioma].ToString());
+			cmRegister.Position = 0;
+			}
+		}
+
+        private void Save_Dato()
+        {
+            string query = "UPDATE proveedor SET nombre = '" + this.nombre.Text + "' WHERE (numero = " + Convert.ToInt32(this.numero.Text) + " and numemp = " + Global.nempresa + ")";
+            db.ExcetuteQuery(query);
+        }
+
+
 		private bool Find_Numero(string codigo)
 		{
 			bool encontro=false;

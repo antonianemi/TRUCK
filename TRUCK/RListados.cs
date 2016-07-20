@@ -112,15 +112,6 @@ namespace TRUCK
                 else this.button1.Focus();
             }
         }
-
-
-
-
-
-
-
-
-
         private void button1_Click(object sender, EventArgs e)
         {
             string nombre_reporte = "";
@@ -146,6 +137,7 @@ namespace TRUCK
                     return;
                 }
             }
+
             System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
            
             DateTime MyDate = new DateTime(Global.year, Global.mes, Global.dia, Global.hora, Global.minutos, Global.segundo);
@@ -253,7 +245,7 @@ namespace TRUCK
                                     filtro = "({taras.numemp} = " + Global.nempresa + ")";
                                     condi = "(numemp = " + Global.nempresa + ")";
                                 }
-                                sele = "SELECT * FROM taras WHERE " + condi; 
+                                sele = "SELECT * FROM tara WHERE " + condi; 
                                 n_reporte = 188;
                             }
                             else
@@ -302,7 +294,7 @@ namespace TRUCK
                                 filtro = "({taras.numemp} = " + Global.nempresa + ")";
                                 condi = "(numemp = " + Global.nempresa + ")";
                             }
-                            sele = "SELECT * FROM taras WHERE " + condi;
+                            sele = "SELECT * FROM tara WHERE " + condi;
                             n_reporte = 188;
                         } break;
                 }
@@ -366,7 +358,9 @@ namespace TRUCK
                     {
                         this.label1.Text = Global.M_Error[197, Global.idioma];
                         this.label2.Text = Global.M_Error[198, Global.idioma];
-                    } break;
+                    }
+                break;
+
                 case 1: //Listado de Tarifa y producto
                     {
                         if (Global.aplicacion == 0)
@@ -379,7 +373,9 @@ namespace TRUCK
                             this.label1.Text = Global.M_Error[201, Global.idioma];
                             this.label2.Text = Global.M_Error[202, Global.idioma];
                         }
-                    } break;
+                    }
+                break;
+
                 case 2: //Listado de Cliente para el publico y proveedores para otros
                     {
                         if (Global.aplicacion == 0)
@@ -392,22 +388,32 @@ namespace TRUCK
                             this.label1.Text = Global.M_Error[203, Global.idioma];
                             this.label2.Text = Global.M_Error[204, Global.idioma];
                         }
-                    } break;                
+                    }
+                break;
+                                    
                 case 3: //Listado de clientes
                     {
                         this.label1.Text = Global.M_Error[193, Global.idioma];
                         this.label2.Text = Global.M_Error[194, Global.idioma];
-                    } break;
+                    }
+                break;
+
+
                 case 4: //Listado de Transportista
                     {
                         this.label1.Text = Global.M_Error[296, Global.idioma];
                         this.label2.Text = Global.M_Error[297, Global.idioma];
-                    } break;
+                    }
+                break;
+
                 case 5:  //Listado de Vehiculos tara
                     {
                         this.label1.Text = Global.M_Error[298, Global.idioma];
                         this.label2.Text = Global.M_Error[299, Global.idioma];
-                    } break;
+                    }
+                break;
+
+
             }
             this.label1.Refresh();
             this.label2.Refresh();

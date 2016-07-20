@@ -18,40 +18,39 @@ namespace TRUCK
 	/// </summary>
     public class Transacciones1m : System.Windows.Forms.Form
     {
-
         #region VARIABLES
         DataAccesQuery db;
         DataSet dt1;
         DataSet dt2;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label txt_um_pn;
-        private System.Windows.Forms.Label txt_um_pt;
-        private System.Windows.Forms.Label txt_um_pb;
-        private System.Windows.Forms.TextBox peso_neto;
-        private System.Windows.Forms.TextBox peso_tara;
-        private System.Windows.Forms.TextBox peso_bruto;
-        private System.Windows.Forms.Label txt_titulo;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.ComboBox tipo_mov;
-        private System.Windows.Forms.ComboBox combo_producto;
-        private System.ComponentModel.IContainer components;
-        private System.Windows.Forms.ComboBox combo_proveedor;
-        private System.Windows.Forms.ComboBox combo_transporte;
-        private System.Windows.Forms.ComboBox combo_cliente;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label15;
+        private GroupBox groupBox1;
+        private Panel panel1;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private Label txt_um_pn;
+        private Label txt_um_pt;
+        private Label txt_um_pb;
+        private TextBox peso_neto;
+        private TextBox peso_tara;
+        private TextBox peso_bruto;
+        private Label txt_titulo;
+        private Label label6;
+        private Label label7;
+        private Label label8;
+        private Label label9;
+        private Label label10;
+        private Label label11;
+        private GroupBox groupBox3;
+        private GroupBox groupBox4;
+        private ComboBox tipo_mov;
+        private ComboBox combo_producto;
+        private IContainer components;
+        private ComboBox combo_proveedor;
+        private ComboBox combo_transporte;
+        private ComboBox combo_cliente;
+        private Label label13;
+        private Label label14;
+        private Label label15;
         private ToolStrip toolBar1;
         private ToolStripButton toolStripButton1;
         private ToolStripButton toolStripButton2;
@@ -84,7 +83,7 @@ namespace TRUCK
         private ToolStripSeparator bindingNavigatorSeparator2;
         private ToolStripButton toolStripButton5;
         private ToolTip toolTip1;
-        private AxShockwaveFlashObjects.AxShockwaveFlash axShockwaveFlash1 = new AxShockwaveFlashObjects.AxShockwaveFlash();
+        //private AxShockwaveFlashObjects.AxShockwaveFlash axShockwaveFlash1 = new AxShockwaveFlashObjects.AxShockwaveFlash();
         private DataGridView GVTransaccion;
         private Timer timer1;
         private Label label4;
@@ -126,12 +125,12 @@ namespace TRUCK
             this.serialPort1.DataReceived += new SerialDataReceivedEventHandler(serialPort1_DataReceived);
             this.serialPort1.ErrorReceived +=new SerialErrorReceivedEventHandler(serialPort1_ErrorReceived);
             this.serialPort1.PinChanged +=new SerialPinChangedEventHandler(serialPort1_PinChanged);
-
             this.tipo_mov.Items.Add(Global.M_Error[211, Global.idioma].ToString());  //Movimiento con carga registra el peso bruto
             this.tipo_mov.Items.Add(Global.M_Error[212, Global.idioma].ToString()); //Movimiento sin carga registra el peso tara
             this.tipo_mov.SelectedIndex = 0;
 
             Llenar_Grid();
+
             switch (Global.aplicacion)
             {
                 case 0:
@@ -196,7 +195,7 @@ namespace TRUCK
             }
             if (this.cancelar_transaccion)
             {               
-                this.toolStripButton6_Click(this.toolStripButton6, new ToolBarButtonClickEventArgs(null));       
+                this.CerrarTransacciones(this.toolStripButton6, new ToolBarButtonClickEventArgs(null));       
                 this.Close();
                 this.Dispose();
             }
@@ -293,7 +292,7 @@ namespace TRUCK
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.txt_observa = new System.Windows.Forms.RichTextBox();
-            this.axShockwaveFlash1 = new AxShockwaveFlashObjects.AxShockwaveFlash();
+            //this.axShockwaveFlash1 = new AxShockwaveFlashObjects.AxShockwaveFlash();
             this.axShockwaveFlash2 = new AxShockwaveFlashObjects.AxShockwaveFlash();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -304,7 +303,7 @@ namespace TRUCK
             this.bindingNavigator1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GVTransaccion)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash1)).BeginInit();
+            //((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -606,19 +605,19 @@ namespace TRUCK
             // 
             resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.toolStripButton1.Click += new System.EventHandler(this.SaveRecord);
             // 
             // toolStripButton5
             // 
             resources.ApplyResources(this.toolStripButton5, "toolStripButton5");
             this.toolStripButton5.Name = "toolStripButton5";
-            this.toolStripButton5.Click += new System.EventHandler(this.toolStripButton5_Click);
+            this.toolStripButton5.Click += new System.EventHandler(this.NewRecord);
             // 
             // toolStripButton2
             // 
             resources.ApplyResources(this.toolStripButton2, "toolStripButton2");
             this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+            this.toolStripButton2.Click += new System.EventHandler(this.CompleteRecord);
             // 
             // toolStripButton3
             // 
@@ -652,25 +651,25 @@ namespace TRUCK
             // 
             resources.ApplyResources(this.toolStripButton4, "toolStripButton4");
             this.toolStripButton4.Name = "toolStripButton4";
-            this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
+            this.toolStripButton4.Click += new System.EventHandler(this.DeleteRecord);
             // 
             // toolStripButton7
             // 
             resources.ApplyResources(this.toolStripButton7, "toolStripButton7");
             this.toolStripButton7.Name = "toolStripButton7";
-            this.toolStripButton7.Click += new System.EventHandler(this.toolStripButton7_Click);
+            this.toolStripButton7.Click += new System.EventHandler(this.Folio);
             // 
             // toolStripButton8
             // 
             resources.ApplyResources(this.toolStripButton8, "toolStripButton8");
             this.toolStripButton8.Name = "toolStripButton8";
-            this.toolStripButton8.Click += new System.EventHandler(this.toolStripButton8_Click);
+            this.toolStripButton8.Click += new System.EventHandler(this.LLenarGrid);
             // 
             // toolStripButton6
             // 
             resources.ApplyResources(this.toolStripButton6, "toolStripButton6");
             this.toolStripButton6.Name = "toolStripButton6";
-            this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
+            this.toolStripButton6.Click += new System.EventHandler(this.CerrarTransacciones);
             // 
             // bindingNavigator1
             // 
@@ -777,8 +776,8 @@ namespace TRUCK
             // 
             // axShockwaveFlash1
             // 
-            resources.ApplyResources(this.axShockwaveFlash1, "axShockwaveFlash1");
-            this.axShockwaveFlash1.Name = "axShockwaveFlash1";
+            //resources.ApplyResources(this.axShockwaveFlash1, "axShockwaveFlash1");
+            //this.axShockwaveFlash1.Name = "axShockwaveFlash1";
             // 
             // axShockwaveFlash2
             // 
@@ -815,7 +814,7 @@ namespace TRUCK
             this.bindingNavigator1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GVTransaccion)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash1)).EndInit();
+            //((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -827,9 +826,13 @@ namespace TRUCK
         private void Transacciones1m_Load(object sender, EventArgs e)
         {
             try
-            {
-                if (Global.display) RS232.inicia(ref this.serialPort4, Global.P_COMM, Global.Buad, ref mensaje);
-                if (RS232.inicia(ref this.serialPort1, Global.P_COMM1, Global.Buad1, ref mensaje))
+            {   
+                if (Global.display)
+                {
+                    RS232.inicia(ref this.serialPort4, 0, Global.Buad, ref mensaje);
+                }
+
+                if (RS232.inicia(ref this.serialPort1, 0, Global.Buad1, ref mensaje))
                 {
                     this.timer1.Interval = 1000;
                     this.timer1.Enabled = true;
@@ -904,20 +907,34 @@ namespace TRUCK
 
             cmRegister = (CurrencyManager)this.BindingContext[dt1, dt1.Tables[0].TableName];
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         private void Llenar_Grid()
         {            
             dt1=db.getData("SELECT * FROM transaccion WHERE( numemp = " + Global.nempresa + " ) ORDER BY FOLIO");
             dt1.Tables[0].TableName = "transaccion";
-
-
             dt2 = db.getData("SELECT * FROM Historia WHERE(numemp = " + Global.nempresa + ") ORDER BY FOLIO");
             dt2.Tables[0].TableName = "Historia";
             dt2.Tables[0].PrimaryKey = new DataColumn[] { dt2.Tables[0].Columns["FOLIO"] };   
             this.bindingSource1.DataSource = dt1;
-            //this.bindingSource1.DataMember = dt2.Tables[0].TableName;
             this.bindingNavigator1.BindingSource = this.bindingSource1;
             cmRegister = (CurrencyManager)this.BindingContext[dt1, dt1.Tables[0].TableName];
-
         }
         private void Llenar_Producto(int n_empresa)
         {
@@ -992,7 +1009,40 @@ namespace TRUCK
             }
 
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         #endregion
+
+
 
         #region Eventos para el IO de puerto serial
         private void timer1_Tick(object sender, EventArgs e)
@@ -1038,6 +1088,8 @@ namespace TRUCK
                 }
             }
         }
+
+
         private void SetText(string text, string um)
         {
             if (this.peso_bruto.InvokeRequired || this.peso_tara.InvokeRequired)
@@ -1050,6 +1102,8 @@ namespace TRUCK
                 Peso_Neto(text, um);
             }
         }
+
+
 
 
         private void Peso_Neto(string text, string txt_um)
@@ -1072,6 +1126,7 @@ namespace TRUCK
                 }
                 if (this.peso_bruto.Text == "") this.peso_bruto.Text = "0";
                 if (this.peso_tara.Text == "") this.peso_tara.Text = "0";
+
                 if (this.peso_tara.Text != "" && this.peso_bruto.Text != "")
                 {
                     this.peso_neto.Text = Convert.ToString(Convert.ToDouble(this.peso_bruto.Text) - Convert.ToDouble(this.peso_tara.Text));
@@ -1087,9 +1142,15 @@ namespace TRUCK
                         else this.nombre_swf1 = Global.appPath + "\\baseVacia.swf";
                     }
                     else band = 0;
-                    axShockwaveFlash1.Movie = this.nombre_swf1;
+                    axShockwaveFlash2.Movie = this.nombre_swf1;
+
                 }
-                else axShockwaveFlash1.Movie = Global.appPath + "\\baseVacia.swf";
+
+                else
+                {
+                    axShockwaveFlash2.Movie = Global.appPath + "\\baseVacia.swf";
+                }
+
             }
             catch (Exception e)
             {
@@ -1099,13 +1160,17 @@ namespace TRUCK
         #endregion
 
         #region Funcion de manejo de Datos en DB
+
+
+
+
+
+
         private int Folio_Nuevo()
         {
-
             int next_folio = 0;
             int folio_config = 0;
             int cod = 0;
-
 
             IDataReader Cfg = db.getDataReader("SELECT folio FROM configuracion");
             if (Cfg.Read()) folio_config = Cfg.GetInt32(0);
@@ -1118,41 +1183,48 @@ namespace TRUCK
 
             if (cod > 0)
             {
-                if (folio_config <= cod)  //Convert.ToInt32(dt2.Tables["Historia"].Rows[cod - 1]["folio"].ToString()))
-                    next_folio = cod + 1;  //Convert.ToInt32(dt2.Tables["Historia"].Rows[cod - 1]["folio"].ToString()) + 1;
+                if (folio_config <= cod) 
+                    next_folio = cod + 1;
                 else next_folio = folio_config;
             }
-
-            else next_folio = folio_config;
+            else
+            {
+                next_folio = folio_config;
+            }
 
             return next_folio;
-
         }
+
+
+
         private void update_existencia(Double p_neto)
         {
             Double t_existencia = 0;
             Double exist_act = 0;
             bool existe = true;
-
+            
+            //first validate if exist or not
             IDataReader tt = db.getDataReader("SELECT existencia FROM ARTICULOS WHERE numero = " + this.combo_producto.SelectedValue + " and numemp = " + Global.nempresa);
 
             if (tt.Read())
             {
-                existe = true;
+                existe = true;//exist
                 exist_act = tt.GetInt32(0);
             }
             else
             {
-                existe = false;
+                existe = false;//dont exist
                 exist_act = 0;
             }
             tt.Close();
+
             if (existe)
             {
                 Label texto = new Label();
                 texto.Font = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Bold);
                 texto.Text = Global.M_Error[182, Global.idioma].ToUpper();
                 string query = "";
+
                 if (MessageBox.Show(texto.Text, "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
                     t_existencia = exist_act + p_neto;
@@ -1204,9 +1276,6 @@ namespace TRUCK
                 MessageBox.Show(Global.M_Error[89, Global.idioma].ToString());
             }
         }
-
-
-
         private bool New()
         {
             string query = "";
@@ -1337,6 +1406,7 @@ namespace TRUCK
             }
         }
         private bool Cancelar_Historia()
+
         {
             try
             {
@@ -1416,6 +1486,7 @@ namespace TRUCK
                 MessageBox.Show(Global.M_Error[305, Global.idioma].ToString());
             }
         }
+
         private void Mostrar_Datos(int pos, int op)
         {
 
@@ -1447,7 +1518,7 @@ namespace TRUCK
             if (dt2.Tables[0].Rows.Count > 0)
             {
                 this.toolStripButton1.Enabled = false;
-                DataRow dr = dt2.Tables[0].Rows[pos];
+                DataRow dr = dt1.Tables[0].Rows[pos];
                 this.txt_folio.Text = dr["FOLIO"].ToString();
                 if (Convert.ToInt16(dr["MOV"].ToString()) == 0) this.tipo_mov.SelectedIndex = 0;
                 else this.tipo_mov.SelectedIndex = 1;
@@ -1588,8 +1659,8 @@ namespace TRUCK
         }
         #endregion
 
-        #region Eventos para los toolstrip, combox y bottom        
-        private void toolStripButton1_Click(object sender, EventArgs e)//Guardar Registro
+        #region Eventos para los toolstrip, combox y bottom
+        private void SaveRecord(object sender, EventArgs e)//Guardar Registro
         {
             //Guardar la transaccion de primera entrada
             this.toolStripButton5.Enabled = true;  //nuevo
@@ -1606,10 +1677,13 @@ namespace TRUCK
                     }
                     else
                     {
-                        IDataReader tm = db.getDataReader("SELECT numero,tara FROM taras WHERE ( numemp = " + Global.nempresa + " AND numero = '" + this.txt_placa.Text.Trim() + "')");
+                        IDataReader tm = db.getDataReader("SELECT numero,tara FROM tara WHERE ( numemp = " + Global.nempresa + " AND numero = '" + this.txt_placa.Text.Trim() + "')");
+
                         if (tm.Read()) this.tara_manual = Convert.ToInt32(tm.GetString(1));
                         else this.tara_manual = 0;
+
                         tm.Close();
+
                         if (this.tara_manual != 0 && this.tipo_mov.SelectedIndex == 0)
                         {
                             if (MessageBox.Show(Global.M_Error[34, Global.idioma], "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
@@ -1618,7 +1692,7 @@ namespace TRUCK
                                 if (Convert.ToDouble(this.peso_neto.Text) >= 0)
                                 {
                                     if (New())
-                                    { this.toolStripButton2_Click(this.toolStripButton2, new EventArgs()); }
+                                    { this.CompleteRecord(this.toolStripButton2, new EventArgs()); }
                                 }
                             }
                             else
@@ -1647,20 +1721,25 @@ namespace TRUCK
                             this.timer1.Start();
                         }
                     }
+
                 }
+
                 else
                 {
                     MessageBox.Show(Global.M_Error[91, Global.idioma].ToString());
                     this.txt_placa.Focus();
                 }
+
             }
+
             Llenar_Grid();
         }
-        private void toolStripButton2_Click(object sender, EventArgs e)//Completar Registro 
+        private void CompleteRecord(object sender, EventArgs e)//Completar Registro 
         {
             string query = "";
 
             if (this.tara_manual > 0) this.peso_neto.Text = Convert.ToString(Convert.ToDouble(this.peso_bruto.Text) - Convert.ToDouble(this.tara_manual));
+
             if (Convert.ToDouble(this.peso_neto.Text) > 0)
             {
                 if (Actualiza_Historia())
@@ -1675,12 +1754,15 @@ namespace TRUCK
                     {
                         query = "UPDATE Historia SET status = 'P' WHERE (folio = " + Convert.ToInt32(this.txt_folio.Text) + " and numemp = " + Global.nempresa + ")";
                         db.ExcetuteQuery(query);
-                    }                    
+                    }    
+                                    
                     this.toolStripButton5.Enabled = true;  //nuevo
                     this.toolStripButton1.Enabled = false; //guardar
                     this.toolStripButton2.Enabled = false; //completar
+
                     Limpiar_Datos();
                     this.timer1.Start();
+
                 }
             }
             else
@@ -1693,9 +1775,10 @@ namespace TRUCK
             }
             Llenar_Grid();
         }
-        private void toolStripButton4_Click(object sender, EventArgs e)//Eliminar Registro
+        private void DeleteRecord(object sender, EventArgs e)//Eliminar Registro
         {
             DialogResult df = MessageBox.Show(Global.M_Error[100, Global.idioma].ToString(), "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
             if (df == DialogResult.Yes)
             {
                 if (Cancelar_Historia())
@@ -1708,9 +1791,11 @@ namespace TRUCK
                     Limpiar_Datos();
                 }
             }
+
             Llenar_Grid();
+
         }
-        private void toolStripButton5_Click(object sender, EventArgs e)//Nuevo Registro
+        private void NewRecord(object sender, EventArgs e)//Nuevo Registro
         {
             //nuevo transaccion
             this.toolStripButton5.Enabled = false;  //nuevo
@@ -1719,8 +1804,9 @@ namespace TRUCK
 
             Llenar_Grid();
             Limpiar_Datos();
+
         }
-        private void toolStripButton6_Click(object sender, EventArgs e)//Cerrar las transacciones
+        private void CerrarTransacciones(object sender, EventArgs e)//Cerrar las transacciones
         {
             try
             {
@@ -1762,13 +1848,13 @@ namespace TRUCK
             this.Close();
             this.Dispose();
         }                
-        private void toolStripButton7_Click(object sender, EventArgs e)
+        private void Folio(object sender, EventArgs e)
         {
             Folio fo = new Folio(2, this.txt_folio.Text);
             fo.Show();
             Llenar_Grid();
         }        
-        private void toolStripButton8_Click(object sender, EventArgs e)
+        private void LLenarGrid(object sender, EventArgs e)
         {
             Llenar_Grid();
             Limpiar_Datos();
@@ -1838,6 +1924,7 @@ namespace TRUCK
         }
         #endregion
 
+        #region FUNCIONES EXTERNAS
         public int buscar_posicion(int elemento, string clave)
         {
             int desde, hasta, medio, posicion; // desde y hasta indican los límites del array que se está mirando.
@@ -1914,13 +2001,7 @@ namespace TRUCK
             }
             return encontro;
         }
-
+        #endregion
     }
-
-
-
-
-
-
-
+ 
 }
