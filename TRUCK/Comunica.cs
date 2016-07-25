@@ -10,6 +10,8 @@ namespace TRUCK
         public bool inicia(ref SerialPort S_RS232, int puerto, int baud, ref string mensaje)
 
         {
+
+
             try
             {
                 if (S_RS232.IsOpen) S_RS232.Close();
