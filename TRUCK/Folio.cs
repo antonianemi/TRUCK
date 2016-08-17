@@ -257,6 +257,7 @@ namespace TRUCK
                     condi = "(folio >= " + inicio + " and folio <= " + final + " and numemp = " + Global.nempresa + ")";  // and status = 'F')";
 
                     IDataReader em = db.getDataReader("SELECT empresa,direccion1,direccion2,cp,telf,direccion3 FROM empresa WHERE numemp = " + Global.nempresa);
+
                     if (em.Read())
                     {
                         nom_empre = em.GetString(0);

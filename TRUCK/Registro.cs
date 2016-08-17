@@ -242,7 +242,7 @@ namespace TRUCK
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Registro));
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.text1 = new System.Windows.Forms.TextBox();
+            this.text1 = new TextBox();
             this.text2 = new System.Windows.Forms.TextBox();
             this.text3 = new System.Windows.Forms.TextBox();
             this.text4 = new System.Windows.Forms.TextBox();

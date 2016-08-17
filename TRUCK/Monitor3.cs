@@ -59,6 +59,9 @@ namespace TRUCK
             if (Global.scale == 0) RS232.SendData(ref this.serialPort2, ref mensaje2, "P");
             if (Global.scale == 0) RS232.SendData(ref this.serialPort3, ref mensaje3, "P");
         }
+
+
+
         private void button1_Click(object sender, EventArgs e)
         {
             try
@@ -107,6 +110,14 @@ namespace TRUCK
             this.Close();
             this.Dispose();
         }
+
+
+
+
+
+
+
+      
         private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             mensaje1 += this.serialPort1.ReadExisting();
@@ -151,6 +162,13 @@ namespace TRUCK
                 }
             }
         }
+
+
+
+
+
+
+
         #endregion
         #region FUCTIONS
         private void SetText1(string text)

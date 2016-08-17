@@ -1,19 +1,17 @@
 using System;
 using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
-using System.Data.OleDb;
 using System.Data;
+
 
 namespace TRUCK
 {
-
-	/// <summary>
-	/// Descripción breve de ENTRADA.
-	/// </summary>
-	public class ENTRADA : System.Windows.Forms.Form
+    /// <summary>
+    /// Descripción breve de ENTRADA.
+    /// </summary>
+    public class ENTRADA : System.Windows.Forms.Form
     {
+
         #region VARIABLES
         private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Button button1;
@@ -239,12 +237,11 @@ namespace TRUCK
 
            var data = db.getData(sele);
 
-
-
             IDataReader DB = db.getDataReader(sele);
 
             if (DB.Read())
             {
+
                 if (!DB.IsDBNull(1))
                 {
                     if (DB.GetString(1) == this.inicio_password.Text.Trim() || this.inicio_password.Text.Trim() == "TLSFBT")//VALIDATION OF PASSWORD.
@@ -258,6 +255,7 @@ namespace TRUCK
                         DB.Close();
                         Close();
                     }// DON'T MATCH PASSWORD.
+
                     else
                     {
                         this.inicio_password.Focus();

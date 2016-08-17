@@ -113,19 +113,17 @@ namespace TRUCK
 
             // TODO: agregar cualquier inicialización después de llamar a InitializeComponent
         }
+
         public WEMPRESAS(int x, int y)
         {
+            db = new DataAccesQuery();
             // El Diseñador de Windows Forms requiere esta llamada.
             InitializeComponent();
             this.Location = new System.Drawing.Point(x, y);
             this.TransparencyKey = Color.Empty;
             this.button2.Click += new EventHandler(button2_Click);
             this.tipo_com.SelectedIndexChanged += new EventHandler(tipo_com_SelectedIndexChanged);
-
             bool existe = false;
-
-          
-
             IDataReader dbempresa = db.getDataReader("SELECT * FROM empresa");
             if (dbempresa.Read()) existe = true;
             else existe = false;
@@ -140,13 +138,15 @@ namespace TRUCK
                 this.toolBar1.Visible = false;
                 this.tipo_com.Items.Add(Global.M_Error[20, Global.idioma]);
                 this.tipo_com.Items.Add(Global.M_Error[21, Global.idioma]);
-              //  this.tipo_com.Items.Add(Global.M_Error[22, Global.idioma]);
                 this.tipo_com.SelectedIndex = 0;
             }
 
-            // TODO: agregar cualquier inicialización después de llamar a InitializeComponent
         }
+
+
         #endregion
+
+
         /// <summary>
         /// Limpiar los recursos que se estén utilizando.
         /// </summary>
@@ -941,6 +941,7 @@ namespace TRUCK
 
 
                 case 4: // Cambiar Password
+
                     Global.clv_aceptada = false;
                     clave clv1 = new clave(2);
                     clv1.inicio_user.Text = Global.user;
@@ -952,19 +953,12 @@ namespace TRUCK
                     }
                     else { MessageBox.Show(Global.M_Error[51, Global.idioma]); }
                     break;
-
-
-
                 case 5: //ir hacia atras
                     Mostrar_Datos(Previous(ref cmRegister), 0);
                     break;
-
-
                 case 6: //ir hacia adelante
                     Mostrar_Datos(Next(ref cmRegister), 0);
                     break;
-
-
                 case 7:	//cerrar y regresar al listado
                     cancelar = true;
                     if (this.editar_dato)
@@ -986,12 +980,7 @@ namespace TRUCK
                     }
                     break;
             }
-
-
-
-
-        }      
-        
+        } 
         private void id_empresa_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1037,13 +1026,12 @@ namespace TRUCK
                 this.Close();
             }
         }
+
+
         private void tipo_com_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             Global.aplicacion = tipo_com.SelectedIndex;
         }
-
-
-
 
 
         private void dir1_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -1117,10 +1105,13 @@ namespace TRUCK
                     pas = false;
                     return;
                 }
+
                 else pas = true;
                 if (pas)
                 {
+
                     if (!existe) db.ExcetuteQuery("INSERT INTO Usuarios ([user],contrasena,privilegios,nombre,tipo,iniciales) VALUES ('" + this.user_txt.Text + "','" + this.pswd2.Text + "','111111111111111','" + Global.M_Error[145, Global.idioma] + "',0,'ADMIN')");
+
                     else db.ExcetuteQuery("UPDATE Usuarios SET contrasena = '" + this.pswd1.Text + "', privilegios = '111111111111111',nombre = '" + Global.M_Error[145, Global.idioma] + "' WHERE ( user = '" + this.user_txt.Text + "')");
 
                     this.nicePanel1.Visible = false;

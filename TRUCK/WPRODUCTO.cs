@@ -592,10 +592,11 @@ namespace TRUCK
         db.ExcetuteQuery(query);
         }
         #endregion
+
         #region FUNCTIOS
         public void comando(int opcion)
         {
-            System.Windows.Forms.ToolStripItem bt = this.toolBar1.Items[opcion];
+            ToolStripItem bt = this.toolBar1.Items[opcion];
             this.toolBar1_ButtonClick(this.toolBar1, new ToolStripItemClickedEventArgs(bt));
         }
 		private void editar_TextChanged(object sender, System.EventArgs e)
@@ -668,9 +669,9 @@ namespace TRUCK
         {
             int encontro = -1;
 
-            dt.Tables[0].PrimaryKey = new System.Data.DataColumn[] { dt.Tables[0].Columns[campo] };
+            dt.Tables[0].PrimaryKey = new DataColumn[] { dt.Tables[0].Columns[campo] };
 
-            System.Data.DataRow dr = dt.Tables[0].Rows.Find(Convert.ToInt32(n_codigo));
+            DataRow dr = dt.Tables[0].Rows.Find(Convert.ToInt32(n_codigo));
 
             if (dr != null)
             {
@@ -683,7 +684,7 @@ namespace TRUCK
             int encontro = -1;
             int len = descrip.Length;
 
-            System.Data.DataRow[] dr = dt.Tables[0].Select("SUBSTRING(" + campo2 + ",1," + len + ") = '" + descrip + "'");
+            DataRow[] dr = dt.Tables[0].Select("SUBSTRING(" + campo2 + ",1," + len + ") = '" + descrip + "'");
 
             if (dr.Length > 0)
             {

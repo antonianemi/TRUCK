@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Data;
-using System.IO;
-using CrystalDecisions.CrystalReports.Engine;
-using BaseAcces;
+
+
 namespace TRUCK
 {
     public class Inventario : Form1

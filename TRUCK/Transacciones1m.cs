@@ -1,22 +1,19 @@
 using System;
 using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Data.OleDb;
 using System.Data;
 using System.IO.Ports;
-using CrystalDecisions.CrystalReports.Engine;
-using CrystalDecisions.ReportSource;
-using CrystalDecisions.Shared;
-using CrystalDecisions.Windows.Forms;
 
 namespace TRUCK
 {
-	/// <summary>
-	/// Descripción breve de Transacciones.
-	/// </summary>
-    public class Transacciones1m : System.Windows.Forms.Form
+
+
+    /// <summary>
+    /// Descripción breve de Transacciones.
+    /// </summary>
+    public class Transacciones1m : Form
     {
         #region VARIABLES
         DataAccesQuery db;
@@ -101,7 +98,6 @@ namespace TRUCK
         private AxShockwaveFlashObjects.AxShockwaveFlash axShockwaveFlash2;
         private ToolStripMenuItem folioToolStripMenuItem;
         #endregion
-
         public Transacciones1m()
         {
             //
@@ -131,6 +127,7 @@ namespace TRUCK
 
             Llenar_Grid();
 
+
             switch (Global.aplicacion)
             {
                 case 0:
@@ -139,25 +136,30 @@ namespace TRUCK
                         Llenar_Clientes(Global.nempresa);
                         this.combo_transporte.Enabled = false;
                         this.combo_proveedor.Enabled = false;
-                    } break;
+                    }
+                    break;
                 case 1:
                     {
                         Llenar_Producto(Global.nempresa);
                         Llenar_Proveedor(Global.nempresa);
                         Llenar_Transporte(Global.nempresa);
                         Llenar_Clientes(Global.nempresa);                        
-                    } break;
+                    }
+                    break;
                 case 2:
                     {
                         Llenar_Producto(Global.nempresa);
                         Llenar_Proveedor(Global.nempresa);
                         Llenar_Clientes(Global.nempresa);
                         this.combo_transporte.Enabled = false;
-                        
-                    } break;
+                    }
+                    break;
             }
+
             Grid_Transaccion();
+
             band = -1;
+
             if (this.combo_producto.Items.Count <= 0)
             {
                 MessageBox.Show(Global.M_Error[63, Global.idioma], "", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -204,7 +206,6 @@ namespace TRUCK
             // TODO: Agregar código de constructor después de llamar a InitializeComponent
             //
         }       
-
         /// <summary>
         /// Limpiar los recursos que se estén utilizando.
         /// </summary>
@@ -219,7 +220,6 @@ namespace TRUCK
             }
             base.Dispose(disposing);
         }
-
         #region Windows Form Designer generated code
         /// <summary>
         /// Método necesario para admitir el Diseñador, no se puede modificar
@@ -412,7 +412,7 @@ namespace TRUCK
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.txt_guia);
-            this.groupBox4.Controls.Add(this.txt_placa);
+            groupBox4.Controls.Add(this.txt_placa);
             this.groupBox4.Controls.Add(this.txt_embarque);
             this.groupBox4.Controls.Add(this.txt_factura);
             this.groupBox4.Controls.Add(this.label4);
@@ -818,10 +818,8 @@ namespace TRUCK
             ((System.ComponentModel.ISupportInitialize)(this.axShockwaveFlash2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
         #endregion
-
         #region Evento load
         private void Transacciones1m_Load(object sender, EventArgs e)
         {
@@ -848,18 +846,15 @@ namespace TRUCK
             }
         }
         #endregion
-
         #region Funciones para llenado de datos grid, combox
         private void Grid_Transaccion()
         {
             para1 = Global.M_Error[206, Global.idioma].ToString();
             para2 = Global.M_Error[203, Global.idioma].ToString();
             para3 = Global.M_Error[189, Global.idioma].ToString();
-
             campo = "folio";
             campo2 = "placas";
             campo3 = "factura";
-
             DataGridViewTextBoxColumn colStyle1 = new DataGridViewTextBoxColumn();
             colStyle1.HeaderText = Global.M_Error[206, Global.idioma].ToString();
             colStyle1.Width = 100;
@@ -897,34 +892,14 @@ namespace TRUCK
             colStyle4.DefaultCellStyle.NullValue = "";
             colStyle4.DataPropertyName = "observacion";
             colStyle4.MaxInputLength = 254;
-            
-            this.GVTransaccion.Columns.Add(colStyle1);
-            this.GVTransaccion.Columns.Add(colStyle2);
-            this.GVTransaccion.Columns.Add(colStyle3);
-            this.GVTransaccion.Columns.Add(colStyle5); 
-            this.GVTransaccion.Columns.Add(colStyle7);
-            this.GVTransaccion.Columns.Add(colStyle4);            
-
+            GVTransaccion.Columns.Add(colStyle1);
+            GVTransaccion.Columns.Add(colStyle2);
+            GVTransaccion.Columns.Add(colStyle3);
+            GVTransaccion.Columns.Add(colStyle5); 
+            GVTransaccion.Columns.Add(colStyle7);
+            GVTransaccion.Columns.Add(colStyle4);            
             cmRegister = (CurrencyManager)this.BindingContext[dt1, dt1.Tables[0].TableName];
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         private void Llenar_Grid()
         {            
             dt1=db.getData("SELECT * FROM transaccion WHERE( numemp = " + Global.nempresa + " ) ORDER BY FOLIO");
@@ -1009,41 +984,7 @@ namespace TRUCK
             }
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         #endregion
-
-
-
         #region Eventos para el IO de puerto serial
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -1088,8 +1029,6 @@ namespace TRUCK
                 }
             }
         }
-
-
         private void SetText(string text, string um)
         {
             if (this.peso_bruto.InvokeRequired || this.peso_tara.InvokeRequired)
@@ -1102,14 +1041,13 @@ namespace TRUCK
                 Peso_Neto(text, um);
             }
         }
-
-
-
-
         private void Peso_Neto(string text, string txt_um)
         {
+
             try
             {
+
+                //vALIDAR SI ES PESO TARA
                 if (this.tipo_mov.SelectedIndex == 0)
                 {
                     this.peso_bruto.Text = text;
@@ -1117,21 +1055,25 @@ namespace TRUCK
                     this.nombre_swf1 = Global.appPath + "\\llenoSube.swf";
                     this.nombre_swf2 = Global.appPath + "\\llenoBaja.swf";
                 }
-                else
+                else//O PESO NORMAL
                 {
                     this.peso_tara.Text = text;
                     this.txt_um_pt.Text = txt_um;
                     this.nombre_swf1 = Global.appPath + "\\vacioSube.swf";
                     this.nombre_swf2 = Global.appPath + "\\vacioBaja.swf";
                 }
+
                 if (this.peso_bruto.Text == "") this.peso_bruto.Text = "0";
+
                 if (this.peso_tara.Text == "") this.peso_tara.Text = "0";
+
+
 
                 if (this.peso_tara.Text != "" && this.peso_bruto.Text != "")
                 {
                     this.peso_neto.Text = Convert.ToString(Convert.ToDouble(this.peso_bruto.Text) - Convert.ToDouble(this.peso_tara.Text));
                     this.txt_um_pn.Text = txt_um;
-                    //if (Convert.ToInt32(this.peso_neto.Text) == 0)
+
                     if (this.peso_neto.Text == "0" || this.peso_neto.Text == "0.0")
                     {
                         if (band >= 0 && band <= 20)
@@ -1141,7 +1083,9 @@ namespace TRUCK
                         }
                         else this.nombre_swf1 = Global.appPath + "\\baseVacia.swf";
                     }
+
                     else band = 0;
+
                     axShockwaveFlash2.Movie = this.nombre_swf1;
 
                 }
@@ -1150,7 +1094,6 @@ namespace TRUCK
                 {
                     axShockwaveFlash2.Movie = Global.appPath + "\\baseVacia.swf";
                 }
-
             }
             catch (Exception e)
             {
@@ -1158,14 +1101,7 @@ namespace TRUCK
             }
         }
         #endregion
-
         #region Funcion de manejo de Datos en DB
-
-
-
-
-
-
         private int Folio_Nuevo()
         {
             int next_folio = 0;
@@ -1194,9 +1130,6 @@ namespace TRUCK
 
             return next_folio;
         }
-
-
-
         private void update_existencia(Double p_neto)
         {
             Double t_existencia = 0;
@@ -1486,7 +1419,6 @@ namespace TRUCK
                 MessageBox.Show(Global.M_Error[305, Global.idioma].ToString());
             }
         }
-
         private void Mostrar_Datos(int pos, int op)
         {
 
@@ -1559,7 +1491,6 @@ namespace TRUCK
             this.txt_placa.Focus();
         }
         #endregion
-
         #region Eventos para captura de datos 
         private void GVTransaccion_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -1658,7 +1589,6 @@ namespace TRUCK
             }
         }
         #endregion
-
         #region Eventos para los toolstrip, combox y bottom
         private void SaveRecord(object sender, EventArgs e)//Guardar Registro
         {
@@ -1872,7 +1802,7 @@ namespace TRUCK
                     cmRegister.Position = Find_Descripcion(Buscar.nombre, campo3,campo);
                     if (cmRegister.Position >= 0)
                     {
-                        this.GVTransaccion.Rows[cmRegister.Position].Selected = true; ;
+                        this.GVTransaccion.Rows[cmRegister.Position].Selected = true;
                         Mostrar_Datos(cmRegister.Position, 0);
                     }
                     else MessageBox.Show(Global.M_Error[32, Global.idioma].ToString());
@@ -1893,7 +1823,7 @@ namespace TRUCK
                     cmRegister.Position = Find_Descripcion(Buscar.nombre,campo2,campo);
                     if (cmRegister.Position >= 0)
                     {
-                        this.GVTransaccion.Rows[cmRegister.Position].Selected = true; ;
+                        this.GVTransaccion.Rows[cmRegister.Position].Selected = true;
                         Mostrar_Datos(cmRegister.Position, 0);
                     }
                     else MessageBox.Show(Global.M_Error[32, Global.idioma].ToString());
@@ -1914,7 +1844,7 @@ namespace TRUCK
                     cmRegister.Position = Find_Codigo(Buscar.codigo, campo);
                     if (cmRegister.Position >= 0)
                     {
-                        this.GVTransaccion.Rows[cmRegister.Position].Selected = true; ;
+                        this.GVTransaccion.Rows[cmRegister.Position].Selected = true;
                         Mostrar_Datos(cmRegister.Position, 0);
                     }
                     else MessageBox.Show(Global.M_Error[32, Global.idioma].ToString());
@@ -1923,7 +1853,6 @@ namespace TRUCK
             else MessageBox.Show(Global.M_Error[2, Global.idioma].ToString());
         }
         #endregion
-
         #region FUNCIONES EXTERNAS
         public int buscar_posicion(int elemento, string clave)
         {
@@ -2003,5 +1932,4 @@ namespace TRUCK
         }
         #endregion
     }
- 
 }

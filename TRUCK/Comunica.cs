@@ -78,8 +78,8 @@ namespace TRUCK
                     S_RS232.Close();
                     S_RS232 = null;
                 }
-                S_RS232 = null;
                 S_RS232.Dispose();
+                S_RS232 = null;
             }
             catch (System.IO.IOException eO)
             {

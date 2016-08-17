@@ -537,8 +537,18 @@ namespace TRUCK
             this.PerformLayout();
 
 		}
-		#endregion
+        #endregion
         #region funciones de DB
+
+
+
+
+
+
+
+        /// <summary>
+        /// here is saved the mode aplication when the user is selected.
+        /// </summary>
         private void New_Dato()
         {
             string query = "INSERT INTO configuracion (puerto,baudrate,puerto2,baudrate2,puerto3,baudrate3,puerto4,baudrate4,tipo,scale,formato_fecha,num_decimal,car_moneda,folio,display,aplicacion,path,rmto)" +
@@ -565,6 +575,9 @@ namespace TRUCK
                 data.RejectChanges();
             }
         }
+
+
+
 		private void Save_Dato()
 		{
 
@@ -613,13 +626,13 @@ namespace TRUCK
                 this.s_moneda.Text = dr["car_moneda"].ToString();
                 this.n_decimal.Text = dr["num_decimal"].ToString();
                 this.txt_folio.Text = dr["folio"].ToString();
-                this.type_scale.SelectedIndex = Convert.ToInt16(dr["scale"].ToString());
                 Global.aplicacion = Convert.ToInt16(dr["aplicacion"].ToString());
                 Global.tipo_dato = (string.IsNullOrEmpty(dr["tipo"].ToString()))? 0 : Convert.ToInt16(dr["tipo"].ToString());
                 Global.nempresa = (string.IsNullOrEmpty(dr["numemp"].ToString())) ? 0 : Convert.ToInt16(dr["numemp"].ToString());
                 this.type_appli.SelectedIndex = Global.tipo_dato - 1;
                 try
                 {
+                    this.type_scale.SelectedIndex = Convert.ToInt16(dr["scale"].ToString());
                     this.PUERTO1.SelectedIndex = Convert.ToInt16(dr["puerto"].ToString());
                     this.BAUD1.SelectedIndex = Convert.ToInt16(dr["baudrate"].ToString());
                     this.PUERTO2.SelectedIndex = Convert.ToInt16(dr["puerto2"].ToString());
@@ -644,22 +657,12 @@ namespace TRUCK
                                     this.BAUD2.Enabled = true;
                                     this.BAUD3.Enabled = true;
                                 } break;
-                          /*  case 3:
-                                {
-                                    this.PUERTO2.Enabled = true;
-                                    this.BAUD2.Enabled = true;
-                                    this.PUERTO3.Enabled = false;
-                                    this.BAUD3.Enabled = false;
-                                } break;*/
                         }
                     }
-
-
-                    //if (Convert.ToBoolean(dr["display"].ToString()))
                         if (dr["display"].ToString()=="1")
                         {
                         this.DISPLAY.Checked = true;
-                        this.PUERTO4.SelectedIndex = Convert.ToInt16(dr["puerto4"].ToString());
+                        PUERTO4.SelectedIndex = Convert.ToInt16(dr["puerto4"].ToString());
                         this.BAUD4.SelectedIndex = Convert.ToInt16(dr["baudrate4"].ToString());
                     }
                     else
@@ -668,8 +671,6 @@ namespace TRUCK
                         this.PUERTO4.SelectedIndex = -1;
                         this.BAUD4.SelectedIndex = 0;
                     }
-
-                    //if (Convert.ToBoolean(dr["rmto"].ToString()))
                     if (dr["rmto"].ToString() == "1")
                         this.Rmto.Checked = true;
                     else

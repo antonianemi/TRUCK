@@ -10,11 +10,12 @@ namespace TRUCK
 	/// <summary>
 	/// Descripción breve de Monitoreo.
 	/// </summary>
-	public class Monitor1 : System.Windows.Forms.Form
+	public class Monitor1 : Form
     {
+
         #region VARIABLES
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label pto1;
+        private GroupBox groupBox1;
+        private Label pto1;
         private SerialPort serialPort1 = new SerialPort();
         private string mensaje;
         private Button button1;
@@ -22,21 +23,14 @@ namespace TRUCK
         private IContainer components = null;
         private Timer timer1;
         private Comunica RS232 = new Comunica();
+
         #endregion
         #region CONSTRUCTORS
         public Monitor1()
 		{
-			//
-			// Necesario para admitir el Diseñador de Windows Forms
-			//
             InitializeComponent();
-            this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(serialPort1_DataReceived);
-            this.serialPort1.ErrorReceived += new SerialErrorReceivedEventHandler(serialPort1_ErrorReceived);
-            this.serialPort1.PinChanged += new SerialPinChangedEventHandler(serialPort1_PinChanged);
-			//
-			// TODO: Agregar código de constructor después de llamar a InitializeComponent
-			//
-		}
+         
+        }
         #endregion
         #region Windows Form Designer generated code
         /// <summary>
@@ -98,6 +92,21 @@ namespace TRUCK
         }
         #endregion
         #region EVENTS
+        private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            mensaje += this.serialPort1.ReadExisting();
+
+            if (mensaje.IndexOf((char)13) > 0)
+            {
+                if (mensaje.Length > 0)
+                {
+                    if (mensaje.IndexOf("NEG") < 0 && mensaje.IndexOf("OVER") < 0 && mensaje.IndexOf("SOBRE") < 0 && mensaje.IndexOf("&&") < 0) mensaje = RS232.obtiene_peso(mensaje);
+                    else mensaje = "0";
+                    SetText(mensaje);
+                }
+
+            }
+        }
         private void serialPort1_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
             MessageBox.Show(e.EventType.ToString());
@@ -105,31 +114,6 @@ namespace TRUCK
         private void serialPort1_PinChanged(object sender, SerialPinChangedEventArgs e)
         {
             MessageBox.Show(e.EventType.ToString());
-        }
-        private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            SerialPort S_RS232 = (SerialPort)sender;
-            // This method will be called when there is data waiting in the port's buffer
-            // Determain which mode (string or binary) the user is in
-            // Read all the data waiting in the buffer
-            mensaje += S_RS232.ReadExisting();
-            // Display the text to the user in the terminal
-
-            SetText(RS232.obtiene_peso(mensaje));
-
-            //if (mensaje.IndexOf((char)13) > 0)
-            //{
-            //    if (mensaje.IndexOf("OVER") < 0 && mensaje.IndexOf("SOBRE") < 0 && mensaje.IndexOf("&&") < 0)
-            //    {
-            //        if (mensaje.Length > 0)
-            //        {
-            //            if (mensaje.IndexOf("NEG") < 0) mensaje = RS232.obtiene_peso(mensaje);
-            //            else mensaje = "0";
-            //            SetText(mensaje);
-            //        }
-            //    }
-            //    else mensaje = "0";
-            //}
         }
         private void SetText(string text)
         {
@@ -139,21 +123,16 @@ namespace TRUCK
                 this.Invoke(d, new object[] { text });
             }
             else
-            {
-
-                pto1.Height = 300;
-                pto1.Width =  600;
+            {                
                 this.pto1.Text = text;
             }
         }
         private void button1_Click(object sender, EventArgs e)
         {
             try
-            {
-                //Cerrar la opcion        
+            {       
                 this.timer1.Stop();
                 this.timer1.Enabled = false;
-                this.serialPort1.DataReceived -= new System.IO.Ports.SerialDataReceivedEventHandler(serialPort1_DataReceived);
 
                 if (this.serialPort1.IsOpen)
                 {
@@ -161,6 +140,8 @@ namespace TRUCK
                     this.serialPort1.DiscardOutBuffer();
                     RS232.Termino(ref this.serialPort1);
                 }
+                this.serialPort1.DataReceived -= new System.IO.Ports.SerialDataReceivedEventHandler(serialPort1_DataReceived);
+
             }
             catch (System.IO.IOException eio)
             {
@@ -183,6 +164,9 @@ namespace TRUCK
         }
         private void Monitor1_Load(object sender, EventArgs e)
         {
+            this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(serialPort1_DataReceived);
+            this.serialPort1.ErrorReceived += new SerialErrorReceivedEventHandler(serialPort1_ErrorReceived);
+            this.serialPort1.PinChanged += new SerialPinChangedEventHandler(serialPort1_PinChanged);
             RS232.inicia(ref this.serialPort1, Global.P_COMM1, Global.Buad1, ref mensaje);
             this.timer1.Interval = 1000;
             this.timer1.Enabled = true;

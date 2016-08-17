@@ -10,12 +10,9 @@ using System.Threading;
 
 namespace TRUCK
 {
-
-
     /// <summary>
     /// Descripción breve de Form1.
     /// </summary>
-    ///	
     public class Menu : System.Windows.Forms.Form
     {
         #region VARIABLES
@@ -57,7 +54,9 @@ namespace TRUCK
         private MenuItem MenuEmpresa;
 		private System.Windows.Forms.MenuItem menuItem11;
         #endregion
+
         #region CONSTRUCTOR
+
         public Menu()
 		{   		
 			InitializeComponent();
@@ -72,6 +71,11 @@ namespace TRUCK
 
 
         #region EVENTS
+
+
+
+    
+
         private void Menu_Load(object sender, System.EventArgs e)
         {
             OperatingSystem os;
@@ -81,9 +85,9 @@ namespace TRUCK
                 this.WindowState = FormWindowState.Maximized;
                 this.BackColor = System.Drawing.Color.Gray;
                 this.Status.Text = Global.M_Error[58, Global.idioma].ToString();
-
                 y = this.Size.Height / 8;
                 x = this.Size.Width / 8;
+
 
                 if (!System.IO.File.Exists(Global.appPath + "\\CAMIONERADB.FDB"))
                 {
@@ -96,11 +100,8 @@ namespace TRUCK
                 else
                 {
                     db = new DataAccesQuery();//se rea una nueva base de datos.
-
                     var data = db.getData("SELECT * FROM empresa");
-
                     int emp = data.Tables[0].Rows.Count;
-
 
                     if (emp <= 0)
                     {
@@ -111,9 +112,7 @@ namespace TRUCK
                     }
                     else
                     {
-
                         this.MenuEmpresa.MenuItems.Clear();
-
                         for (int g = 0; g < emp; g++)
                         {
                             this.MenuEmpresa.MenuItems.Add(data.Tables[0].Rows[g]["numemp"].ToString() + data.Tables[0].Rows[g]["empresa"].ToString());
@@ -121,66 +120,13 @@ namespace TRUCK
                         }
                     }
 
+
                     using (FileStream fi = new FileStream(Global.appPath + "\\recibe.ttt", FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
-                    { fi.Close(); }
-
-                    IDataReader Cfg = db.getDataReader("SELECT num_decimal,car_moneda,formato_fecha,tipo,display,scale,aplicacion,puerto,puerto2,puerto3,puerto4,baudrate,baudrate2,baudrate3,baudrate4 FROM configuracion where numemp = " + Global.nempresa);
-
-                    if (!Cfg.Read())
                     {
-                        Cfg.Close();
-                        WDGENERAL config = new WDGENERAL(x, y, 2);
-                        this.AddOwnedForm(config);
-                        config.ShowDialog();
+                        fi.Close();
                     }
-                    else
-                    {
-                        for (int i = 0; i < Cfg.FieldCount; i++)
-                        {
-                            if (Cfg.GetName(i) == "num_decimal")
-                            {
-                                if (!Cfg.IsDBNull(i))
-                                {
-                                    Global.n_decimal = Cfg.GetInt16(i);
-                                    if (Global.n_decimal == 0)
-                                    {
-                                        Global.F_Decimal = "{0:####0}";
-                                        Global.F_Total = "{0:#,###,###,##0}";
-                                    }
-                                    if (Global.n_decimal == 1)
-                                    {
-                                        Global.F_Decimal = "{0:###0.0}";
-                                        Global.F_Total = "{0:###,###,##0.0}";
-                                    }
-                                    if (Global.n_decimal == 2)
-                                    {
-                                        Global.F_Decimal = "{0:##0.#0}";
-                                        Global.F_Total = "{0:##,###,##0.#0}";
-                                    }
-                                }
-                                else
-                                {
-                                    Global.F_Decimal = "{0:##0.#0}";
-                                    Global.F_Total = "{0:##,###,##0.#0}";
-                                }
-                            }
-                            if (Cfg.GetName(i) == "formato_fecha") { Global.F_Fecha = Cfg.GetString(i); }
-                            if (Cfg.GetName(i) == "car_moneda") { Global.moneda = Cfg.GetString(i); }
-                            if (Cfg.GetName(i) == "tipo") { Global.tipo_dato = Cfg.GetInt32(i); }
-                            if (Cfg.GetName(i) == "display") { Global.display = Cfg.GetBoolean(i); }
-                            if (Cfg.GetName(i) == "scale") { Global.scale = Cfg.GetInt32(i); }
-                            if (Cfg.GetName(i) == "aplicacion") { Global.aplicacion = Cfg.GetInt32(i); }
-                            if (Cfg.GetName(i) == "puerto4") { Global.P_COMM = Cfg.GetInt16(i); }
-                            if (Cfg.GetName(i) == "puerto") { Global.P_COMM1 = Cfg.GetInt16(i); }
-                            if (Cfg.GetName(i) == "puerto2") { Global.P_COMM2 = Cfg.GetInt16(i); }
-                            if (Cfg.GetName(i) == "puerto3") { Global.P_COMM3 = Cfg.GetInt16(i); }
-                            if (Cfg.GetName(i) == "baudrate4") { Global.Buad = Cfg.GetInt32(i); }
-                            if (Cfg.GetName(i) == "baudrate") { Global.Buad1 = Cfg.GetInt32(i); }
-                            if (Cfg.GetName(i) == "baudrate2") { Global.Buad2 = Cfg.GetInt32(i); }
-                            if (Cfg.GetName(i) == "baudrate3") { Global.Buad3 = Cfg.GetInt32(i); }
-                        }
-                        Cfg.Close();
-                    }
+
+                    loadConfiguration();
 
                     DateTime MyDate = new DateTime(Global.year, Global.mes, Global.dia, Global.hora, Global.minutos, Global.segundo);
 
@@ -192,39 +138,15 @@ namespace TRUCK
                     this.Text = Global.Empresa;
 
                     Registro rt = new Registro();
-
                     ENTRADA INIC = new ENTRADA();
 
                     INIC.ShowDialog(this);
 
-
                     if (User_exit == true)
                     {
-                        for (int i = 0; i < this.mainMenu.MenuItems.Count; i++)
-                        {
-                            this.mainMenu.MenuItems[i].Enabled = true;
-                            for (int j = 0; j < this.mainMenu.MenuItems[i].MenuItems.Count; i++)
-                            {
-                                this.mainMenu.MenuItems[i].MenuItems[j].Enabled = true;
-                            }
-                        }
-                        for (int i = 0; i < Global.privilegio.Length; i++)
-                        {
-                            if (Global.privilegio.Substring(i, 1) == "1")
-                            {
-                                if (i == 7) { this.menuItem8.Enabled = true; } //Registrar transacciones
-                                if (i == 6) { this.MenuInfo.Enabled = true; }  //Generar Reportes
-                                if (i == 10) { this.menuItem6.Enabled = true; } //Configuracion
-                                if (i == 8) { this.menuItem11.Enabled = true; }  //Reimprimir documento
-                            }
-                            else
-                            {
-                                if (i == 7) { this.menuItem8.Enabled = false; }
-                                if (i == 6) { this.MenuInfo.Enabled = false; }
-                                if (i == 10) { this.menuItem6.Enabled = false; }
-                                if (i == 8) { this.menuItem11.Enabled = false; }
-                            }
-                        }
+                        loadPermissions();
+
+
                         if (Global.aplicacion == 0)
                         {
                             this.menuItem12.Enabled = false;  //Ajustar inventario
@@ -253,6 +175,99 @@ namespace TRUCK
                 os = null;
             }
         }
+
+        void loadPermissions()
+        {
+            for (int i = 0; i < this.mainMenu.MenuItems.Count; i++)
+            {
+                this.mainMenu.MenuItems[i].Enabled = true;
+
+                for (int j = 0; j < this.mainMenu.MenuItems[i].MenuItems.Count; i++)
+                {
+                    this.mainMenu.MenuItems[i].MenuItems[j].Enabled = true;
+                }
+            }
+            for (int i = 0; i < Global.privilegio.Length; i++)
+            {
+                if (Global.privilegio.Substring(i, 1) == "1")
+                {
+                    if (i == 7) { this.menuItem8.Enabled = true; } //Registrar transacciones
+                    if (i == 6) { this.MenuInfo.Enabled = true; }  //Generar Reportes
+                    if (i == 10) { this.menuItem6.Enabled = true; } //Configuracion
+                    if (i == 8) { this.menuItem11.Enabled = true; }  //Reimprimir documento
+                }
+                else
+                {
+                    if (i == 7) { this.menuItem8.Enabled = false; }
+                    if (i == 6) { this.MenuInfo.Enabled = false; }
+                    if (i == 10) { this.menuItem6.Enabled = false; }
+                    if (i == 8) { this.menuItem11.Enabled = false; }
+                }
+            }
+        }
+        void loadConfiguration()
+        {
+            IDataReader Cfg = db.getDataReader("SELECT num_decimal,car_moneda,formato_fecha,tipo,display,scale,aplicacion,puerto,puerto2,puerto3,puerto4,baudrate,baudrate2,baudrate3,baudrate4 FROM configuracion where numemp = " + Global.nempresa);
+            if (!Cfg.Read())//Request a configuration
+            {
+                Cfg.Close();
+                WDGENERAL config = new WDGENERAL(x, y, 2);
+                this.AddOwnedForm(config);
+                config.ShowDialog();
+            }
+            else
+            {
+                for (int i = 0; i < Cfg.FieldCount; i++)
+                {
+                    if (Cfg.GetName(i) == "num_decimal")
+                    {
+                        if (!Cfg.IsDBNull(i))
+                        {
+                            Global.n_decimal = Cfg.GetInt16(i);
+
+                            if (Global.n_decimal == 0)
+                            {
+                                Global.F_Decimal = "{0:####0}";
+                                Global.F_Total = "{0:#,###,###,##0}";
+                            }
+                            if (Global.n_decimal == 1)
+                            {
+                                Global.F_Decimal = "{0:###0.0}";
+                                Global.F_Total = "{0:###,###,##0.0}";
+                            }
+                            if (Global.n_decimal == 2)
+                            {
+                                Global.F_Decimal = "{0:##0.#0}";
+                                Global.F_Total = "{0:##,###,##0.#0}";
+                            }
+                        }
+                        else
+                        {
+                            Global.F_Decimal = "{0:##0.#0}";
+                            Global.F_Total = "{0:##,###,##0.#0}";
+                        }
+                    }
+                    if (Cfg.GetName(i) == "formato_fecha") { Global.F_Fecha = Cfg.GetString(i); }
+                    if (Cfg.GetName(i) == "car_moneda") { Global.moneda = Cfg.GetString(i); }
+                    if (Cfg.GetName(i) == "tipo") { Global.tipo_dato = Cfg.GetInt32(i); }
+                    if (Cfg.GetName(i) == "display") { Global.display = Cfg.GetBoolean(i); }
+                    if (Cfg.GetName(i) == "scale") { Global.scale = Cfg.GetInt32(i); }
+                    if (Cfg.GetName(i) == "aplicacion") { Global.aplicacion = Cfg.GetInt32(i); }
+                    if (Cfg.GetName(i) == "puerto4") { Global.P_COMM = Cfg.GetInt16(i); }
+                    if (Cfg.GetName(i) == "puerto") { Global.P_COMM1 = Cfg.GetInt16(i); }
+                    if (Cfg.GetName(i) == "puerto2") { Global.P_COMM2 = Cfg.GetInt16(i); }
+                    if (Cfg.GetName(i) == "puerto3") { Global.P_COMM3 = Cfg.GetInt16(i); }
+                    if (Cfg.GetName(i) == "baudrate4") { Global.Buad = Cfg.GetInt32(i); }
+                    if (Cfg.GetName(i) == "baudrate") { Global.Buad1 = Cfg.GetInt32(i); }
+                    if (Cfg.GetName(i) == "baudrate2") { Global.Buad2 = Cfg.GetInt32(i); }
+                    if (Cfg.GetName(i) == "baudrate3") { Global.Buad3 = Cfg.GetInt32(i); }
+                }
+
+                Cfg.Close();
+
+            }
+        }
+
         void Menu_Click(object sender, EventArgs e)
         {
             System.Windows.Forms.MenuItem hj = (MenuItem)sender;
@@ -388,6 +403,7 @@ namespace TRUCK
         private void menuItem4_Click(object sender, System.EventArgs e)
         {
             bool cerrado = true;
+
             for (int w = 0; w < this.MdiChildren.Length; w++)
             {
                 if (this.MdiChildren[w].Name == "Monitor1")
