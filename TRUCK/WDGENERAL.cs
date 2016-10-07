@@ -1,30 +1,28 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Data;
 using System.IO;
 using System.Data.OleDb;
-
+using System.Diagnostics;
 namespace TRUCK
 {
 
-
-
-
-
-
-    public class WDGENERAL : System.Windows.Forms.Form
+    /// <summary>
+    /// This class can save in the database new configuration or update a configuration existent.
+    /// it is important to see its escenaries.
+    /// </summary>
+    public class WDGENERAL : System.Windows.Forms.Form, MVP.MVPGeneral.IRequiredViewOpc
     {
+        private readonly MVP.MVPGeneral.IPresenterOpc _Presenter;
+
         #region VARIABLES
         private System.ComponentModel.IContainer components = null;
 		private CurrencyManager cmRegister;
-		private System.Windows.Forms.ComboBox f_fecha;
-		private System.Windows.Forms.ComboBox s_moneda;
+		private System.Windows.Forms.ComboBox cbm_Fecha;
+		private System.Windows.Forms.ComboBox cbm_Moneda;
 		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.TextBox n_decimal;
+		private System.Windows.Forms.TextBox txt_Decimals;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label4;
 		private bool editar_dato=false;
@@ -33,38 +31,38 @@ namespace TRUCK
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.ComboBox PUERTO1;
-		private System.Windows.Forms.ComboBox BAUD1;
-		private System.Windows.Forms.ComboBox PUERTO2;
-		private System.Windows.Forms.ComboBox BAUD2;
-		private System.Windows.Forms.CheckBox DISPLAY;
+		private System.Windows.Forms.ComboBox cbm_Port1;
+		private System.Windows.Forms.ComboBox cbm_port1_speed;
+		private System.Windows.Forms.ComboBox cbm_port2;
+		private System.Windows.Forms.ComboBox cbm_port2_speed;
+		private System.Windows.Forms.CheckBox chk_Display;
 		private System.Windows.Forms.TextBox txt_folio;
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.Label label12;
-		private System.Windows.Forms.ComboBox BAUD3;
-		private System.Windows.Forms.ComboBox PUERTO3;
+		private System.Windows.Forms.ComboBox cbm_port3_speed;
+		private System.Windows.Forms.ComboBox cbm_port3;
 		private System.Windows.Forms.Label label13;
 		private System.Windows.Forms.Label label14;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.ComboBox PUERTO4;
-		private System.Windows.Forms.ComboBox BAUD4;
-        private ComboBox type_scale;
+		private System.Windows.Forms.GroupBox gpr_Formats;
+		private System.Windows.Forms.GroupBox gpr_Comunication;
+		private System.Windows.Forms.GroupBox gpr_RemoteDisplay;
+		private System.Windows.Forms.ComboBox cbm_Display_Port;
+		private System.Windows.Forms.ComboBox cbm_Display_Speed;
+        private ComboBox cbm_Scale_Indicator;
         private Label label9;
         private ToolStrip toolBar1;
-        private ToolStripButton toolStripButton1;
-        private ToolStripButton toolStripButton2;
-        private ToolStripButton toolStripButton3;
-        private ToolStripButton toolStripButton4;
-        private ComboBox type_appli;
+        private ToolStripButton tbtn_Edit;
+        private ToolStripButton tbtn_Save;
+        private ToolStripButton tbtn_Erase;
+        private ToolStripButton tbtn_close;
+        private ComboBox cbm_Indicators;
         private Label label11;
-        private TextBox path_serv;
+        private TextBox txt_path_Server;
         private Label label15;
-        private CheckBox Rmto;
-        private Button button1;
+        private CheckBox chk_remoto;
+        private Button btn_Examine;
         private Label label16;
-        private ComboBox tipo_display;
+        private ComboBox cbm_Display_Type;
         DataSet data;
         DataAccesQuery db = new DataAccesQuery();
         #endregion
@@ -72,106 +70,10 @@ namespace TRUCK
         public WDGENERAL(int x, int y, int op)
         {
             InitializeComponent();
-            this.Location = new System.Drawing.Point(x, y);
-            this.TransparencyKey = Color.Empty;
-            this.s_moneda.KeyDown += new System.Windows.Forms.KeyEventHandler(this.s_moneda_KeyDown);
-            this.s_moneda.SelectedIndexChanged += new System.EventHandler(this.editar_TextChanged);
-            this.n_decimal.KeyDown += new System.Windows.Forms.KeyEventHandler(this.n_decimal_KeyDown);
-            this.n_decimal.TextChanged += new System.EventHandler(this.editar_TextChanged);
-            this.f_fecha.KeyDown += new System.Windows.Forms.KeyEventHandler(this.f_fecha_KeyDown);
-            this.f_fecha.SelectedIndexChanged += new System.EventHandler(this.editar_TextChanged);
-            this.toolBar1.ItemClicked += new ToolStripItemClickedEventHandler(this.toolBar1_ButtonClick);
-            if (Global.aplicacion < 2)
-            {
-                this.type_scale.Items.Add("PIQ/PI");
-                this.type_scale.Items.Add("720i");
-                this.type_scale.SelectedIndex = 0;
-            }                     
-
-            if (Global.aplicacion < 2)
-            {
-                this.type_appli.Enabled = true;
-                this.type_appli.Items.Add(Global.M_Error[69, Global.idioma]);
-                this.type_appli.Items.Add(Global.M_Error[70, Global.idioma]);
-                this.type_appli.SelectedIndex = 0;
-            }
-            else this.type_appli.Enabled = false;
-
-            this.f_fecha.Items.Add("dd/MM/yyyy");
-            this.f_fecha.Items.Add("MM/dd/yyyy");
-            this.f_fecha.Items.Add("yyyy/MM/dd");
-            this.f_fecha.SelectedIndex = 0;
-
-            this.s_moneda.Items.Add("$");
-            this.s_moneda.Items.Add("€");
-            this.s_moneda.Items.Add("£");
-            this.s_moneda.Items.Add("Ç");
-            this.s_moneda.Items.Add("R");
-            this.s_moneda.SelectedIndex = 0;
-            if (Global.port.Count > 0)
-            {
-                for (int z = 0; z < Global.port.Count; z++)
-                {
-                    this.PUERTO1.Items.Add(Global.port[z]);
-                    this.PUERTO2.Items.Add(Global.port[z]);
-                    this.PUERTO3.Items.Add(Global.port[z]);
-                    this.PUERTO4.Items.Add(Global.port[z]);
-                }
-                this.PUERTO1.SelectedIndex = 0;
-                this.PUERTO2.SelectedIndex = 0;
-                this.PUERTO3.SelectedIndex = 0;
-                this.PUERTO4.SelectedIndex = 0;
-            }                    
-
-            for (int z = 0; z < Global.velocidad.Length; z++)
-            {
-                this.BAUD1.Items.Add(Global.velocidad[z]);
-                this.BAUD2.Items.Add(Global.velocidad[z]);
-                this.BAUD3.Items.Add(Global.velocidad[z]);
-                this.BAUD4.Items.Add(Global.velocidad[z]);
-            }
-            this.BAUD1.SelectedIndex = 0;
-            this.BAUD2.SelectedIndex = 0;
-            this.BAUD3.SelectedIndex = 0;
-            this.BAUD4.SelectedIndex = 0;
-                        
-            this.tipo_display.Items.Add("AURORA65");
-            this.tipo_display.Items.Add("GM8895A");
-            this.tipo_display.SelectedIndex = 0;
-            
-            this.n_decimal.Text = "2";
-
-            if (op == 1)
-            {
-                this.f_fecha.SelectedIndex = 0;
-                this.s_moneda.SelectedIndex = 0;
-                this.n_decimal.Text = "2";
-            }
-
-            try
-            {     
-                data = db.getData("SELECT * FROM configuracion");
-
-                data.Tables[0].TableName = "configuracion";
-
-                cmRegister = (CurrencyManager)this.BindingContext[data, "configuracion"];
-                
-                cmRegister.Position = 0;
-                
-                if (data.Tables[0].Rows.Count > 0)
-                {
-                    this.type_appli.Enabled = false;
-                    Mostrar_Datos(cmRegister.Position);
-                }
-            }
-            catch (System.PlatformNotSupportedException explat)
-            {
-                MessageBox.Show(explat.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            Location = new System.Drawing.Point(x, y);
+            TransparencyKey = Color.Empty;
+            StartEscene();//change this class to start escene.
+            _Presenter = new GeneralPresenter(this);//Instace of presenter.
         }
         #endregion
         /// <summary>
@@ -198,50 +100,50 @@ namespace TRUCK
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WDGENERAL));
             this.txt_folio = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.f_fecha = new System.Windows.Forms.ComboBox();
-            this.s_moneda = new System.Windows.Forms.ComboBox();
+            this.cbm_Fecha = new System.Windows.Forms.ComboBox();
+            this.cbm_Moneda = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.n_decimal = new System.Windows.Forms.TextBox();
+            this.txt_Decimals = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.BAUD3 = new System.Windows.Forms.ComboBox();
-            this.PUERTO3 = new System.Windows.Forms.ComboBox();
-            this.DISPLAY = new System.Windows.Forms.CheckBox();
+            this.cbm_port3_speed = new System.Windows.Forms.ComboBox();
+            this.cbm_port3 = new System.Windows.Forms.ComboBox();
+            this.chk_Display = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.BAUD2 = new System.Windows.Forms.ComboBox();
-            this.PUERTO2 = new System.Windows.Forms.ComboBox();
-            this.BAUD1 = new System.Windows.Forms.ComboBox();
-            this.PUERTO1 = new System.Windows.Forms.ComboBox();
-            this.PUERTO4 = new System.Windows.Forms.ComboBox();
+            this.cbm_port2_speed = new System.Windows.Forms.ComboBox();
+            this.cbm_port2 = new System.Windows.Forms.ComboBox();
+            this.cbm_port1_speed = new System.Windows.Forms.ComboBox();
+            this.cbm_Port1 = new System.Windows.Forms.ComboBox();
+            this.cbm_Display_Port = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.BAUD4 = new System.Windows.Forms.ComboBox();
+            this.cbm_Display_Speed = new System.Windows.Forms.ComboBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.gpr_Formats = new System.Windows.Forms.GroupBox();
+            this.gpr_Comunication = new System.Windows.Forms.GroupBox();
+            this.gpr_RemoteDisplay = new System.Windows.Forms.GroupBox();
             this.label16 = new System.Windows.Forms.Label();
-            this.tipo_display = new System.Windows.Forms.ComboBox();
-            this.type_scale = new System.Windows.Forms.ComboBox();
+            this.cbm_Display_Type = new System.Windows.Forms.ComboBox();
+            this.cbm_Scale_Indicator = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
             this.toolBar1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
-            this.type_appli = new System.Windows.Forms.ComboBox();
+            this.tbtn_Edit = new System.Windows.Forms.ToolStripButton();
+            this.tbtn_Save = new System.Windows.Forms.ToolStripButton();
+            this.tbtn_Erase = new System.Windows.Forms.ToolStripButton();
+            this.tbtn_close = new System.Windows.Forms.ToolStripButton();
+            this.cbm_Indicators = new System.Windows.Forms.ComboBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.path_serv = new System.Windows.Forms.TextBox();
+            this.txt_path_Server = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
-            this.Rmto = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.chk_remoto = new System.Windows.Forms.CheckBox();
+            this.btn_Examine = new System.Windows.Forms.Button();
+            this.gpr_Formats.SuspendLayout();
+            this.gpr_Comunication.SuspendLayout();
+            this.gpr_RemoteDisplay.SuspendLayout();
             this.toolBar1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -255,15 +157,15 @@ namespace TRUCK
             resources.ApplyResources(this.label1, "label1");
             this.label1.Name = "label1";
             // 
-            // f_fecha
+            // cbm_Fecha
             // 
-            resources.ApplyResources(this.f_fecha, "f_fecha");
-            this.f_fecha.Name = "f_fecha";
+            resources.ApplyResources(this.cbm_Fecha, "cbm_Fecha");
+            this.cbm_Fecha.Name = "cbm_Fecha";
             // 
-            // s_moneda
+            // cbm_Moneda
             // 
-            resources.ApplyResources(this.s_moneda, "s_moneda");
-            this.s_moneda.Name = "s_moneda";
+            resources.ApplyResources(this.cbm_Moneda, "cbm_Moneda");
+            this.cbm_Moneda.Name = "cbm_Moneda";
             // 
             // label8
             // 
@@ -271,10 +173,10 @@ namespace TRUCK
             resources.ApplyResources(this.label8, "label8");
             this.label8.Name = "label8";
             // 
-            // n_decimal
+            // txt_Decimals
             // 
-            resources.ApplyResources(this.n_decimal, "n_decimal");
-            this.n_decimal.Name = "n_decimal";
+            resources.ApplyResources(this.txt_Decimals, "txt_Decimals");
+            this.txt_Decimals.Name = "txt_Decimals";
             // 
             // label7
             // 
@@ -296,21 +198,21 @@ namespace TRUCK
             resources.ApplyResources(this.label12, "label12");
             this.label12.Name = "label12";
             // 
-            // BAUD3
+            // cbm_port3_speed
             // 
-            resources.ApplyResources(this.BAUD3, "BAUD3");
-            this.BAUD3.Name = "BAUD3";
+            resources.ApplyResources(this.cbm_port3_speed, "cbm_port3_speed");
+            this.cbm_port3_speed.Name = "cbm_port3_speed";
             // 
-            // PUERTO3
+            // cbm_port3
             // 
-            resources.ApplyResources(this.PUERTO3, "PUERTO3");
-            this.PUERTO3.Name = "PUERTO3";
+            resources.ApplyResources(this.cbm_port3, "cbm_port3");
+            this.cbm_port3.Name = "cbm_port3";
             // 
-            // DISPLAY
+            // chk_Display
             // 
-            resources.ApplyResources(this.DISPLAY, "DISPLAY");
-            this.DISPLAY.Name = "DISPLAY";
-            this.DISPLAY.CheckedChanged += new System.EventHandler(this.DISPLAY_CheckedChanged);
+            resources.ApplyResources(this.chk_Display, "chk_Display");
+            this.chk_Display.Name = "chk_Display";
+            this.chk_Display.CheckedChanged += new System.EventHandler(this.DISPLAY_CheckedChanged);
             // 
             // label6
             // 
@@ -332,106 +234,106 @@ namespace TRUCK
             resources.ApplyResources(this.label2, "label2");
             this.label2.Name = "label2";
             // 
-            // BAUD2
+            // cbm_port2_speed
             // 
-            resources.ApplyResources(this.BAUD2, "BAUD2");
-            this.BAUD2.Name = "BAUD2";
+            resources.ApplyResources(this.cbm_port2_speed, "cbm_port2_speed");
+            this.cbm_port2_speed.Name = "cbm_port2_speed";
             // 
-            // PUERTO2
+            // cbm_port2
             // 
-            resources.ApplyResources(this.PUERTO2, "PUERTO2");
-            this.PUERTO2.Name = "PUERTO2";
+            resources.ApplyResources(this.cbm_port2, "cbm_port2");
+            this.cbm_port2.Name = "cbm_port2";
             // 
-            // BAUD1
+            // cbm_port1_speed
             // 
-            resources.ApplyResources(this.BAUD1, "BAUD1");
-            this.BAUD1.Name = "BAUD1";
+            resources.ApplyResources(this.cbm_port1_speed, "cbm_port1_speed");
+            this.cbm_port1_speed.Name = "cbm_port1_speed";
             // 
-            // PUERTO1
+            // cbm_Port1
             // 
-            resources.ApplyResources(this.PUERTO1, "PUERTO1");
-            this.PUERTO1.Name = "PUERTO1";
+            resources.ApplyResources(this.cbm_Port1, "cbm_Port1");
+            this.cbm_Port1.Name = "cbm_Port1";
             // 
-            // PUERTO4
+            // cbm_Display_Port
             // 
-            resources.ApplyResources(this.PUERTO4, "PUERTO4");
-            this.PUERTO4.Name = "PUERTO4";
+            resources.ApplyResources(this.cbm_Display_Port, "cbm_Display_Port");
+            this.cbm_Display_Port.Name = "cbm_Display_Port";
             // 
             // label13
             // 
             resources.ApplyResources(this.label13, "label13");
             this.label13.Name = "label13";
             // 
-            // BAUD4
+            // cbm_Display_Speed
             // 
-            resources.ApplyResources(this.BAUD4, "BAUD4");
-            this.BAUD4.Name = "BAUD4";
+            resources.ApplyResources(this.cbm_Display_Speed, "cbm_Display_Speed");
+            this.cbm_Display_Speed.Name = "cbm_Display_Speed";
             // 
             // label14
             // 
             resources.ApplyResources(this.label14, "label14");
             this.label14.Name = "label14";
             // 
-            // groupBox1
+            // gpr_Formats
             // 
-            this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.f_fecha);
-            this.groupBox1.Controls.Add(this.n_decimal);
-            this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.s_moneda);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.txt_folio);
-            resources.ApplyResources(this.groupBox1, "groupBox1");
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.TabStop = false;
+            this.gpr_Formats.Controls.Add(this.label8);
+            this.gpr_Formats.Controls.Add(this.cbm_Fecha);
+            this.gpr_Formats.Controls.Add(this.txt_Decimals);
+            this.gpr_Formats.Controls.Add(this.label7);
+            this.gpr_Formats.Controls.Add(this.label1);
+            this.gpr_Formats.Controls.Add(this.cbm_Moneda);
+            this.gpr_Formats.Controls.Add(this.label4);
+            this.gpr_Formats.Controls.Add(this.txt_folio);
+            resources.ApplyResources(this.gpr_Formats, "gpr_Formats");
+            this.gpr_Formats.Name = "gpr_Formats";
+            this.gpr_Formats.TabStop = false;
             // 
-            // groupBox2
+            // gpr_Comunication
             // 
-            this.groupBox2.Controls.Add(this.label10);
-            this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Controls.Add(this.PUERTO1);
-            this.groupBox2.Controls.Add(this.BAUD3);
-            this.groupBox2.Controls.Add(this.PUERTO2);
-            this.groupBox2.Controls.Add(this.BAUD1);
-            this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.PUERTO3);
-            this.groupBox2.Controls.Add(this.BAUD2);
-            this.groupBox2.Controls.Add(this.label12);
-            this.groupBox2.Controls.Add(this.label2);
-            resources.ApplyResources(this.groupBox2, "groupBox2");
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.TabStop = false;
+            this.gpr_Comunication.Controls.Add(this.label10);
+            this.gpr_Comunication.Controls.Add(this.label6);
+            this.gpr_Comunication.Controls.Add(this.cbm_Port1);
+            this.gpr_Comunication.Controls.Add(this.cbm_port3_speed);
+            this.gpr_Comunication.Controls.Add(this.cbm_port2);
+            this.gpr_Comunication.Controls.Add(this.cbm_port1_speed);
+            this.gpr_Comunication.Controls.Add(this.label5);
+            this.gpr_Comunication.Controls.Add(this.label3);
+            this.gpr_Comunication.Controls.Add(this.cbm_port3);
+            this.gpr_Comunication.Controls.Add(this.cbm_port2_speed);
+            this.gpr_Comunication.Controls.Add(this.label12);
+            this.gpr_Comunication.Controls.Add(this.label2);
+            resources.ApplyResources(this.gpr_Comunication, "gpr_Comunication");
+            this.gpr_Comunication.Name = "gpr_Comunication";
+            this.gpr_Comunication.TabStop = false;
             // 
-            // groupBox3
+            // gpr_RemoteDisplay
             // 
-            this.groupBox3.Controls.Add(this.label16);
-            this.groupBox3.Controls.Add(this.tipo_display);
-            this.groupBox3.Controls.Add(this.label13);
-            this.groupBox3.Controls.Add(this.label14);
-            this.groupBox3.Controls.Add(this.PUERTO4);
-            this.groupBox3.Controls.Add(this.BAUD4);
-            this.groupBox3.Controls.Add(this.DISPLAY);
-            resources.ApplyResources(this.groupBox3, "groupBox3");
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.TabStop = false;
+            this.gpr_RemoteDisplay.Controls.Add(this.label16);
+            this.gpr_RemoteDisplay.Controls.Add(this.cbm_Display_Type);
+            this.gpr_RemoteDisplay.Controls.Add(this.label13);
+            this.gpr_RemoteDisplay.Controls.Add(this.label14);
+            this.gpr_RemoteDisplay.Controls.Add(this.cbm_Display_Port);
+            this.gpr_RemoteDisplay.Controls.Add(this.cbm_Display_Speed);
+            this.gpr_RemoteDisplay.Controls.Add(this.chk_Display);
+            resources.ApplyResources(this.gpr_RemoteDisplay, "gpr_RemoteDisplay");
+            this.gpr_RemoteDisplay.Name = "gpr_RemoteDisplay";
+            this.gpr_RemoteDisplay.TabStop = false;
             // 
             // label16
             // 
             resources.ApplyResources(this.label16, "label16");
             this.label16.Name = "label16";
             // 
-            // tipo_display
+            // cbm_Display_Type
             // 
-            resources.ApplyResources(this.tipo_display, "tipo_display");
-            this.tipo_display.Name = "tipo_display";
+            resources.ApplyResources(this.cbm_Display_Type, "cbm_Display_Type");
+            this.cbm_Display_Type.Name = "cbm_Display_Type";
             // 
-            // type_scale
+            // cbm_Scale_Indicator
             // 
-            resources.ApplyResources(this.type_scale, "type_scale");
-            this.type_scale.Name = "type_scale";
-            this.type_scale.SelectedIndexChanged += new System.EventHandler(this.type_scale_SelectedIndexChanged);
+            resources.ApplyResources(this.cbm_Scale_Indicator, "cbm_Scale_Indicator");
+            this.cbm_Scale_Indicator.Name = "cbm_Scale_Indicator";
+            this.cbm_Scale_Indicator.SelectedIndexChanged += new System.EventHandler(this.type_scale_SelectedIndexChanged);
             // 
             // label9
             // 
@@ -442,95 +344,98 @@ namespace TRUCK
             // 
             this.toolBar1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.toolBar1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.toolStripButton2,
-            this.toolStripButton3,
-            this.toolStripButton4});
+            this.tbtn_Edit,
+            this.tbtn_Save,
+            this.tbtn_Erase,
+            this.tbtn_close});
             resources.ApplyResources(this.toolBar1, "toolBar1");
             this.toolBar1.Name = "toolBar1";
             // 
-            // toolStripButton1
+            // tbtn_Edit
             // 
-            resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
-            this.toolStripButton1.Name = "toolStripButton1";
+            resources.ApplyResources(this.tbtn_Edit, "tbtn_Edit");
+            this.tbtn_Edit.Name = "tbtn_Edit";
+            this.tbtn_Edit.Click += new System.EventHandler(this.tbtn_Edit_Click);
             // 
-            // toolStripButton2
+            // tbtn_Save
             // 
-            resources.ApplyResources(this.toolStripButton2, "toolStripButton2");
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+            resources.ApplyResources(this.tbtn_Save, "tbtn_Save");
+            this.tbtn_Save.Name = "tbtn_Save";
+            this.tbtn_Save.Click += new System.EventHandler(this.tbtn_Save_Click);
             // 
-            // toolStripButton3
+            // tbtn_Erase
             // 
-            resources.ApplyResources(this.toolStripButton3, "toolStripButton3");
-            this.toolStripButton3.Name = "toolStripButton3";
+            resources.ApplyResources(this.tbtn_Erase, "tbtn_Erase");
+            this.tbtn_Erase.Name = "tbtn_Erase";
+            this.tbtn_Erase.Click += new System.EventHandler(this.tbtn_Erase_Click);
             // 
-            // toolStripButton4
+            // tbtn_close
             // 
-            resources.ApplyResources(this.toolStripButton4, "toolStripButton4");
-            this.toolStripButton4.Name = "toolStripButton4";
+            resources.ApplyResources(this.tbtn_close, "tbtn_close");
+            this.tbtn_close.Name = "tbtn_close";
+            this.tbtn_close.Click += new System.EventHandler(this.tbtn_close_Click);
             // 
-            // type_appli
+            // cbm_Indicators
             // 
-            resources.ApplyResources(this.type_appli, "type_appli");
-            this.type_appli.Name = "type_appli";
-            this.type_appli.SelectedIndexChanged += new System.EventHandler(this.type_appli_SelectedIndexChanged);
+            resources.ApplyResources(this.cbm_Indicators, "cbm_Indicators");
+            this.cbm_Indicators.Name = "cbm_Indicators";
+            this.cbm_Indicators.SelectedIndexChanged += new System.EventHandler(this.type_appli_SelectedIndexChanged);
             // 
             // label11
             // 
             resources.ApplyResources(this.label11, "label11");
             this.label11.Name = "label11";
             // 
-            // path_serv
+            // txt_path_Server
             // 
-            this.path_serv.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.path_serv.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystem;
-            resources.ApplyResources(this.path_serv, "path_serv");
-            this.path_serv.Name = "path_serv";
+            this.txt_path_Server.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.txt_path_Server.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystem;
+            resources.ApplyResources(this.txt_path_Server, "txt_path_Server");
+            this.txt_path_Server.Name = "txt_path_Server";
             // 
             // label15
             // 
             resources.ApplyResources(this.label15, "label15");
             this.label15.Name = "label15";
             // 
-            // Rmto
+            // chk_remoto
             // 
-            resources.ApplyResources(this.Rmto, "Rmto");
-            this.Rmto.Name = "Rmto";
-            this.Rmto.UseVisualStyleBackColor = true;
-            this.Rmto.CheckedChanged += new System.EventHandler(this.Rmto_CheckedChanged);
+            resources.ApplyResources(this.chk_remoto, "chk_remoto");
+            this.chk_remoto.Name = "chk_remoto";
+            this.chk_remoto.UseVisualStyleBackColor = true;
+            this.chk_remoto.CheckedChanged += new System.EventHandler(this.Rmto_CheckedChanged);
             // 
-            // button1
+            // btn_Examine
             // 
-            resources.ApplyResources(this.button1, "button1");
-            this.button1.Name = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            resources.ApplyResources(this.btn_Examine, "btn_Examine");
+            this.btn_Examine.Name = "btn_Examine";
+            this.btn_Examine.UseVisualStyleBackColor = true;
+            this.btn_Examine.Click += new System.EventHandler(this.button1_Click);
             // 
             // WDGENERAL
             // 
             resources.ApplyResources(this, "$this");
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.Rmto);
+            this.Controls.Add(this.btn_Examine);
+            this.Controls.Add(this.chk_remoto);
             this.Controls.Add(this.label15);
-            this.Controls.Add(this.path_serv);
-            this.Controls.Add(this.type_appli);
+            this.Controls.Add(this.txt_path_Server);
+            this.Controls.Add(this.cbm_Indicators);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.toolBar1);
-            this.Controls.Add(this.type_scale);
-            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.cbm_Scale_Indicator);
+            this.Controls.Add(this.gpr_RemoteDisplay);
             this.Controls.Add(this.label9);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.gpr_Comunication);
+            this.Controls.Add(this.gpr_Formats);
             this.HelpButton = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "WDGENERAL";
             this.Tag = "";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
+            this.gpr_Formats.ResumeLayout(false);
+            this.gpr_Formats.PerformLayout();
+            this.gpr_Comunication.ResumeLayout(false);
+            this.gpr_RemoteDisplay.ResumeLayout(false);
             this.toolBar1.ResumeLayout(false);
             this.toolBar1.PerformLayout();
             this.ResumeLayout(false);
@@ -538,166 +443,7 @@ namespace TRUCK
 
 		}
         #endregion
-        #region funciones de DB
-
-
-
-
-
-
-
-        /// <summary>
-        /// here is saved the mode aplication when the user is selected.
-        /// </summary>
-        private void New_Dato()
-        {
-            string query = "INSERT INTO configuracion (puerto,baudrate,puerto2,baudrate2,puerto3,baudrate3,puerto4,baudrate4,tipo,scale,formato_fecha,num_decimal,car_moneda,folio,display,aplicacion,path,rmto)" +
-                "VALUES ( " + this.PUERTO1.SelectedIndex + "," + this.BAUD1.SelectedIndex + "," + this.PUERTO2.SelectedIndex + "," + this.BAUD2.SelectedIndex + "," +
-                this.PUERTO3.SelectedIndex + "," + this.BAUD3.SelectedIndex + "," + this.PUERTO4.SelectedIndex + "," + this.BAUD4.SelectedIndex + "," + Global.tipo_dato + "," + this.type_scale.SelectedIndex + ",'" +
-                this.f_fecha.Text + "'," + Convert.ToInt16(this.n_decimal.Text) + ",'" + this.s_moneda.Text + "'," + Convert.ToInt32(this.txt_folio.Text) + ",'" + ((this.DISPLAY.Checked) ? 1 : 0) + "'," + Global.aplicacion + ",'" +
-                this.path_serv.Text + "','" + ((this.Rmto.Checked) ? 1 : 0) + "')";
-            try
-            {
-                db.ExcetuteQuery(query);
-                Mostrar_Datos(cmRegister.Position);
-            }
-            catch (DBConcurrencyException dbcx)
-            {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-                data.RejectChanges();
-            }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                data.RejectChanges();
-            }
-        }
-
-
-
-		private void Save_Dato()
-		{
-
-            string query = "UPDATE configuracion SET formato_fecha = '" + this.f_fecha.Text + "', num_decimal = " + ((this.n_decimal.Text.Equals("")) ? 0 : Convert.ToInt16(this.n_decimal.Text)) +
-                ", baudrate = " + this.BAUD1.SelectedIndex + ", puerto = " + this.PUERTO1.SelectedIndex +
-                ", baudrate2 = " + this.BAUD2.SelectedIndex + ", puerto2 = " + this.PUERTO2.SelectedIndex +
-                ", baudrate3 = " + this.BAUD3.SelectedIndex + ", puerto3 = " + this.PUERTO3.SelectedIndex +
-                ", baudrate4 = " + this.BAUD4.SelectedIndex + ", puerto4 = " + this.PUERTO4.SelectedIndex +
-                ", car_moneda = '" + this.s_moneda.Text + "', display = " + ((this.DISPLAY.Checked) ? 1 : 0) +
-                ", folio = " + ((this.n_decimal.Text.Equals("")) ? 0 : Convert.ToInt32(this.n_decimal.Text)) + ", tipo = " + Global.tipo_dato +
-                ", path = '" + this.path_serv.Text + "', rmto = " + ((this.Rmto.Checked) ? 1 : 0) + ", numemp = " + Global.nempresa;
-            try
-            {
-                switch (((this.n_decimal.Text.Equals("")) ? 0 : Convert.ToInt32(this.n_decimal.Text)))
-                {
-                    case 0: Global.F_Decimal = "{0:####0}"; break;
-                    case 1: Global.F_Decimal = "{0:###0.0}"; break;
-                    case 2: Global.F_Decimal = "{0:##0.#0}"; break;
-                }
-
-                db.ExcetuteQuery(query);
-                data = db.getData("SELECT * FROM configuracion");
-                Mostrar_Datos(cmRegister.Position);
-            }
-            catch (DBConcurrencyException dbcx)
-            {
-                string customErrorMessage;
-                customErrorMessage = dbcx.Message.ToString();
-                customErrorMessage += dbcx.Row[0].ToString();
-                MessageBox.Show(customErrorMessage.ToString());
-                data.RejectChanges();
-            }
-            catch (OleDbException ex)
-            {
-                MessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                data.RejectChanges();
-            }
-		}
-		private void Mostrar_Datos(int pos)
-		{
-            if (data.Tables[0].Rows.Count > 0)
-            {
-                DataRow dr = data.Tables[0].Rows[pos];
-
-                this.f_fecha.Text = dr["formato_fecha"].ToString();
-                this.s_moneda.Text = dr["car_moneda"].ToString();
-                this.n_decimal.Text = dr["num_decimal"].ToString();
-                this.txt_folio.Text = dr["folio"].ToString();
-                Global.aplicacion = Convert.ToInt16(dr["aplicacion"].ToString());
-                Global.tipo_dato = (string.IsNullOrEmpty(dr["tipo"].ToString()))? 0 : Convert.ToInt16(dr["tipo"].ToString());
-                Global.nempresa = (string.IsNullOrEmpty(dr["numemp"].ToString())) ? 0 : Convert.ToInt16(dr["numemp"].ToString());
-                this.type_appli.SelectedIndex = Global.tipo_dato - 1;
-                try
-                {
-                    this.type_scale.SelectedIndex = Convert.ToInt16(dr["scale"].ToString());
-                    this.PUERTO1.SelectedIndex = Convert.ToInt16(dr["puerto"].ToString());
-                    this.BAUD1.SelectedIndex = Convert.ToInt16(dr["baudrate"].ToString());
-                    this.PUERTO2.SelectedIndex = Convert.ToInt16(dr["puerto2"].ToString());
-                    this.BAUD2.SelectedIndex = Convert.ToInt16(dr["baudrate2"].ToString());
-                    this.PUERTO3.SelectedIndex = Convert.ToInt16(dr["puerto3"].ToString());
-                    this.BAUD3.SelectedIndex = Convert.ToInt16(dr["baudrate3"].ToString());
-                    if (Global.aplicacion < 2)
-                    {
-                        switch (Global.tipo_dato)
-                        {
-                            case 1:
-                                {                                   
-                                    this.PUERTO2.Enabled = false;
-                                    this.PUERTO3.Enabled = false;
-                                    this.BAUD2.Enabled = false;
-                                    this.BAUD3.Enabled = false;
-                                } break;
-                            case 2:
-                                {
-                                    this.PUERTO2.Enabled = true;
-                                    this.PUERTO3.Enabled = true;
-                                    this.BAUD2.Enabled = true;
-                                    this.BAUD3.Enabled = true;
-                                } break;
-                        }
-                    }
-                        if (dr["display"].ToString()=="1")
-                        {
-                        this.DISPLAY.Checked = true;
-                        PUERTO4.SelectedIndex = Convert.ToInt16(dr["puerto4"].ToString());
-                        this.BAUD4.SelectedIndex = Convert.ToInt16(dr["baudrate4"].ToString());
-                    }
-                    else
-                    {
-                        this.DISPLAY.Checked = false;
-                        this.PUERTO4.SelectedIndex = -1;
-                        this.BAUD4.SelectedIndex = 0;
-                    }
-                    if (dr["rmto"].ToString() == "1")
-                        this.Rmto.Checked = true;
-                    else
-                        this.Rmto.Checked = false;
-
-                    this.path_serv.Text = dr["path"].ToString();
-                }
-                catch (Exception ex)
-                {
-                    Console.Write(ex.Message);
-                    MessageBox.Show(Global.M_Error[24, Global.idioma],"", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-                Global.n_decimal = Convert.ToInt16(this.n_decimal.Text);
-                Global.F_Fecha = this.f_fecha.Text;
-                Global.moneda = this.s_moneda.Text;
-                Global.P_COMM = this.PUERTO4.SelectedIndex;  //display
-                Global.P_COMM1 = this.PUERTO1.SelectedIndex; //indicador 1
-                Global.P_COMM2 = this.PUERTO2.SelectedIndex; //indicador 2
-                Global.P_COMM3 = this.PUERTO3.SelectedIndex; //indicador 3
-                Global.Buad = this.BAUD4.SelectedIndex;
-                Global.Buad1 = this.BAUD1.SelectedIndex;
-                Global.Buad2 = this.BAUD2.SelectedIndex;
-                Global.Buad3 = this.BAUD3.SelectedIndex;
-                this.editar_dato = false;
-            }
-        }        
-        String GetIP()
+        string GetIP()
 		{	   
 			String strHostName = System.Net.Dns.GetHostName();
 			// Find host by name
@@ -711,18 +457,13 @@ namespace TRUCK
 			}
 			return IPStr;
 		}
-		public void comando(int opcion)
-		{
-            System.Windows.Forms.ToolStripItem bt = this.toolBar1.Items[opcion];
-            this.toolBar1_ButtonClick(this.toolBar1, new ToolStripItemClickedEventArgs(bt));
-		}
 		private void limpiar()
 		{	
-			this.f_fecha.Text="";
-			this.s_moneda.Text="";
-			this.n_decimal.Text="0";
+			cbm_Fecha.Text="";
+			cbm_Moneda.Text="";
+			txt_Decimals.Text="0";
         }
-        #endregion
+       
         #region eventos de captura
         private void button2_Click(object sender, System.EventArgs e)
 		{
@@ -732,89 +473,32 @@ namespace TRUCK
 		}
         private void button1_Click(object sender, EventArgs e)
         {
-            if (this.Rmto.Checked)
+            if (chk_remoto.Checked)
             {
                 OpenFileDialog dlgOpenFile = new OpenFileDialog();
                 dlgOpenFile.ShowReadOnly = true;
 
                 if (dlgOpenFile.ShowDialog() == DialogResult.OK)
                 {
-                    this.path_serv.Text = dlgOpenFile.FileName;
+                    this.txt_path_Server.Text = dlgOpenFile.FileName;
                 }
             }
-        }                       
-        private void toolBar1_ButtonClick(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
-        {
-            switch (this.toolBar1.Items.IndexOf(e.ClickedItem))
-            {
-                case 0:
-                    Global.clv_aceptada = false;
-                    clave clv2 = new clave(2);
-                    clv2.ShowDialog(this);
-                    if (Global.clv_aceptada && Global.privilegio.Substring(0, 1) == "1")
-                    {
-                        this.groupBox1.Enabled = true;
-                    }
-                    else
-                    {
-                        MessageBox.Show(Global.M_Error[51, Global.idioma]);
-                        this.groupBox1.Enabled = false;
-                    }
-                    break;
-                case 1: //Actualizacion de configuracion
-
-                    this.editar_dato = false;
-                    bool existe = false;
-
-
-                    IDataReader Cfg = db.getDataReader("SELECT * FROM configuracion");
-                    if (Cfg.Read()) existe = true;
-                    else existe = false;
-                    Cfg.Close();
-                    if (!existe) New_Dato();
-                    else Save_Dato();
-                    if (Global.Remoto)
-                    {
-                        using (FileStream fp = new FileStream(Global.appPath + "\\Connect.txt", FileMode.Create, FileAccess.Write, FileShare.Read))
-                        {
-                            using (StreamWriter wf = new StreamWriter(fp))
-                            {
-                                wf.WriteLine(this.path_serv.Text);
-                                wf.Close();
-                                fp.Close();
-                            }
-                        }
-                    }
-                    this.groupBox1.Enabled = false;
-                    this.comando(3);
-                    break;
-
-                case 3:
-
-                    if (this.editar_dato)
-                    {
-                        if (MessageBox.Show(Global.M_Error[303, Global.idioma].ToString(), "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                        {
-                            this.comando(1);
-                        }
-                    }
-                    this.Close();
-                    break;
-            }
-        }	
+        } 
 		private void s_moneda_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Enter)
-			{ this.n_decimal.Focus();}
+			{
+                txt_Decimals.Focus();
+            }
 		}
-		private void n_decimal_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void n_decimal_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Enter)
 			{
-				if (Convert.ToInt16(this.n_decimal.Text) > 2)
+				if (Convert.ToInt16(this.txt_Decimals.Text) > 2)
 				{
 					MessageBox.Show(Global.M_Error[74,Global.idioma].ToString());
-					this.n_decimal.Focus();
+					this.txt_Decimals.Focus();
 				}
 				else 
 				{
@@ -823,84 +507,84 @@ namespace TRUCK
 					if (!Cfg.Read())
 					{
 						Cfg.Close();
-						New_Dato();
 					}
 					Cfg.Close();
-					Save_Dato();
 				}
 			}
 		}
-		private void f_fecha_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void f_fecha_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Enter)
-			{ this.s_moneda.Focus();}
-		}		
-		private void editar_TextChanged(object sender, System.EventArgs e)
+			{ this.cbm_Moneda.Focus();}
+		}
+        private void editar_TextChanged(object sender, System.EventArgs e)
 		{
-			this.editar_dato=true;
+			editar_dato=true;
         }
         #endregion
+
+
         #region eventos de combobox y check box
         private void DISPLAY_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if (this.DISPLAY.Checked)
+			if (this.chk_Display.Checked)
 			{
-                this.PUERTO4.Enabled=true;
-				this.BAUD4.Enabled=true;
+                this.cbm_Display_Port.Enabled=true;
+				this.cbm_Display_Speed.Enabled=true;
                 Global.display = true;
 			}
 			else
 			{				
 				
-				this.PUERTO4.Enabled=false;
-				this.BAUD4.Enabled=false;
+				this.cbm_Display_Port.Enabled=false;
+				this.cbm_Display_Speed.Enabled=false;
                 Global.display = false;
 			}
 		}
         private void type_scale_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Global.scale = this.type_scale.SelectedIndex;
+            Global.scale = this.cbm_Scale_Indicator.SelectedIndex;
             if (Global.aplicacion < 2)
             {
-                this.type_appli.Enabled = true;
+                this.cbm_Indicators.Enabled = true;
             }
             else
             {
-                this.type_appli.Enabled = false;
+                this.cbm_Indicators.Enabled = false;
             }
         }
         private void type_appli_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.type_appli.SelectedIndex == 0)
+            if (this.cbm_Indicators.SelectedIndex == 0)
             {
                 Global.tipo_dato = 1;
-                this.PUERTO2.Enabled = false;
-                this.PUERTO3.Enabled = false;
-                this.BAUD2.Enabled = false;
-                this.BAUD3.Enabled = false;
+                this.cbm_port2.Enabled = false;
+                this.cbm_port3.Enabled = false;
+                this.cbm_port2_speed.Enabled = false;
+                this.cbm_port3_speed.Enabled = false;
             }
-            else if (this.type_appli.SelectedIndex == 1)
+            else if (this.cbm_Indicators.SelectedIndex == 1)
             {
                 Global.tipo_dato = 2;
-                this.PUERTO2.Enabled = true;
-                this.PUERTO3.Enabled = true;
-                this.BAUD2.Enabled = true;
-                this.BAUD3.Enabled = true;
+                this.cbm_port2.Enabled = true;
+                this.cbm_port3.Enabled = true;
+                this.cbm_port2_speed.Enabled = true;
+                this.cbm_port3_speed.Enabled = true;
             }
         
         }
         private void Rmto_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.Rmto.Checked)
+            if (this.chk_remoto.Checked)
             {
                 Global.Remoto = true;
-                this.path_serv.Enabled = true;
-                this.path_serv.Focus();
+                this.txt_path_Server.Enabled = true;
+                this.txt_path_Server.Focus();
             }
             else
             {
                 Global.Remoto = false;
-                this.path_serv.Enabled = false;
+                this.txt_path_Server.Enabled = false;
                 if (System.IO.File.Exists(Global.appPath + "\\Connect.txt"))
                 {
                     System.IO.File.Delete(Global.appPath + "\\Connect.txt");
@@ -908,9 +592,177 @@ namespace TRUCK
             }
         }
         #endregion
-        private void toolStripButton2_Click(object sender, EventArgs e)
+
+        void loadCombos()
         {
-            Save_Dato();
+            InitializeComboDisplay();
+            InitializeComboFecha();
+            InitializeComboIndicator();
+            InitializeComboMoneda();
+            InitializeCombosIndicators();
+            InitializeCombosPorts();
+            InitializeCombosSpeeds();
+            InitializeDisplayPort();
+        }
+        void InitializeCombosIndicators()
+        {
+            cbm_Indicators.Enabled = true;
+            cbm_Indicators.Items.Add(Global.M_Error[69, Global.idioma]);
+            cbm_Indicators.Items.Add(Global.M_Error[70, Global.idioma]);
+            cbm_Indicators.SelectedIndex = 0;
+        }
+        void InitializeComboIndicator()
+        {
+            cbm_Scale_Indicator.Items.Add("PIQ/PI");
+            cbm_Scale_Indicator.Items.Add("720i");
+            cbm_Scale_Indicator.SelectedIndex = 0;
+        }
+        void InitializeComboMoneda()
+        {
+            cbm_Moneda.Items.Add("$");
+            cbm_Moneda.Items.Add("€");
+            cbm_Moneda.Items.Add("£");
+            cbm_Moneda.Items.Add("Ç");
+            cbm_Moneda.Items.Add("R");
+            cbm_Moneda.SelectedIndex = 0;
+        }
+        void InitializeComboDisplay()
+        {
+            cbm_Display_Type.Items.Add("AURORA65");
+            cbm_Display_Type.Items.Add("GM8895A");
+            cbm_Display_Type.SelectedIndex = 0;
+        }
+        void InitializeDisplayPort()
+        {
+            cbm_Display_Port.Items.Add("");
+        }
+        void InitializeComboFecha()
+        {
+            cbm_Fecha.Items.Add("dd/MM/yyyy");
+            cbm_Fecha.Items.Add("MM/dd/yyyy");
+            cbm_Fecha.Items.Add("yyyy/MM/dd");
+            cbm_Fecha.SelectedIndex = 0;
+        }
+        void InitializeCombosPorts()
+        {
+            if (Global.port.Count > 0)
+            {
+                for (int z = 0; z < Global.port.Count; z++)
+                {
+                    cbm_Port1.Items.Add(Global.port[z]);
+                    cbm_port2.Items.Add(Global.port[z]);
+                    cbm_port3.Items.Add(Global.port[z]);
+                    cbm_Display_Port.Items.Add(Global.port[z]);
+                }
+
+                cbm_Port1.SelectedIndex = 0;
+                cbm_port2.SelectedIndex = 0;
+                cbm_port3.SelectedIndex = 0;
+                cbm_Display_Port.SelectedIndex = 0;
+            }
+        }
+        void InitializeCombosSpeeds()
+        {
+            for (int z = 0; z < Global.velocidad.Length; z++)
+            {
+                cbm_port1_speed.Items.Add(Global.velocidad[z]);
+                cbm_port2_speed.Items.Add(Global.velocidad[z]);
+                cbm_port3_speed.Items.Add(Global.velocidad[z]);
+                cbm_Display_Speed.Items.Add(Global.velocidad[z]);
+            }
+            cbm_port1_speed.SelectedIndex = 0;
+            cbm_port2_speed.SelectedIndex = 0;
+            cbm_port3_speed.SelectedIndex = 0;
+        }
+        void StartEscene()
+        {
+            loadCombos();
+        }
+        void EsceneLoadData()
+        {
+        }
+        void FillForm()
+        {
+        }
+        void FillFormFromDataBase()
+        {
+        }
+        void RefreshForm()
+        {
+        }
+        /// <summary>
+        /// Clean the values in the form, clean all the controls and verify of this form contains changes for to save.
+        /// </summary>
+        void CleanForm()
+        {
+        }
+        public void ShowEscenaInicial()
+        {   
+        }
+        public void ShowEscenaAccessDenied()
+        {   
+        }
+        public void ShowEscenaAccess()
+        {  
+        }
+        public void ClearControls()
+        {  
+        }
+        public void BindDataToView(ENT_CONFIGURATION obj)
+        {  
+        }
+        public void sendDataFromView()
+        {
+            
+        }
+        private void tbtn_close_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void tbtn_Erase_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbtn_Save_Click(object sender, EventArgs e)
+        {
+            ENT_CONFIGURATION obj = new ENT_CONFIGURATION();
+            /*
+            cbm_Display_Type
+            cbm_Scale_Indicator
+            cbm_Indicators
+            */
+            obj.car_moneda    = cbm_Moneda.SelectedItem.ToString();
+            obj.num_decimal   = (txt_Decimals.Text=="")?0:Convert.ToInt32(txt_Decimals.Text);//Validate if is number
+            obj.folio         = Convert.ToInt32(txt_folio.Text);
+            obj.display       = (chk_Display.Checked) ? 1 : 0;
+            obj.puerto4       = (cbm_Display_Port.SelectedItem!=null)  ? Convert.ToInt32((cbm_Display_Port.SelectedItem.ToString() == "") ? 0 : 0)  : 0;
+            obj.baudrate4     = (cbm_Display_Speed.SelectedItem!=null) ? Convert.ToInt32((cbm_Display_Speed.SelectedItem.ToString() == "") ? 0 : 0) : 0;
+            obj.baudrate      = (cbm_port1_speed.SelectedItem!=null)   ? Convert.ToInt32((cbm_port1_speed.SelectedItem.ToString() == "") ? 0 : 0)   : 0;
+            obj.puerto        = (cbm_Port1.SelectedItem!=null)         ? Convert.ToInt32((cbm_Port1.SelectedItem.ToString() == "") ? 0 : 0)         : 0;
+            obj.baudrate2     = (cbm_port2_speed.SelectedItem!=null)   ? Convert.ToInt32((cbm_port2_speed.SelectedItem.ToString() == "") ? 0 : 0)   : 0;
+            obj.puerto2       = (cbm_port2.SelectedItem!=null)         ? Convert.ToInt32((cbm_port2.SelectedItem.ToString() == "") ? 0 : 0)         : 0;
+            obj.baudrate3     = (cbm_port3_speed.SelectedItem!=null)   ? Convert.ToInt32((cbm_port3_speed.SelectedItem.ToString() == "") ? 0 : 0)   : 0;
+            obj.puerto3       = (cbm_port3.SelectedItem != null)       ? Convert.ToInt32((cbm_port3.SelectedItem.ToString() == "") ? 0 : 0)         : 0;
+            obj.tipo          = (cbm_Display_Type.SelectedItem != null)? Convert.ToInt32((cbm_Display_Type.SelectedItem.ToString() == "") ? 0 : 0)  : 0;
+            obj.path          = txt_path_Server.Text;
+            obj.rmto          = (chk_remoto.Checked) ? "1" : "0";
+            obj.formato_fecha = (cbm_Fecha.SelectedItem != null)     ? (cbm_Fecha.SelectedItem.ToString() == "" ? "" : "") : "";
+            
+            _Presenter.saveConfiguration(obj);
+
+            
+        }
+        private void tbtn_Edit_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        public ENT_CONFIGURATION getDataFromView()
+        {
+            ENT_CONFIGURATION obj = new ENT_CONFIGURATION();
+            
+            return obj;
         }
     }
 }

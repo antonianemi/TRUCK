@@ -10,11 +10,20 @@ using System.Threading;
 
 namespace TRUCK
 {
+
+    enum Error 
+    {
+        ERROR_OUT_FORZE,
+        ERROR_OUT_NORMAL,
+    }
+
+
     /// <summary>
     /// Descripción breve de Form1.
     /// </summary>
     public class Menu : System.Windows.Forms.Form
     {
+
         #region VARIABLES
         DataAccesQuery db;
         private MenuItem MenuInfo;
@@ -53,6 +62,7 @@ namespace TRUCK
         private MenuItem menuItem17;
         private MenuItem MenuEmpresa;
 		private System.Windows.Forms.MenuItem menuItem11;
+        private Error _error;
         #endregion
 
         #region CONSTRUCTOR
@@ -60,6 +70,7 @@ namespace TRUCK
         public Menu()
 		{   		
 			InitializeComponent();
+            _error = Error.ERROR_OUT_NORMAL;
             Global G = new Global();
 			G.Cargar_Mensajes();
             G.Cargar_puertos();
@@ -88,73 +99,58 @@ namespace TRUCK
                 y = this.Size.Height / 8;
                 x = this.Size.Width / 8;
 
-
-                if (!System.IO.File.Exists(Global.appPath + "\\CAMIONERADB.FDB"))
+                //verify the existing of database.
+                if (!File.Exists(Global.appPath + "\\CAMIONERADB.FDB"))
                 {
+                    _error = Error.ERROR_OUT_FORZE;                    
                     MessageBox.Show(Global.M_Error[31, Global.idioma], "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //Show a better mesaje mor desribed for this application.
                     this.Close();
                     this.Dispose();
                 }
-
-
                 else
                 {
-                    db = new DataAccesQuery();//se rea una nueva base de datos.
-                    var data = db.getData("SELECT * FROM empresa");
-                    int emp = data.Tables[0].Rows.Count;
 
-                    if (emp <= 0)
+                    DataSet data;
+
+                    int emp;
+
+                    FindCompanies(out emp, out data);//Search users.
+
+                    if (emp <= 0)//There no a user.
                     {
-                        WEMPRESAS empresa = new WEMPRESAS(x, y);
-                        this.AddOwnedForm(empresa);
-                        empresa.ShowDialog();
-                        Global.Empresa = empresa.empresa.Text;
-                    }
-                    else
-                    {
-                        this.MenuEmpresa.MenuItems.Clear();
-                        for (int g = 0; g < emp; g++)
-                        {
-                            this.MenuEmpresa.MenuItems.Add(data.Tables[0].Rows[g]["numemp"].ToString() + data.Tables[0].Rows[g]["empresa"].ToString());
-                            this.MenuEmpresa.MenuItems[g].Click += new EventHandler(Menu_Click);
-                        }
+                        WEMPRESAS empresa = new WEMPRESAS(x, y);//this form will create a new company in the database.
+                        this.AddOwnedForm(empresa);//add to the screen this form.
+                        empresa.ShowDialog();//Show this form into the screen.
+                        Global.Empresa = empresa.empresa.Text;//Get the name's company
                     }
 
-
-                    using (FileStream fi = new FileStream(Global.appPath + "\\recibe.ttt", FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+                    else//There is a user.
                     {
-                        fi.Close();
+                            MenuEmpresa.MenuItems.Clear();
+                            //Load the companies into the controls. 
+                            for (int g = 0; g < emp; g++)
+                            {
+                                MenuEmpresa.MenuItems.Add(data.Tables[0].Rows[g]["numemp"].ToString() + data.Tables[0].Rows[g]["empresa"].ToString());
+                                MenuEmpresa.MenuItems[g].Click += new EventHandler(Menu_Click);
+                            }
                     }
 
-                    loadConfiguration();
-
-                    DateTime MyDate = new DateTime(Global.year, Global.mes, Global.dia, Global.hora, Global.minutos, Global.segundo);
-
-                    string fecha = string.Format("{0:" + Global.F_Fecha + "}", MyDate);
-                    string hora1 = string.Format("{0:" + Global.F_Hora + "}", MyDate);
-
-                    this.Tiempo.Text = fecha + " " + hora1;
-                    this.Tiempo.ToolTipText = MyDate.ToString("f");
-                    this.Text = Global.Empresa;
-
-                    Registro rt = new Registro();
-                    ENTRADA INIC = new ENTRADA();
-
-                    INIC.ShowDialog(this);
+                    loadConfiguration();//load the configurations for the system.
+                    ShowLogin();//Shows the login for provide credentials.
 
                     if (User_exit == true)
                     {
-                        loadPermissions();
-
-
+                        loadPermissions();//configure the permisions for the user.
+                        //type aplication PUBLIC or PRIVATE.
                         if (Global.aplicacion == 0)
                         {
-                            this.menuItem12.Enabled = false;  //Ajustar inventario
-                            this.menuinfo3.Enabled = false;  //Reporte de Inventario por familia
+                            menuItem12.Enabled = false;  //Ajustar inventario
+                            menuinfo3.Enabled = false;  //Reporte de Inventario por familia
                         }
                         if (Global.aplicacion == 1) this.menuItem13.Enabled = false;
 
-                        this.Text = Global.Empresa + " [" + Global.user + "]";
+                        this.Text = Global.Empresa + " [" + Global.user + "]";//show the comany's name
                     }
                     else
                     {
@@ -175,6 +171,26 @@ namespace TRUCK
                 os = null;
             }
         }
+
+        void FindCompanies(out int emp,out DataSet data)
+        {
+            //Search a Company in the database.
+            db = new DataAccesQuery();
+            data = db.getData("SELECT * FROM empresa");
+            emp = data.Tables[0].Rows.Count;
+        }
+
+        void FindUsers(out int emp, out DataSet data)
+        {
+            //Search a Company in the database.
+            db = new DataAccesQuery();
+            data = db.getData("SELECT * FROM Usuarios");
+            emp = data.Tables[0].Rows.Count;
+        }
+
+
+        void ShowLogin(){new ENTRADA().ShowDialog(this);}
+
 
         void loadPermissions()
         {
@@ -207,11 +223,16 @@ namespace TRUCK
         }
         void loadConfiguration()
         {
+            using (FileStream fi = new FileStream(Global.appPath + "\\recibe.ttt", FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+            {
+                fi.Close();
+            }
             IDataReader Cfg = db.getDataReader("SELECT num_decimal,car_moneda,formato_fecha,tipo,display,scale,aplicacion,puerto,puerto2,puerto3,puerto4,baudrate,baudrate2,baudrate3,baudrate4 FROM configuracion where numemp = " + Global.nempresa);
-            if (!Cfg.Read())//Request a configuration
+            
+            if (!Cfg.Read())//if there is no configuration in the database
             {
                 Cfg.Close();
-                WDGENERAL config = new WDGENERAL(x, y, 2);
+                WDGENERAL config = new WDGENERAL(x, y, 2);//create a new configuration.
                 this.AddOwnedForm(config);
                 config.ShowDialog();
             }
@@ -266,6 +287,13 @@ namespace TRUCK
                 Cfg.Close();
 
             }
+            //load the date
+            DateTime MyDate = new DateTime(Global.year, Global.mes, Global.dia, Global.hora, Global.minutos, Global.segundo);
+            string fecha = string.Format("{0:" + Global.F_Fecha + "}", MyDate);
+            string hora1 = string.Format("{0:" + Global.F_Hora + "}", MyDate);
+            Tiempo.Text = fecha + " " + hora1;
+            Tiempo.ToolTipText = MyDate.ToString("f");
+            Text = Global.Empresa;//Load the companie's name
         }
 
         void Menu_Click(object sender, EventArgs e)
@@ -680,15 +708,17 @@ namespace TRUCK
 		}
         #endregion
 
+
+
         /// <summary>
         /// Punto de entrada principal de la aplicación.
         /// </summary>
         [STAThread]
         public static void Main()
         {
-            if (System.IO.File.Exists(Global.appPath + "\\setup.txt"))
+            if (File.Exists(Global.appPath + "\\setup.txt"))
             {
-                StreamReader fi = System.IO.File.OpenText(Global.appPath + "\\setup.txt");
+                StreamReader fi = File.OpenText(Global.appPath + "\\setup.txt");
                 fi.BaseStream.Position = 0;
 
                 if (fi.Peek() != -1)
@@ -702,7 +732,11 @@ namespace TRUCK
 
             Thread.CurrentThread.CurrentCulture = new CultureInfo(Global.idioma2);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(Global.idioma2);
-            Application.Run(new Menu());
+            Global G = new Global();
+            G.Cargar_Mensajes();
+            G.Cargar_puertos();
+            Application.Run(new WDGENERAL(200,200,1));
+
         }
 
         private void InitializeComponent()
@@ -992,11 +1026,16 @@ namespace TRUCK
             //File.Delete(mdwfilename);
             //File.Move(Global.appPath + "\\tempdb.mdb", mdwfilename);
         }	
+
+
+
+
+
 		protected override void Dispose(bool disposing)
 		{
             bool cerrado = true;
 
-            if (MessageBox.Show(Global.M_Error[318, Global.idioma], "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if(_error== Error.ERROR_OUT_FORZE)
             {
                 for (int w = 0; w < this.MdiChildren.Length; w++)
                 {
@@ -1011,7 +1050,7 @@ namespace TRUCK
 
                 }
                 if (cerrado)
-                {                 
+                {
                     if (disposing)
                     {
                         if (components != null)
@@ -1020,6 +1059,35 @@ namespace TRUCK
                         }
                     }
                     base.Dispose(disposing);
+                }
+            }
+            else if(_error== Error.ERROR_OUT_NORMAL)
+            {
+                if (MessageBox.Show(Global.M_Error[318, Global.idioma], "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    for (int w = 0; w < MdiChildren.Length; w++)
+                    {
+                        if (MdiChildren[w].Name == "Monitor1" || this.MdiChildren[w].Name == "Monitor3" || this.MdiChildren[w].Name == "Transacciones3m" || this.MdiChildren[w].Name == "Transacciones1m")
+                        {
+                            cerrado = false;
+                            MessageBox.Show(Global.M_Error[33, Global.idioma].ToString(), "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MdiChildren[w].Activate();
+                            break;
+                        }
+                        else MdiChildren[w].Close();
+
+                    }
+                    if (cerrado)
+                    {
+                        if (disposing)
+                        {
+                            if (components != null)
+                            {
+                                components.Dispose();
+                            }
+                        }
+                        base.Dispose(disposing);
+                    }
                 }
             }
 		}

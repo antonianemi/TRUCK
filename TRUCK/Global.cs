@@ -103,11 +103,17 @@ namespace TRUCK
         public static bool Remoto = false;
         public static bool realizo_impresion = true;  //Para saber si se imprimio el documento
 		public static bool envio_dato = false;		//bandera que indica si se envio algun dato
-		public static bool clv_aceptada=false;		//Bandera que indica si se la clave es aceptada
-		public static int tipo_dato = 1;            //Tipo de aplicaion de (2)tres indicadores o (1) un indicador 
+		public static bool clv_aceptada=false;      //Bandera que indica si se la clave es aceptada
+
+        public static int tipo_dato = 1;            //Tipo de aplicaion de (2)tres indicadores o (1) un indicador 
+
+
         public static int scale = 0;                // Tipo de bascula o indicador conectado para elejir el protocolo de comunicacion (0) PIQ/PI (1)720i (2)otros
         public static bool display = false;         //Para saber si tiene un display remoto o no.
+
+
         public static int aplicacion = 0;           //Tipo de aplicacion (0)publica, (1)privada o (2)de pesaje solamente
+
 
 		public  Global()
 		{
@@ -116,10 +122,14 @@ namespace TRUCK
 
         public void Cargar_puertos()
         {
-
             port = new System.Collections.ArrayList();
-            foreach (string s in System.IO.Ports.SerialPort.GetPortNames())  port.Add(s);
-            port.Sort(); 
+
+            foreach (string s in SerialPort.GetPortNames())
+            {
+                port.Add(s);
+            }
+
+            port.Sort(); //sort this ports
          
             if (port.Count <= 0)
             {

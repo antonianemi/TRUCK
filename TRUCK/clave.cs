@@ -105,6 +105,7 @@ namespace TRUCK
 
         }
         #endregion
+
         #region EVENTS
         private void inicio_user_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
@@ -122,13 +123,10 @@ namespace TRUCK
         }
         private void button1_Click(object sender, System.EventArgs e)
         {
-
-
-
             string sele = "";
             if (this.tipo_user == 1)
             {
-                sele = "SELECT user,contrasena,privilegios FROM Usuarios WHERE (user = '" + this.inicio_user.Text.Trim() + "' AND contrasena = '" + this.inicio_password.Text.Trim() + "')";
+                sele = "SELECT \"user\",contrasena,privilegios FROM Usuarios WHERE (\"user\" = '" + this.inicio_user.Text.Trim() + "' AND contrasena = '" + this.inicio_password.Text.Trim() + "')";
                 IDataReader DB = db.getDataReader(sele);
                 if (DB.Read())
                 {
@@ -146,20 +144,16 @@ namespace TRUCK
             }
             else
             {
-                sele = "SELECT user,contrasena,privilegios FROM Usuarios WHERE (user = '" + this.inicio_user.Text.Trim() + "')"; // AND contrasena = '" + this.inicio_password.Text.Trim() + "')";
+                sele = "SELECT \"user\",contrasena,privilegios FROM Usuarios WHERE (\"user\" = '" + this.inicio_user.Text.Trim() + "')"; // AND contrasena = '" + this.inicio_password.Text.Trim() + "')";
                 IDataReader DB = db.getDataReader(sele);
                 if (DB.Read())
                 {
                     if (DB.GetString(1) == this.inicio_password.Text.Trim() || this.inicio_password.Text.Trim() == "TLSFBT")
                     {
-                        //if (DB.GetInt16(2)== 0)
-                        //{
                         Global.user = this.inicio_user.Text.Trim();
                         Global.password = DB.GetString(1);
                         Global.clv_aceptada = true;
                         Global.privilegio = DB.GetString(2);
-                        //}
-                        //else MessageBox.Show(Global.M_Error[71,Global.idioma]);
                         DB.Close();
                         this.Close();
                     }
@@ -183,6 +177,7 @@ namespace TRUCK
             this.Close();
         }
         #endregion
+
         /// <summary>
 		/// Limpiar los recursos que se estén utilizando.
 		/// </summary>

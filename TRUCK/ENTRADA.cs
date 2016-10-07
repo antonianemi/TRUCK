@@ -32,10 +32,10 @@ namespace TRUCK
         public ENTRADA()
 		{
 			InitializeComponent();
-			this.TransparencyKey = Color.Empty;
-			this.inicio_password.KeyDown += new System.Windows.Forms.KeyEventHandler(this.inicio_password_KeyDown);
-			this.inicio_user.KeyDown += new System.Windows.Forms.KeyEventHandler(this.inicio_user_KeyDown);
-			this.inicio_user.Text = "Admin";               
+			TransparencyKey = Color.Empty;
+			inicio_password.KeyDown += new System.Windows.Forms.KeyEventHandler(this.inicio_password_KeyDown);
+			inicio_user.KeyDown += new System.Windows.Forms.KeyEventHandler(this.inicio_user_KeyDown);
+			inicio_user.Text = "Admin";               
                     
             db = new DataAccesQuery();
             DataSet data = db.getData("SELECT * FROM empresa ORDER BY numemp");
@@ -208,6 +208,7 @@ namespace TRUCK
         #endregion
 
         #region EVENTS
+
         private void inicio_user_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -215,6 +216,7 @@ namespace TRUCK
                 this.inicio_password.Focus();
             }
         }
+
         private void inicio_password_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -222,21 +224,18 @@ namespace TRUCK
                 this.button1.Focus();
             }
         }
+
         private void button2_Click(object sender, System.EventArgs e)
         {
             this.Close();
         }
+
         private void button1_Click(object sender, System.EventArgs e)
         {
-
             Global.nempresa = Convert.ToInt16(this.inicio_empresa.SelectedValue);
-
             Global.Empresa = this.inicio_empresa.Text;
-
             string sele = "SELECT \"user\" ,contrasena,privilegios,nombre FROM usuarios WHERE (\"user\" = '" + this.inicio_user.Text.Trim() + "')";
-
-           var data = db.getData(sele);
-
+            var data = db.getData(sele);
             IDataReader DB = db.getDataReader(sele);
 
             if (DB.Read())
@@ -254,8 +253,7 @@ namespace TRUCK
                         TRUCK.Menu.User_exit = true;
                         DB.Close();
                         Close();
-                    }// DON'T MATCH PASSWORD.
-
+                    }
                     else
                     {
                         this.inicio_password.Focus();

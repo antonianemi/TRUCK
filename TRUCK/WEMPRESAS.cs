@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Data;
-using System.Data.OleDb;
 
 namespace TRUCK
 {
@@ -64,7 +60,10 @@ namespace TRUCK
         private PictureBox pictureLogo;
         private OpenFileDialog openFileDialog1;
         #endregion
+
+
         #region CONSTRUCTORS
+
         public WEMPRESAS(int x, int y, int op)
         {
             db = new DataAccesQuery();
@@ -117,28 +116,31 @@ namespace TRUCK
         public WEMPRESAS(int x, int y)
         {
             db = new DataAccesQuery();
-            // El Diseñador de Windows Forms requiere esta llamada.
             InitializeComponent();
             this.Location = new System.Drawing.Point(x, y);
             this.TransparencyKey = Color.Empty;
-            this.button2.Click += new EventHandler(button2_Click);
             this.tipo_com.SelectedIndexChanged += new EventHandler(tipo_com_SelectedIndexChanged);
+
             bool existe = false;
             IDataReader dbempresa = db.getDataReader("SELECT * FROM empresa");
             if (dbempresa.Read()) existe = true;
             else existe = false;
             dbempresa.Close();
 
-            if (!existe)
+            if (!existe)//Configurate the first company in tha database.
             {
-                this.datos_empresa.Visible = false;
-                this.datos_empresa.SendToBack();
-                this.nicePanel1.Visible = true;
-                this.nicePanel1.BringToFront();
-                this.toolBar1.Visible = false;
-                this.tipo_com.Items.Add(Global.M_Error[20, Global.idioma]);
-                this.tipo_com.Items.Add(Global.M_Error[21, Global.idioma]);
-                this.tipo_com.SelectedIndex = 0;
+
+                //Change the panel
+                datos_empresa.Visible = false;
+                datos_empresa.SendToBack();
+                nicePanel1.Visible = true;
+                nicePanel1.BringToFront();
+                toolBar1.Visible = false;
+                //Load the two ways of system.
+                tipo_com.Items.Add(Global.M_Error[20, Global.idioma]);
+                tipo_com.Items.Add(Global.M_Error[21, Global.idioma]);
+                tipo_com.SelectedIndex = 0;//Configure the control combo for seledted predefined.
+
             }
 
         }
@@ -161,6 +163,7 @@ namespace TRUCK
             }
             base.Dispose(disposing);
         }
+        
         #region Designer generated code
         /// <summary>
         /// Método necesario para admitir el Diseñador, no se puede modificar
@@ -573,6 +576,7 @@ namespace TRUCK
 
         }
         #endregion
+      
         #region FUNCTIONS
         private void New_Dato()
         {   
@@ -589,7 +593,6 @@ namespace TRUCK
                 + this.ruta_logo + "')";
                 db.ExcetuteQuery(query); 
         }
-
         private void Save_Dato()
         {            
                 string query = "UPDATE empresa SET empresa = '" + this.empresa.Text + "', direccion1 = '" + this.dir1.Text + "', direccion2 = '" + this.dir2.Text + "', direccion3 = '" + this.dir3.Text + "'," +
@@ -615,7 +618,6 @@ namespace TRUCK
          db.ExcetuteQuery(query);
          MessageBox.Show(Global.M_Error[3, Global.idioma].ToString());
         }
-
         private bool Find_Numero(string nombre)
         {
 
@@ -634,8 +636,6 @@ namespace TRUCK
             }
             return encontro;
         }
-
-
         public bool muestra_empresa(string codigo)
         {
             if (this.Find_Numero(codigo))
@@ -646,8 +646,6 @@ namespace TRUCK
             else return false;
 
         }
-
-
         private void Mostrar_Datos(int pos, int op)
         {
             if (dt.Tables[0].Rows.Count > 0 && pos >= 0)
@@ -668,8 +666,6 @@ namespace TRUCK
                 this.editar_dato = false;
             }
         }
-
-
         private void limpiar()
         {
             this.id_empresa.Text = "";
@@ -681,8 +677,6 @@ namespace TRUCK
             this.txt_telf.Text = "";
             this.id_empresa.Enabled = true;
         }
-
-
         private void ver_empre()
         {
             this.toolBar1.Items[1].Enabled = false;
@@ -694,16 +688,11 @@ namespace TRUCK
             this.datos_empresa.Visible = false;
             this.nicePanel1.Visible = false;
         }
-
-
         public void comando(int opcion)
         {
             System.Windows.Forms.ToolStripItem bt = this.toolBar1.Items[opcion];   //= new MSComctlLib.ButtonClass();
             this.toolBar1_ButtonClick(this.toolBar1, new ToolStripItemClickedEventArgs(bt));
         }
-
-
-
         public int Find_Codigo(string n_codigo, string campo)
         {
             int encontro = -1;
@@ -718,8 +707,6 @@ namespace TRUCK
             }
             return encontro;
         }
-
-
         public int Find_Descripcion(string descrip, string campo2, string campo1)
         {
             int encontro = -1;
@@ -733,8 +720,6 @@ namespace TRUCK
             }
             return encontro;
         }
-
-
         public int buscar_posicion(int elemento, string clave)
         {
             int desde, hasta, medio, posicion; // desde y hasta indican los límites del array que se está mirando.
@@ -823,6 +808,7 @@ namespace TRUCK
 
 
         #endregion
+
         #region EVENTS
         private void toolBar1_ButtonClick(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
         {
@@ -1026,14 +1012,10 @@ namespace TRUCK
                 this.Close();
             }
         }
-
-
         private void tipo_com_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             Global.aplicacion = tipo_com.SelectedIndex;
         }
-
-
         private void dir1_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1093,7 +1075,7 @@ namespace TRUCK
             bool pas;
             if (this.user_txt.Text != "")
             {
-                IDataReader usua = db.getDataReader("SELECT user,contrasena FROM Usuarios WHERE (user = '" + this.user_txt.Text + "')");
+                IDataReader usua = db.getDataReader("SELECT \"user\",contrasena FROM Usuarios WHERE (user = '" + this.user_txt.Text + "')");
                 if (usua.Read()) existe = true;
                 else existe = false;
                 usua.Close();
@@ -1110,9 +1092,14 @@ namespace TRUCK
                 if (pas)
                 {
 
-                    if (!existe) db.ExcetuteQuery("INSERT INTO Usuarios ([user],contrasena,privilegios,nombre,tipo,iniciales) VALUES ('" + this.user_txt.Text + "','" + this.pswd2.Text + "','111111111111111','" + Global.M_Error[145, Global.idioma] + "',0,'ADMIN')");
-
-                    else db.ExcetuteQuery("UPDATE Usuarios SET contrasena = '" + this.pswd1.Text + "', privilegios = '111111111111111',nombre = '" + Global.M_Error[145, Global.idioma] + "' WHERE ( user = '" + this.user_txt.Text + "')");
+                    if (!existe)
+                    {
+                        string query = "INSERT INTO Usuarios (\"user\",contrasena,privilegios,nombre,tipo,iniciales) VALUES ('" + this.user_txt.Text + "','" + this.pswd2.Text + "','111111111111111','" + Global.M_Error[145, Global.idioma] + "',0,'ADMIN')";
+                        db.ExcetuteQuery(query);
+                        query = "INSERT INTO Usuarios (\"user\",contrasena,privilegios,nombre,tipo,iniciales) VALUES ('OPERATOR','','111111111111111','" + Global.M_Error[145, Global.idioma] + "',0,'OPERATOR')";
+                        db.ExcetuteQuery(query);
+                    }
+                    else db.ExcetuteQuery("UPDATE \"user\" SET contrasena = '" + this.pswd1.Text + "', privilegios = '111111111111111',nombre = '" + Global.M_Error[145, Global.idioma] + "' WHERE ( user = '" + this.user_txt.Text + "')");
 
                     this.nicePanel1.Visible = false;
                     this.nicePanel1.SendToBack();
@@ -1129,6 +1116,7 @@ namespace TRUCK
                 }
             }
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             Bitmap logo;
@@ -1166,7 +1154,6 @@ namespace TRUCK
             }
         }
         #endregion
-
     }
 }
 
